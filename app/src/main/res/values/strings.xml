@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Teste</string>
+    <string name="tv_name">Nome:</string>
+    <string name="tv_email">Email:</string>
+    <string name="tv_phone">Telefone:</string>
+    <string name="tv_address">Endereço:</string>
+    <string name="btn_close">Fechar</string>
+</resources>
