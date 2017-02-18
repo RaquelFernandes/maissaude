@@ -1,4 +1,9 @@
 <resources>
+    <string name="cadastro_hint_email">Email</string>
+    <string name="cadastro_hint_senha">Senha</string>
+    <string name="cadastro_btn_entrar">Entrar</string>
+    <string name="cadastro_btn_registrar">Registrar-se</string>
+
     <string name="app_name">Teste</string>
     <string name="tv_name">Nome:</string>
     <string name="tv_email">Email:</string>

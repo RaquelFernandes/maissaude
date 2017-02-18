@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.a1514290074.teste.MainActivity">
+    tools:context="com.example.a1514290074.teste.CadastroActivity">
 
     <LinearLayout
         android:orientation="vertical"
