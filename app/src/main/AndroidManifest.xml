@@ -15,7 +15,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CadastroActivity"></activity>
+
+        <activity android:name=".CadastroActivity"
+                  android:parentActivityName="com.example.a1514290074.teste.LoginActivity"
+                  android:label="Registrar">
+
+        </activity>
 
     </application>
 
