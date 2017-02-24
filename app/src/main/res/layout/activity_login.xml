@@ -1,75 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_login"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".LoginActivity">
+    android:layout_height="match_parent">
 
-
-    <ImageView
-        android:id="@+id/imageView2"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_login"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="40dp"
-        app:srcCompat="@drawable/cardiogram" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context=".LoginActivity">
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp">
 
-        <EditText
-            android:id="@+id/login_et_email"
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_marginBottom="40dp"
+            android:layout_marginTop="30dp"
+            app:srcCompat="@drawable/cardiogram" />
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/login_hint_email"
-            android:inputType="textEmailAddress" />
+            android:layout_marginBottom="5dp">
 
-    </android.support.design.widget.TextInputLayout>
+            <EditText
+                android:id="@+id/login_et_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/login_hint_email"
+                android:inputType="textEmailAddress" />
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        </android.support.design.widget.TextInputLayout>
 
-        <EditText
-            android:id="@+id/login_et_senha"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/login_hint_senha"
-            android:inputType="textPassword" />
+            android:layout_height="wrap_content">
 
-    </android.support.design.widget.TextInputLayout>
+            <EditText
+                android:id="@+id/login_et_senha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/login_hint_senha"
+                android:inputType="textPassword" />
 
-    <Button
-        android:id="@+id/login_btn_entrar"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:text="@string/login_btn_entrar"
-        android:textColor="@color/textButton" />
+        </android.support.design.widget.TextInputLayout>
 
-    <Button
-        android:id="@+id/cadastro_btn_login"
-        android:onClick="irParaCadastro"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:paddingBottom="10dp"
-        android:paddingTop="8dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:text="@string/login_btn_registrar"
-        android:background="?android:selectableItemBackground"
-        android:textColor="@color/colorPrimary" />
+        <Button
+            android:id="@+id/login_btn_entrar"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="@string/login_btn_entrar"
+            android:textColor="@color/textButton" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/cadastro_btn_login"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:background="?android:selectableItemBackground"
+            android:onClick="irParaCadastro"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="8dp"
+            android:text="@string/login_btn_registrar"
+            android:textColor="@color/colorPrimary" />
+
+    </LinearLayout>
+</ScrollView>

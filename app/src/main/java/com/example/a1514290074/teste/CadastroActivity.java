@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -23,7 +26,8 @@ import java.io.InputStream;
 
 public class CadastroActivity extends AppCompatActivity {
 
-    static final int ESCOLHER_FOTO = 1;
+    private static final int ESCOLHER_FOTO = 1;
+    private static final String FOTO_PERFIL = "foto";
 
     EditText tvEmail;
     EditText tvSenha;
@@ -38,9 +42,15 @@ public class CadastroActivity extends AppCompatActivity {
         tvSenha = (EditText) findViewById(R.id.cadastro_et_senha);
         ivFoto = (ImageView) findViewById(R.id.iv_foto);
 
-        // Deixa a foto do usuário circular
-        Drawable fotoCircular = Helper.imagemCircular(getResources(), R.drawable.usuario);
-        ivFoto.setImageDrawable(fotoCircular);
+        if (savedInstanceState != null && savedInstanceState.containsKey(FOTO_PERFIL)) {
+            // Carrega foto do usuário circular
+            Drawable fotoCircular = Helper.imagemCircular(getResources(), (Bitmap) savedInstanceState.getParcelable(FOTO_PERFIL));
+            ivFoto.setImageDrawable(fotoCircular);
+        } else {
+            // Carrega foto padrão circular
+            Drawable fotoCircular = Helper.imagemCircular(getResources(), R.drawable.usuario);
+            ivFoto.setImageDrawable(fotoCircular);
+        }
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -68,6 +78,13 @@ public class CadastroActivity extends AppCompatActivity {
                 ivFoto.setImageDrawable(fotoCircular);
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Bitmap foto = ((RoundedBitmapDrawable) ivFoto.getDrawable()).getBitmap();
+        outState.putParcelable(FOTO_PERFIL, foto);
     }
 
     public void irParaLogin(View v) {

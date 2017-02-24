@@ -1,123 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.a1514290074.teste.CadastroActivity">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="15dp"
-        android:layout_gravity="center">
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.example.a1514290074.teste.CadastroActivity">
 
-        <ImageView
-            android:id="@+id/iv_foto"
-            android:onClick="trocarFoto"
-            android:layout_width="100dp"
+        <RelativeLayout
+            android:layout_width="125dp"
+            android:layout_height="125dp"
             android:layout_gravity="center"
-            android:layout_height="100dp"
-            app:srcCompat="@drawable/usuario"
-            android:contentDescription="@string/cadastro_foto" />
+            android:gravity="center">
 
-        <android.support.design.widget.FloatingActionButton
-            android:onClick="trocarFoto"
-            android:layout_width="35dp"
+            <ImageView
+                android:id="@+id/iv_foto"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:contentDescription="@string/cadastro_foto"
+                android:onClick="trocarFoto"
+                app:srcCompat="@drawable/usuario" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/floatingActionButton2"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignBottom="@id/iv_foto"
+                android:layout_alignEnd="@id/iv_foto"
+                android:layout_alignRight="@id/iv_foto"
+                android:clickable="true"
+                android:onClick="trocarFoto"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/edit3" />
+        </RelativeLayout>
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp">
+
+            <EditText
+                android:id="@+id/cadastro_et_nome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/cadastro_hint_nome"
+                android:inputType="textEmailAddress" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp">
+
+            <EditText
+                android:id="@+id/cadastro_et_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/cadastro_hint_email"
+                android:inputType="textEmailAddress" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp">
+
+            <EditText
+                android:id="@+id/cadastro_et_senha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/cadastro_hint_senha"
+                android:inputType="textPassword" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/cadastro_et_confirmar_senha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/cadastro_hint_confirmar_senha"
+                android:inputType="textPassword" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="@string/cadastro_btn_criar_conta"
+            android:textColor="@color/textButton" />
+
+        <Button
+            android:id="@+id/cadastro_btn_login"
+            android:layout_width="wrap_content"
             android:layout_height="35dp"
-            android:layout_alignBottom="@id/iv_foto"
-            android:layout_alignRight="@id/iv_foto"
-            android:layout_alignEnd="@id/iv_foto"
-            android:clickable="true"
-            app:srcCompat="@drawable/edit3"
-            android:id="@+id/floatingActionButton2"
-            app:fabSize="mini"/>
-    </RelativeLayout>
+            android:layout_gravity="center"
+            android:background="?android:selectableItemBackground"
+            android:onClick="irParaLogin"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="8dp"
+            android:text="@string/cadastro_btn_acessar_conta"
+            android:textColor="@color/colorPrimary" />
 
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp">
-
-        <EditText
-            android:id="@+id/cadastro_et_nome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/cadastro_hint_nome"
-            android:inputType="textEmailAddress" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp">
-
-        <EditText
-            android:id="@+id/cadastro_et_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/cadastro_hint_email"
-            android:inputType="textEmailAddress" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp">
-
-        <EditText
-            android:id="@+id/cadastro_et_senha"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/cadastro_hint_senha"
-            android:inputType="textPassword" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/cadastro_et_confirmar_senha"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/cadastro_hint_confirmar_senha"
-            android:inputType="textPassword" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:text="@string/cadastro_btn_criar_conta"
-        android:textColor="@color/textButton" />
-
-    <Button
-        android:id="@+id/cadastro_btn_login"
-        android:onClick="irParaLogin"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:paddingBottom="10dp"
-        android:paddingTop="8dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:text="@string/cadastro_btn_acessar_conta"
-        android:background="?android:selectableItemBackground"
-        android:textColor="@color/colorPrimary" />
-
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
