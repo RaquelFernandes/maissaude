@@ -54,6 +54,7 @@
 
         <Button
             android:id="@+id/login_btn_entrar"
+            android:onClick="entrar"
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:layout_marginBottom="10dp"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.a1514290074.teste">
+    package="com.example.a1514290074.saude">
 
     <application
         android:allowBackup="true"
@@ -8,7 +8,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity" android:theme="@style/Login">
+        <activity android:name="com.example.a1514290074.saude.LoginActivity"
+                  android:theme="@style/Login"
+                  android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -16,8 +18,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".CadastroActivity"
-                  android:parentActivityName="com.example.a1514290074.teste.LoginActivity"
+        <activity android:name="com.example.a1514290074.saude.CadastroActivity"
+                  android:parentActivityName="com.example.a1514290074.saude.LoginActivity"
                   android:label="Registrar">
 
         </activity>

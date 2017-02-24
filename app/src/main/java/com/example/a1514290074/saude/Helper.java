@@ -1,4 +1,4 @@
-package com.example.a1514290074.teste;
+package com.example.a1514290074.saude;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;

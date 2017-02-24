@@ -14,7 +14,7 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="com.example.a1514290074.teste.CadastroActivity">
+        tools:context="com.example.a1514290074.saude.CadastroActivity">
 
         <RelativeLayout
             android:layout_width="125dp"
@@ -100,6 +100,8 @@
         </android.support.design.widget.TextInputLayout>
 
         <Button
+            android:id="@+id/cadastro_btn_cadastrar"
+            android:onClick="cadastrar"
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:layout_marginBottom="10dp"

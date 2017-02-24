@@ -5,6 +5,7 @@
     <string name="login_hint_senha">Senha</string>
     <string name="login_btn_entrar">Entrar</string>
     <string name="login_btn_registrar">Não tem uma conta? Registre-se</string>
+    <string name="login_erro_autenticacao">Email e/ou senha incorretos.</string>
 
     <string name="cadastro_hint_nome">Nome Completo</string>
     <string name="cadastro_hint_email">Email</string>
@@ -15,4 +16,6 @@
     <string name="cadastro_btn_criar_conta">Criar Conta</string>
     <string name="cadastro_btn_acessar_conta">Acesse sua conta</string>
     <string name="cadastro_foto">Foto do usuário</string>
+    <string name="cadastro_erro_senhas_diferentes">As senhas precisam ser idênticas</string>
+    <string name="cadastro_erro_registro">Não foi possível criar a conta</string>
 </resources>

@@ -1,36 +1,37 @@
-package com.example.a1514290074.teste;
+package com.example.a1514290074.saude;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Parcelable;
-import android.os.PersistableBundle;
 import android.provider.MediaStore;
-import android.support.v4.app.NavUtils;
+import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.InputStream;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class CadastroActivity extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     private static final int ESCOLHER_FOTO = 1;
     private static final String FOTO_PERFIL = "foto";
 
     EditText tvEmail;
     EditText tvSenha;
+    EditText tvConfirmarSenha;
     ImageView ivFoto;
 
     @Override
@@ -38,8 +39,25 @@ public class CadastroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser usuario = firebaseAuth.getCurrentUser();
+                if (usuario != null) {
+                    // Usuário entrou
+                    Log.d("teste", "onAuthStateChanged:signed_in:" + usuario.getUid());
+                } else {
+                    // Usuário não entrou
+                    Log.d("teste", "onAuthStateChanged:signed_out");
+                }
+            }
+        };
+
         tvEmail = (EditText) findViewById(R.id.cadastro_et_email);
         tvSenha = (EditText) findViewById(R.id.cadastro_et_senha);
+        tvConfirmarSenha = (EditText) findViewById(R.id.cadastro_et_confirmar_senha);
         ivFoto = (ImageView) findViewById(R.id.iv_foto);
 
         if (savedInstanceState != null && savedInstanceState.containsKey(FOTO_PERFIL)) {
@@ -60,6 +78,20 @@ public class CadastroActivity extends AppCompatActivity {
             if (extras.containsKey("senha")) {
                 tvSenha.setText(extras.getString("senha"));
             }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
         }
     }
 
@@ -85,6 +117,31 @@ public class CadastroActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         Bitmap foto = ((RoundedBitmapDrawable) ivFoto.getDrawable()).getBitmap();
         outState.putParcelable(FOTO_PERFIL, foto);
+    }
+
+    public void cadastrar(View v) {
+        String email = tvEmail.getText().toString();
+        String senha = tvSenha.getText().toString();
+        String confirmarSenha = tvConfirmarSenha.getText().toString();
+
+        if (!senha.equals(confirmarSenha)) {
+            Toast.makeText(CadastroActivity.this, R.string.cadastro_erro_senhas_diferentes, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mAuth.createUserWithEmailAndPassword(email, senha)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(CadastroActivity.this, R.string.cadastro_erro_registro,
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(CadastroActivity.this, "Cadastrou usuario",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     public void irParaLogin(View v) {
