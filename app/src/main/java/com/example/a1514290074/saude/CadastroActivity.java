@@ -1,24 +1,37 @@
 package com.example.a1514290074.saude;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class CadastroActivity extends AppCompatActivity {
@@ -29,10 +42,12 @@ public class CadastroActivity extends AppCompatActivity {
     private static final int ESCOLHER_FOTO = 1;
     private static final String FOTO_PERFIL = "foto";
 
-    EditText tvEmail;
-    EditText tvSenha;
-    EditText tvConfirmarSenha;
+    EditText etNome;
+    EditText etEmail;
+    EditText etSenha;
+    EditText etConfirmarSenha;
     ImageView ivFoto;
+    Button btnCriarConta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +63,9 @@ public class CadastroActivity extends AppCompatActivity {
                 if (usuario != null) {
                     // Usuário entrou
                     Log.d("teste", "onAuthStateChanged:signed_in:" + usuario.getUid());
+                    Intent it = new Intent(CadastroActivity.this, MainActivity.class);
+                    finish();
+                    startActivity(it);
                 } else {
                     // Usuário não entrou
                     Log.d("teste", "onAuthStateChanged:signed_out");
@@ -55,10 +73,23 @@ public class CadastroActivity extends AppCompatActivity {
             }
         };
 
-        tvEmail = (EditText) findViewById(R.id.cadastro_et_email);
-        tvSenha = (EditText) findViewById(R.id.cadastro_et_senha);
-        tvConfirmarSenha = (EditText) findViewById(R.id.cadastro_et_confirmar_senha);
+        etNome = (EditText) findViewById(R.id.cadastro_et_nome);
+        etEmail = (EditText) findViewById(R.id.cadastro_et_email);
+        etSenha = (EditText) findViewById(R.id.cadastro_et_senha);
+        etConfirmarSenha = (EditText) findViewById(R.id.cadastro_et_confirmar_senha);
         ivFoto = (ImageView) findViewById(R.id.iv_foto);
+        btnCriarConta = (Button) findViewById(R.id.cadastro_btn_cadastrar);
+
+        etConfirmarSenha.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    btnCriarConta.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         if (savedInstanceState != null && savedInstanceState.containsKey(FOTO_PERFIL)) {
             // Carrega foto do usuário circular
@@ -73,10 +104,10 @@ public class CadastroActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             if (extras.containsKey("email")) {
-                tvEmail.setText(extras.getString("email"));
+                etEmail.setText(extras.getString("email"));
             }
             if (extras.containsKey("senha")) {
-                tvSenha.setText(extras.getString("senha"));
+                etSenha.setText(extras.getString("senha"));
             }
         }
     }
@@ -119,29 +150,100 @@ public class CadastroActivity extends AppCompatActivity {
         outState.putParcelable(FOTO_PERFIL, foto);
     }
 
-    public void cadastrar(View v) {
-        String email = tvEmail.getText().toString();
-        String senha = tvSenha.getText().toString();
-        String confirmarSenha = tvConfirmarSenha.getText().toString();
+    private boolean validar() {
 
-        if (!senha.equals(confirmarSenha)) {
-            Toast.makeText(CadastroActivity.this, R.string.cadastro_erro_senhas_diferentes, Toast.LENGTH_SHORT).show();
-            return;
+        Boolean valido = true;
+
+        TextInputLayout nomeWrapper = (TextInputLayout) findViewById(R.id.cadastro_et_nome_wrapper);
+        TextInputLayout emailWrapper = (TextInputLayout) findViewById(R.id.cadastro_et_email_wrapper);
+        TextInputLayout senhaWrapper = (TextInputLayout) findViewById(R.id.cadastro_et_senha_wrapper);
+        TextInputLayout confirmarSenhaWrapper = (TextInputLayout) findViewById(R.id.cadastro_et_confirmar_senha_wrapper);
+
+        String nome = etNome.getText().toString();
+        String email = etEmail.getText().toString();
+        String senha = etSenha.getText().toString();
+        String confirmarSenha = etConfirmarSenha.getText().toString();
+
+        if (!Validacao.nome(nome)) {
+            valido = false;
+            nomeWrapper.setError(getString(R.string.erro_campo_obrigatorio));
+        } else {
+            nomeWrapper.setErrorEnabled(false);
         }
 
-        mAuth.createUserWithEmailAndPassword(email, senha)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(CadastroActivity.this, R.string.cadastro_erro_registro,
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(CadastroActivity.this, "Cadastrou usuario",
-                                    Toast.LENGTH_SHORT).show();
+        if (!Validacao.email(email)) {
+            valido = false;
+            emailWrapper.setError(getString(R.string.erro_email));
+        } else {
+            emailWrapper.setErrorEnabled(false);
+        }
+
+        if (!Validacao.senha(senha)) {
+            valido = false;
+            senhaWrapper.setError(getString(R.string.erro_tamanho_senha));
+        } else {
+            senhaWrapper.setErrorEnabled(false);
+        }
+
+        if (!Validacao.confirmarSenha(senha, confirmarSenha)) {
+            valido = false;
+            confirmarSenhaWrapper.setError(getString(R.string.erro_confirmar_senha));
+        } else {
+            confirmarSenhaWrapper.setErrorEnabled(false);
+        }
+
+        return valido;
+    }
+
+    public void cadastrar(View v) {
+        final ProgressDialog loader = ProgressDialog.show(CadastroActivity.this, "",
+                "Criando conta, \naguarde...", true);
+
+        Boolean valido = validar();
+
+        // fecha teclado
+        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+        if (!valido) {
+            loader.dismiss();
+        } else {
+            String email = etEmail.getText().toString();
+            String senha = etSenha.getText().toString();
+
+            mAuth.createUserWithEmailAndPassword(email, senha)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            loader.dismiss();
+                            if (!task.isSuccessful()) {
+                                String erro = getString(R.string.erro_firebase_generico);
+                                try {
+                                    throw task.getException();
+                                } catch(FirebaseAuthWeakPasswordException e) {
+                                    erro = getString(R.string.erro_firebase_tamanho_senha);
+                                } catch(FirebaseAuthInvalidCredentialsException e) {
+                                    erro = getString(R.string.erro_firebase_email);
+                                } catch(FirebaseAuthUserCollisionException e) {
+                                    erro = getString(R.string.erro_firebase_email_usado);
+                                } catch(Exception e) {
+                                    Log.e("AUTH", e.getMessage());
+                                }
+                                AlertDialog.Builder builder = new AlertDialog.Builder(CadastroActivity.this);
+                                builder.setTitle(R.string.cadastro_erro_titulo)
+                                        .setMessage(erro)
+                                        .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.cancel();
+                                            }
+                                        }).create().show();
+                            } else {
+                                Toast.makeText(CadastroActivity.this, R.string.cadastro_toast_conta_criada,
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+        }
     }
 
     public void irParaLogin(View v) {

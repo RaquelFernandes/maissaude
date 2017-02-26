@@ -7,7 +7,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/MaterialTheme">
         <activity
             android:name=".LoginActivity"
             android:theme="@style/Login"
@@ -18,11 +18,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".CadastroActivity"
             android:label="Registrar"
+            android:theme="@style/Cadastro"
             android:parentActivityName=".LoginActivity"></activity>
-        <activity android:name=".MainActivity"></activity>
+
+        <activity android:name=".MainActivity"
+                  android:noHistory="true"></activity>
     </application>
 
 </manifest>

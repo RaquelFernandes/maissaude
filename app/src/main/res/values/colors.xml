@@ -2,6 +2,6 @@
 <resources>
     <color name="colorPrimary">#4bbcd7</color>
     <color name="colorPrimaryDark">#2ca6c3</color>
-    <color name="colorAccent">#4BBCD7</color>
     <color name="textButton">#FFFFFF</color>
+    <color name="tabIndicator">#FFFFFF</color>
 </resources>

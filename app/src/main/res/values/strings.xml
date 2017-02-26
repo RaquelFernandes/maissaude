@@ -6,6 +6,9 @@
     <string name="login_btn_entrar">Entrar</string>
     <string name="login_btn_registrar">Não tem uma conta? Registre-se</string>
     <string name="login_erro_autenticacao">Email e/ou senha incorretos.</string>
+    <string name="login_dlg_erro_titulo">Falha ao fazer login</string>
+    <string name="login_dlg_erro_mensagem">\nEmail ou senha incorretos</string>
+    <string name="login_pdlg_acessando_conta">Acessando a conta, \naguarde…</string>
 
     <string name="cadastro_hint_nome">Nome Completo</string>
     <string name="cadastro_hint_email">Email</string>
@@ -16,9 +19,22 @@
     <string name="cadastro_btn_criar_conta">Criar Conta</string>
     <string name="cadastro_btn_acessar_conta">Acesse sua conta</string>
     <string name="cadastro_foto">Foto do usuário</string>
-    <string name="cadastro_erro_senhas_diferentes">As senhas precisam ser idênticas</string>
+    <string name="cadastro_erro_senhas_diferentes">\nAs senhas precisam ser idênticas</string>
     <string name="cadastro_erro_registro">Não foi possível criar a conta</string>
+    <string name="cadastro_erro_titulo">Erro</string>
+    <string name="cadastro_toast_conta_criada">Conta criada</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="erro_campo_obrigatorio">Campo obrigatório</string>
+    <string name="erro_email">Digite um email válido</string>
+    <string name="erro_tamanho_senha">A senha deve conter no mínimo 6 caracteres</string>
+    <string name="erro_confirmar_senha">As senhas precisam ser idênticas</string>
+    <string name="erro_firebase_generico">\nNão foi possivel criar a conta. \nTente novamente mais tarde</string>
+    <string name="erro_firebase_tamanho_senha">\nA senha deve conter no mínimo 6 caracteres</string>
+    <string name="erro_firebase_email">\nDigite um email válido</string>
+    <string name="erro_firebase_email_usado">\nEsse email já está sendo usado</string>
+
+    <string name="menu_sair">Sair</string>
+
+    <string name="btn_ok">OK</string>
+
 </resources>

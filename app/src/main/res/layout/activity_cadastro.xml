@@ -45,6 +45,7 @@
 
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/cadastro_et_nome_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp">
@@ -59,6 +60,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/cadastro_et_email_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp">
@@ -73,6 +75,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/cadastro_et_senha_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp">
@@ -87,6 +90,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/cadastro_et_confirmar_senha_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -95,7 +99,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/cadastro_hint_confirmar_senha"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:imeOptions="actionDone" />
 
         </android.support.design.widget.TextInputLayout>
 
