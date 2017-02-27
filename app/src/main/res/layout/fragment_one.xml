@@ -5,6 +5,7 @@
     tools:context="com.example.a1514290074.saude.OneFragment">
 
     <TextView
+        android:id="@+id/tv_primeiro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="primeiro"

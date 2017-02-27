@@ -8,6 +8,9 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
+
+import java.io.ByteArrayOutputStream;
 
 public class Helper {
 
@@ -22,5 +25,14 @@ public class Helper {
         RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, bmp);
         drawable.setCircular(true);
         return drawable;
+    }
+
+    public static byte[] imageViewToByteArray(ImageView imageView) {
+        imageView.setDrawingCacheEnabled(true);
+        imageView.buildDrawingCache();
+        Bitmap bitmap = imageView.getDrawingCache();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
     }
 }

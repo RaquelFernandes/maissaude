@@ -9,16 +9,21 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -29,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mAuth = FirebaseAuth.getInstance();
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -37,6 +44,17 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        // TESTE TODO: BUG FIREBASE
+        FirebaseUser novoUsuario = mAuth.getCurrentUser();
+        Log.d("USUARIO", novoUsuario.getEmail());
+        if (novoUsuario.getDisplayName() != null) {
+            Log.d("NOME USUARIO", novoUsuario.getDisplayName());
+            Log.d("FOTO USUARIO", novoUsuario.getPhotoUrl().toString());
+        } else {
+            Log.d("NOME USUARIO", "NULL");
+        }
+        // FIM TESTE BUG FIREBASE
     }
 
     private void setupViewPager(ViewPager viewPager) {

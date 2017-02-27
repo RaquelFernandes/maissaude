@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -26,18 +27,31 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class CadastroActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    FirebaseStorage mStorage;
+    private StorageReference mStorageRef;
+
+    private static final String DIRETORIO_FOTOS = "fotos";
+    private static final String EXTENSAO_FOTOS = ".png";
 
     private static final int ESCOLHER_FOTO = 1;
     private static final String FOTO_PERFIL = "foto";
@@ -48,30 +62,12 @@ public class CadastroActivity extends AppCompatActivity {
     EditText etConfirmarSenha;
     ImageView ivFoto;
     Button btnCriarConta;
+    ProgressDialog loader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro);
-
-        mAuth = FirebaseAuth.getInstance();
-
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser usuario = firebaseAuth.getCurrentUser();
-                if (usuario != null) {
-                    // Usuário entrou
-                    Log.d("teste", "onAuthStateChanged:signed_in:" + usuario.getUid());
-                    Intent it = new Intent(CadastroActivity.this, MainActivity.class);
-                    finish();
-                    startActivity(it);
-                } else {
-                    // Usuário não entrou
-                    Log.d("teste", "onAuthStateChanged:signed_out");
-                }
-            }
-        };
 
         etNome = (EditText) findViewById(R.id.cadastro_et_nome);
         etEmail = (EditText) findViewById(R.id.cadastro_et_email);
@@ -90,6 +86,34 @@ public class CadastroActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        mAuth = FirebaseAuth.getInstance();
+        mStorage = FirebaseStorage.getInstance();
+        mStorageRef = mStorage.getReferenceFromUrl("gs://app-civico.appspot.com");
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser usuario = firebaseAuth.getCurrentUser();
+
+                // Usuário entrou
+                if (usuario != null) {
+
+                    // BUG do Firebase: Não atualizou o perfil
+                    if (usuario.getDisplayName() == null) {
+                        Log.d("PERFIL", "NAO ATUALIZOU AINDA");
+                        uploadFotoDoPerfil(usuario);
+                    } else {
+                        loader.dismiss();
+                        Toast.makeText(CadastroActivity.this, R.string.cadastro_toast_conta_criada,
+                                Toast.LENGTH_SHORT).show();
+                        Intent it = new Intent(CadastroActivity.this, MainActivity.class);
+                        finish();
+                        startActivity(it);
+                    }
+                }
+            }
+        };
 
         if (savedInstanceState != null && savedInstanceState.containsKey(FOTO_PERFIL)) {
             // Carrega foto do usuário circular
@@ -150,6 +174,59 @@ public class CadastroActivity extends AppCompatActivity {
         outState.putParcelable(FOTO_PERFIL, foto);
     }
 
+    private void uploadFotoDoPerfil(final FirebaseUser usuario) {
+        final String CAMINHO_COMPLETO = DIRETORIO_FOTOS + "/" + usuario.getUid() + EXTENSAO_FOTOS;
+
+        StorageReference fotoRef = mStorageRef.child(CAMINHO_COMPLETO);
+
+        byte[] data = Helper.imageViewToByteArray(ivFoto);
+
+        UploadTask uploadTask = fotoRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d("UPLOAD_FOTO", "erro");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d("UPLOAD_FOTO", "ok");
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                atualizarPerfil(usuario, downloadUrl);
+            }
+        });
+
+    }
+
+    private void atualizarPerfil(FirebaseUser usuario, Uri foto) {
+        String nome = etNome.getText().toString();
+
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(nome)
+                .setPhotoUri(foto)
+                .build();
+
+        usuario.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("AUTH", "Perfil atualizado.");
+                            reautenticar();
+                        }
+                    }
+                });
+    }
+
+    private void reautenticar() {
+        FirebaseAuth.getInstance().signOut();
+
+        String email = etEmail.getText().toString();
+        String senha = etSenha.getText().toString();
+
+        mAuth.signInWithEmailAndPassword(email, senha);
+    }
+
     private boolean validar() {
 
         Boolean valido = true;
@@ -196,8 +273,7 @@ public class CadastroActivity extends AppCompatActivity {
     }
 
     public void cadastrar(View v) {
-        final ProgressDialog loader = ProgressDialog.show(CadastroActivity.this, "",
-                "Criando conta, \naguarde...", true);
+        loader = ProgressDialog.show(CadastroActivity.this, "", getString(R.string.login_pdlg_criando_conta), true);
 
         Boolean valido = validar();
 
@@ -215,7 +291,6 @@ public class CadastroActivity extends AppCompatActivity {
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            loader.dismiss();
                             if (!task.isSuccessful()) {
                                 String erro = getString(R.string.erro_firebase_generico);
                                 try {
@@ -237,9 +312,6 @@ public class CadastroActivity extends AppCompatActivity {
                                                 dialog.cancel();
                                             }
                                         }).create().show();
-                            } else {
-                                Toast.makeText(CadastroActivity.this, R.string.cadastro_toast_conta_criada,
-                                        Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

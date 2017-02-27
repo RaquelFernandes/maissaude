@@ -36,5 +36,6 @@
     <string name="menu_sair">Sair</string>
 
     <string name="btn_ok">OK</string>
+    <string name="login_pdlg_criando_conta">Criando conta, \naguarde...</string>
 
 </resources>
