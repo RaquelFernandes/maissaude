@@ -1,4 +1,4 @@
-package com.example.a1514290074.saude;
+package com.example.a1514290074.saude.atividades;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -26,13 +26,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.a1514290074.saude.R;
+import com.example.a1514290074.saude.utils.Validacao;
+import com.example.a1514290074.saude.utils.FotoHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -117,11 +118,11 @@ public class CadastroActivity extends AppCompatActivity {
 
         if (savedInstanceState != null && savedInstanceState.containsKey(FOTO_PERFIL)) {
             // Carrega foto do usuário circular
-            Drawable fotoCircular = Helper.imagemCircular(getResources(), (Bitmap) savedInstanceState.getParcelable(FOTO_PERFIL));
+            Drawable fotoCircular = FotoHelper.imagemCircular(getResources(), (Bitmap) savedInstanceState.getParcelable(FOTO_PERFIL));
             ivFoto.setImageDrawable(fotoCircular);
         } else {
             // Carrega foto padrão circular
-            Drawable fotoCircular = Helper.imagemCircular(getResources(), R.drawable.usuario);
+            Drawable fotoCircular = FotoHelper.imagemCircular(getResources(), R.drawable.usuario);
             ivFoto.setImageDrawable(fotoCircular);
         }
 
@@ -161,7 +162,7 @@ public class CadastroActivity extends AppCompatActivity {
             final Bundle extras = data.getExtras();
             if (extras != null) {
                 Bitmap novaFoto = extras.getParcelable("data");
-                Drawable fotoCircular = Helper.imagemCircular(getResources(), novaFoto);
+                Drawable fotoCircular = FotoHelper.imagemCircular(getResources(), novaFoto);
                 ivFoto.setImageDrawable(fotoCircular);
             }
         }
@@ -179,7 +180,7 @@ public class CadastroActivity extends AppCompatActivity {
 
         StorageReference fotoRef = mStorageRef.child(CAMINHO_COMPLETO);
 
-        byte[] data = Helper.imageViewToByteArray(ivFoto);
+        byte[] data = FotoHelper.imageViewToByteArray(ivFoto);
 
         UploadTask uploadTask = fotoRef.putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {

@@ -1,4 +1,4 @@
-package com.example.a1514290074.saude;
+package com.example.a1514290074.saude.atividades;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -17,8 +17,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.a1514290074.saude.R;
+import com.example.a1514290074.saude.utils.Validacao;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;

@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/MaterialTheme">
         <activity
-            android:name=".LoginActivity"
+            android:name=".atividades.LoginActivity"
             android:theme="@style/Login"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -20,12 +20,12 @@
         </activity>
 
         <activity
-            android:name=".CadastroActivity"
+            android:name=".atividades.CadastroActivity"
             android:label="Registrar"
             android:theme="@style/Cadastro"
-            android:parentActivityName=".LoginActivity"></activity>
+            android:parentActivityName=".atividades.LoginActivity"></activity>
 
-        <activity android:name=".MainActivity"
+        <activity android:name=".atividades.MainActivity"
                   android:noHistory="true"></activity>
     </application>
 

@@ -1,4 +1,4 @@
-package com.example.a1514290074.saude;
+package com.example.a1514290074.saude.utils;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -12,7 +12,7 @@ import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 
-public class Helper {
+public class FotoHelper {
 
     public static Drawable imagemCircular(Resources res, int src) {
         Bitmap bmp = BitmapFactory.decodeResource(res, src);
