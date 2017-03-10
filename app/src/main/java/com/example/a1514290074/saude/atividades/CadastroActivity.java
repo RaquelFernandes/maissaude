@@ -42,6 +42,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 public class CadastroActivity extends AppCompatActivity {
@@ -183,7 +184,7 @@ public class CadastroActivity extends AppCompatActivity {
         byte[] data = FotoHelper.imageViewToByteArray(ivFoto);
 
         UploadTask uploadTask = fotoRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
+        StorageTask<UploadTask.TaskSnapshot> taskSnapshotStorageTask = uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 Log.d("UPLOAD_FOTO", "erro");

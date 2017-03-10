@@ -6,7 +6,12 @@
         android:orderInCategory="2"
         android:title="@string/main_title_filtrar"
         android:icon="@drawable/ic_filter_list"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        android:onClick="filtrar"/>
+
+    <item android:id="@+id/menu_sobre"
+        android:title="@string/menu_sobre"
+        android:onClick="sobre"/>
 
     <item android:id="@+id/menu_sair"
         android:title="@string/menu_sair"

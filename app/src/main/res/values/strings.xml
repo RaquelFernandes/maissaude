@@ -43,5 +43,8 @@
     <string name="main_title_pesquisar">Pesquisar</string>
     <string name="main_title_filtrar">Filtrar</string>
     <string name="tab_favoritos">Favoritos</string>
+    <string name="menu_sobre">Sobre</string>
+    <string name="main_dlg_sobre">Desenvolvido por:\n\nDaniel Sousa\nsousa.dfs@gmail.com</string>
+    <string name="menu_aplicar">Aplicar</string>
 
 </resources>

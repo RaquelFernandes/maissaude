@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:columnCount="2"
+    android:elevation="0dp"
+    android:orientation="vertical"
+    android:padding="30dp"
+    android:rowCount="3"
+    tools:context="com.example.a1514290074.saude.atividades.FiltroActivity">
+
+    <TextView
+        android:layout_columnWeight="0.3"
+        android:text="Categoria:"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_columnWeight="0.3"
+        android:text="Esfera \nadministrativa:"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_columnWeight="0.3"
+        android:text="Classificação:"
+        android:textSize="16sp" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:background="@android:drawable/btn_dropdown"
+        android:paddingBottom="30dp"
+        android:spinnerMode="dropdown" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:background="@android:drawable/btn_dropdown"
+        android:paddingBottom="30dp"
+        android:spinnerMode="dropdown" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:background="@android:drawable/btn_dropdown"
+        android:paddingBottom="30dp"
+        android:spinnerMode="dropdown" />
+
+</GridLayout>
