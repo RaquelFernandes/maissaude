@@ -22,8 +22,11 @@ import com.example.a1514290074.saude.R;
 import com.example.a1514290074.saude.utils.Validacao;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
@@ -41,11 +44,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
-
-        if (mAuth.getCurrentUser() != null) {
-            Intent it = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(it);
-        }
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -153,9 +151,21 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             loader.dismiss();
                             if (!task.isSuccessful()) {
+
+                                String erro = getString(R.string.erro_firebase_login_generico);
+                                try {
+                                    throw task.getException();
+                                } catch (FirebaseNetworkException e) {
+                                    erro = getString(R.string.erro_firebase_login_internet);
+                                } catch (FirebaseAuthInvalidCredentialsException | FirebaseAuthInvalidUserException e) {
+                                    erro = getString(R.string.erro_firebase_login_credenciais);
+                                } catch (Exception e) {
+                                    Log.e("AUTH", e.getMessage());
+                                }
+
                                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                                 builder.setTitle(R.string.login_dlg_erro_titulo)
-                                        .setMessage(R.string.login_dlg_erro_mensagem)
+                                        .setMessage(erro)
                                         .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
                                                 dialog.cancel();
@@ -163,7 +173,8 @@ public class LoginActivity extends AppCompatActivity {
                                         }).create().show();
                             }
                         }
-                    });
+                    })
+            ;
         }
     }
 }

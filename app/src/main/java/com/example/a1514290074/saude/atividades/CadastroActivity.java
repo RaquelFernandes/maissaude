@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -275,7 +276,7 @@ public class CadastroActivity extends AppCompatActivity {
     }
 
     public void cadastrar(View v) {
-        loader = ProgressDialog.show(CadastroActivity.this, "", getString(R.string.login_pdlg_criando_conta), true);
+        loader = ProgressDialog.show(CadastroActivity.this, "", getString(R.string.cadastro_pdlg_criando_conta), true);
 
         Boolean valido = validar();
 
@@ -294,16 +295,18 @@ public class CadastroActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (!task.isSuccessful()) {
-                                String erro = getString(R.string.erro_firebase_generico);
+                                String erro = getString(R.string.erro_firebase_cadastro_generico);
                                 try {
                                     throw task.getException();
                                 } catch(FirebaseAuthWeakPasswordException e) {
-                                    erro = getString(R.string.erro_firebase_tamanho_senha);
+                                    erro = getString(R.string.erro_firebase_cadastro_tamanho_senha);
                                 } catch(FirebaseAuthInvalidCredentialsException e) {
-                                    erro = getString(R.string.erro_firebase_email);
+                                    erro = getString(R.string.erro_firebase_cadastro_email);
                                 } catch(FirebaseAuthUserCollisionException e) {
-                                    erro = getString(R.string.erro_firebase_email_usado);
-                                } catch(Exception e) {
+                                    erro = getString(R.string.erro_firebase_cadastro_email_usado);
+                                } catch (FirebaseNetworkException e) {
+                                    erro = getString(R.string.erro_firebase_cadastro_internet);
+                                } catch (Exception e) {
                                     Log.e("AUTH", e.getMessage());
                                 }
                                 AlertDialog.Builder builder = new AlertDialog.Builder(CadastroActivity.this);

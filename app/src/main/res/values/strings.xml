@@ -5,9 +5,7 @@
     <string name="login_hint_senha">Senha</string>
     <string name="login_btn_entrar">Entrar</string>
     <string name="login_btn_registrar">Não tem uma conta? Registre-se</string>
-    <string name="login_erro_autenticacao">Email e/ou senha incorretos.</string>
     <string name="login_dlg_erro_titulo">Falha ao fazer login</string>
-    <string name="login_dlg_erro_mensagem">\nEmail ou senha incorretos</string>
     <string name="login_pdlg_acessando_conta">Acessando a conta, \naguarde…</string>
 
     <string name="cadastro_hint_nome">Nome Completo</string>
@@ -23,28 +21,34 @@
     <string name="cadastro_erro_registro">Não foi possível criar a conta</string>
     <string name="cadastro_erro_titulo">Erro</string>
     <string name="cadastro_toast_conta_criada">Conta criada</string>
+    <string name="cadastro_pdlg_criando_conta">Criando conta, \naguarde…</string>
 
     <string name="erro_campo_obrigatorio">Campo obrigatório</string>
     <string name="erro_email">Digite um email válido</string>
     <string name="erro_tamanho_senha">A senha deve conter no mínimo 6 caracteres</string>
     <string name="erro_confirmar_senha">As senhas precisam ser idênticas</string>
-    <string name="erro_firebase_generico">\nNão foi possivel criar a conta. \nTente novamente mais tarde</string>
-    <string name="erro_firebase_tamanho_senha">\nA senha deve conter no mínimo 6 caracteres</string>
-    <string name="erro_firebase_email">\nDigite um email válido</string>
-    <string name="erro_firebase_email_usado">\nEsse email já está sendo usado</string>
+    <string name="erro_firebase_cadastro_generico">\nNão foi possivel criar a conta. \nTente novamente mais tarde</string>
+    <string name="erro_firebase_cadastro_tamanho_senha">\nA senha deve conter no mínimo 6 caracteres</string>
+    <string name="erro_firebase_cadastro_email">\nDigite um email válido</string>
+    <string name="erro_firebase_cadastro_email_usado">\nEsse email já está sendo usado</string>
+    <string name="erro_firebase_cadastro_internet">Não foi possível criar a conta. \nVerifique sua conexão com a internet</string>
+    <string name="erro_firebase_login_internet">Não foi possível entrar. \nVerifique sua conexão com a internet.</string>
+    <string name="erro_firebase_login_generico">Não foi possível entrar. \nTente novamente mais tarde.</string>
+    <string name="erro_firebase_login_credenciais">\nEmail e/ou senha incorretos</string>
 
+    <string name="menu_sobre">Sobre</string>
     <string name="menu_sair">Sair</string>
+    <string name="menu_aplicar">Aplicar</string>
 
     <string name="btn_ok">OK</string>
-    <string name="login_pdlg_criando_conta">Criando conta, \naguarde…</string>
+
     <string name="tab_proximos">PRÓXIMOS</string>
     <string name="tab_mapa">MAPA</string>
+    <string name="tab_favoritos">Favoritos</string>
+
     <string name="main_hint_pesquisar">Pesquisar…</string>
     <string name="main_title_pesquisar">Pesquisar</string>
     <string name="main_title_filtrar">Filtrar</string>
-    <string name="tab_favoritos">Favoritos</string>
-    <string name="menu_sobre">Sobre</string>
     <string name="main_dlg_sobre">Desenvolvido por:\n\nDaniel Sousa\nsousa.dfs@gmail.com</string>
-    <string name="menu_aplicar">Aplicar</string>
 
 </resources>
