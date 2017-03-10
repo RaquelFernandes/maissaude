@@ -1,6 +1,8 @@
 package com.example.a1514290074.saude.modelos;
 
-public class Movie {
+import java.io.Serializable;
+
+public class Movie implements Serializable {
     private String title, genre, year;
 
     public Movie() {

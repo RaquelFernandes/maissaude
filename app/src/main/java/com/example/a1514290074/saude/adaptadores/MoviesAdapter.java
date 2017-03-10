@@ -1,10 +1,12 @@
 package com.example.a1514290074.saude.adaptadores;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.a1514290074.saude.R;
 import com.example.a1514290074.saude.modelos.Movie;
@@ -52,4 +54,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
     public int getItemCount() {
         return moviesList.size();
     }
+
+    public Movie getItem(int position) {
+        return moviesList.get(position);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.example.a1514290074.saude.fragmentos;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,11 +9,17 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.a1514290074.saude.atividades.DetalhesActivity;
+import com.example.a1514290074.saude.atividades.MainActivity;
+import com.example.a1514290074.saude.listeners.ClickListener;
 import com.example.a1514290074.saude.modelos.Movie;
 import com.example.a1514290074.saude.adaptadores.MoviesAdapter;
+import com.example.a1514290074.saude.listeners.RecyclerTouchListener;
 import com.example.a1514290074.saude.R;
 
 import java.util.ArrayList;
@@ -55,6 +62,24 @@ public class ProximosFragment extends Fragment{
             separador.setDrawable(getContext().getDrawable(R.drawable.separador_lista));
         }
         recyclerView.addItemDecoration(separador);
+
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
+                recyclerView, new ClickListener() {
+
+            @Override
+            public void onClick(View view, int position) {
+                Movie filme = mAdapter.getItem(position);
+                Intent it = new Intent(getActivity(), DetalhesActivity.class);
+                it.putExtra("filme", filme);
+                startActivity(it);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                Toast.makeText(getActivity(), "Clique longo na posição:" + position,
+                        Toast.LENGTH_LONG).show();
+            }
+        }));
 
         prepareMovieData();
 

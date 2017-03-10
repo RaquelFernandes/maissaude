@@ -24,22 +24,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".atividades.CadastroActivity"
             android:label="Registrar"
             android:parentActivityName=".atividades.LoginActivity"
             android:theme="@style/Cadastro" />
-
-        <activity
-            android:name=".atividades.MainActivity" />
+        <activity android:name=".atividades.MainActivity" />
 
         <activity
             android:name=".atividades.FiltroActivity"
             android:label="Filtrar"
             android:parentActivityName=".atividades.MainActivity"
-            android:theme="@style/Filtrar"
-            />
+            android:theme="@style/Filtrar" />
+
+        <activity
+            android:name=".atividades.DetalhesActivity"
+            android:label="Detalhes"
+            android:parentActivityName=".atividades.MainActivity"
+            android:theme="@style/Filtrar" />
     </application>
 
 </manifest>
