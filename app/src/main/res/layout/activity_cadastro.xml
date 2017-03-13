@@ -23,7 +23,7 @@
             android:gravity="center">
 
             <ImageView
-                android:id="@+id/iv_foto"
+                android:id="@+id/cadastro_iv_foto"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:contentDescription="@string/cadastro_foto"
@@ -31,14 +31,13 @@
                 app:srcCompat="@drawable/usuario" />
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/floatingActionButton2"
+                android:id="@+id/cadastro_btn_editar_foto"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_alignBottom="@id/iv_foto"
-                android:layout_alignEnd="@id/iv_foto"
-                android:layout_alignRight="@id/iv_foto"
+                android:layout_alignBottom="@id/cadastro_iv_foto"
+                android:layout_alignEnd="@id/cadastro_iv_foto"
+                android:layout_alignRight="@id/cadastro_iv_foto"
                 android:clickable="true"
-                android:onClick="trocarFoto"
                 app:fabSize="mini"
                 app:srcCompat="@drawable/edit3" />
         </RelativeLayout>
@@ -106,7 +105,6 @@
 
         <Button
             android:id="@+id/cadastro_btn_cadastrar"
-            android:onClick="cadastrar"
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:layout_marginBottom="10dp"
@@ -121,7 +119,6 @@
             android:layout_height="35dp"
             android:layout_gravity="center"
             android:background="?android:selectableItemBackground"
-            android:onClick="irParaLogin"
             android:paddingBottom="10dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

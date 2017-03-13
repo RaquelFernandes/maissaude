@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v7.app.AlertDialog;
@@ -50,40 +51,72 @@ public class CadastroActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    FirebaseStorage mStorage;
+    private FirebaseStorage mStorage;
     private StorageReference mStorageRef;
+    private EditText mNomeEditText;
+    private EditText mEmailEditText;
+    private EditText mSenhaEditText;
+    private EditText mConfirmarSenhaEditText;
+    private ImageView mFotoImageView;
+    private FloatingActionButton mEditarFotoButton;
+    private Button mCriarContaButton;
+    private Button mLoginButton;
+    private ProgressDialog mProgressDialog;
 
+    private static final String STORAGE_URL = "gs://app-civico.appspot.com";
     private static final String DIRETORIO_FOTOS = "fotos";
     private static final String EXTENSAO_FOTOS = ".png";
 
-    private static final int ESCOLHER_FOTO = 1;
-    private static final String FOTO_PERFIL = "foto";
+    private static final String KEY_FOTO_PERFIL = "foto";
 
-    EditText etNome;
-    EditText etEmail;
-    EditText etSenha;
-    EditText etConfirmarSenha;
-    ImageView ivFoto;
-    Button btnCriarConta;
-    ProgressDialog loader;
+    private static final String EXTRA_EMAIL = "email";
+    private static final String EXTRA_SENHA = "senha";
+
+    private static final int REQUEST_CODE_ESCOLHER_FOTO = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro);
 
-        etNome = (EditText) findViewById(R.id.cadastro_et_nome);
-        etEmail = (EditText) findViewById(R.id.cadastro_et_email);
-        etSenha = (EditText) findViewById(R.id.cadastro_et_senha);
-        etConfirmarSenha = (EditText) findViewById(R.id.cadastro_et_confirmar_senha);
-        ivFoto = (ImageView) findViewById(R.id.iv_foto);
-        btnCriarConta = (Button) findViewById(R.id.cadastro_btn_cadastrar);
+        mNomeEditText = (EditText) findViewById(R.id.cadastro_et_nome);
+        mEmailEditText = (EditText) findViewById(R.id.cadastro_et_email);
+        mSenhaEditText = (EditText) findViewById(R.id.cadastro_et_senha);
+        mConfirmarSenhaEditText = (EditText) findViewById(R.id.cadastro_et_confirmar_senha);
+        mFotoImageView = (ImageView) findViewById(R.id.cadastro_iv_foto);
+        mEditarFotoButton = (FloatingActionButton) findViewById(R.id.cadastro_btn_editar_foto);
+        mCriarContaButton = (Button) findViewById(R.id.cadastro_btn_cadastrar);
+        mLoginButton = (Button) findViewById(R.id.cadastro_btn_login);
 
-        etConfirmarSenha.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+        mFotoImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                trocarFoto();
+            }
+        });
+        mEditarFotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                trocarFoto();
+            }
+        });
+        mCriarContaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cadastrar();
+            }
+        });
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mConfirmarSenhaEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    btnCriarConta.performClick();
+                    mCriarContaButton.performClick();
                     return true;
                 }
                 return false;
@@ -92,7 +125,7 @@ public class CadastroActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
-        mStorageRef = mStorage.getReferenceFromUrl("gs://app-civico.appspot.com");
+        mStorageRef = mStorage.getReferenceFromUrl(STORAGE_URL);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -107,35 +140,30 @@ public class CadastroActivity extends AppCompatActivity {
                         Log.d("PERFIL", "NAO ATUALIZOU AINDA");
                         uploadFotoDoPerfil(usuario);
                     } else {
-                        loader.dismiss();
+                        mProgressDialog.dismiss();
                         Toast.makeText(CadastroActivity.this, R.string.cadastro_toast_conta_criada,
                                 Toast.LENGTH_SHORT).show();
-                        Intent it = new Intent(CadastroActivity.this, MainActivity.class);
                         finish();
-                        startActivity(it);
+                        startActivity(MainActivity.newIntent(CadastroActivity.this));
                     }
                 }
             }
         };
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(FOTO_PERFIL)) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(KEY_FOTO_PERFIL)) {
             // Carrega foto do usuário circular
-            Drawable fotoCircular = FotoHelper.imagemCircular(getResources(), (Bitmap) savedInstanceState.getParcelable(FOTO_PERFIL));
-            ivFoto.setImageDrawable(fotoCircular);
+            Drawable fotoCircular = FotoHelper.imagemCircular(getResources(), (Bitmap) savedInstanceState.getParcelable(KEY_FOTO_PERFIL));
+            mFotoImageView.setImageDrawable(fotoCircular);
         } else {
             // Carrega foto padrão circular
             Drawable fotoCircular = FotoHelper.imagemCircular(getResources(), R.drawable.usuario);
-            ivFoto.setImageDrawable(fotoCircular);
+            mFotoImageView.setImageDrawable(fotoCircular);
         }
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            if (extras.containsKey("email")) {
-                etEmail.setText(extras.getString("email"));
-            }
-            if (extras.containsKey("senha")) {
-                etSenha.setText(extras.getString("senha"));
-            }
+            mEmailEditText.setText(extras.getString(EXTRA_EMAIL, ""));
+            mSenhaEditText.setText(extras.getString(EXTRA_SENHA, ""));
         }
     }
 
@@ -156,16 +184,15 @@ public class CadastroActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ESCOLHER_FOTO && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_CODE_ESCOLHER_FOTO && resultCode == Activity.RESULT_OK) {
             if (data == null) {
-                Toast.makeText(getApplicationContext(), "Erro ao tentar carregar foto", Toast.LENGTH_SHORT).show();
                 return;
             }
             final Bundle extras = data.getExtras();
             if (extras != null) {
                 Bitmap novaFoto = extras.getParcelable("data");
                 Drawable fotoCircular = FotoHelper.imagemCircular(getResources(), novaFoto);
-                ivFoto.setImageDrawable(fotoCircular);
+                mFotoImageView.setImageDrawable(fotoCircular);
             }
         }
     }
@@ -173,8 +200,15 @@ public class CadastroActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Bitmap foto = ((RoundedBitmapDrawable) ivFoto.getDrawable()).getBitmap();
-        outState.putParcelable(FOTO_PERFIL, foto);
+        Bitmap foto = ((RoundedBitmapDrawable) mFotoImageView.getDrawable()).getBitmap();
+        outState.putParcelable(KEY_FOTO_PERFIL, foto);
+    }
+
+    public static Intent newIntent(Context contexto, String email, String senha) {
+        Intent intent = new Intent(contexto, CadastroActivity.class);
+        intent.putExtra(EXTRA_EMAIL, email);
+        intent.putExtra(EXTRA_SENHA, senha);
+        return intent;
     }
 
     private void uploadFotoDoPerfil(final FirebaseUser usuario) {
@@ -182,27 +216,21 @@ public class CadastroActivity extends AppCompatActivity {
 
         StorageReference fotoRef = mStorageRef.child(CAMINHO_COMPLETO);
 
-        byte[] data = FotoHelper.imageViewToByteArray(ivFoto);
+        byte[] data = FotoHelper.imageViewToByteArray(mFotoImageView);
 
         UploadTask uploadTask = fotoRef.putBytes(data);
-        StorageTask<UploadTask.TaskSnapshot> taskSnapshotStorageTask = uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.d("UPLOAD_FOTO", "erro");
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.d("UPLOAD_FOTO", "ok");
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                atualizarPerfil(usuario, downloadUrl);
+                    @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    atualizarPerfil(usuario, downloadUrl);
             }
         });
 
     }
 
     private void atualizarPerfil(FirebaseUser usuario, Uri foto) {
-        String nome = etNome.getText().toString();
+        String nome = mNomeEditText.getText().toString();
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(nome)
@@ -214,7 +242,6 @@ public class CadastroActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Log.d("AUTH", "Perfil atualizado.");
                             reautenticar();
                         }
                     }
@@ -224,8 +251,8 @@ public class CadastroActivity extends AppCompatActivity {
     private void reautenticar() {
         FirebaseAuth.getInstance().signOut();
 
-        String email = etEmail.getText().toString();
-        String senha = etSenha.getText().toString();
+        String email = mEmailEditText.getText().toString();
+        String senha = mSenhaEditText.getText().toString();
 
         mAuth.signInWithEmailAndPassword(email, senha);
     }
@@ -239,10 +266,10 @@ public class CadastroActivity extends AppCompatActivity {
         TextInputLayout senhaWrapper = (TextInputLayout) findViewById(R.id.cadastro_et_senha_wrapper);
         TextInputLayout confirmarSenhaWrapper = (TextInputLayout) findViewById(R.id.cadastro_et_confirmar_senha_wrapper);
 
-        String nome = etNome.getText().toString();
-        String email = etEmail.getText().toString();
-        String senha = etSenha.getText().toString();
-        String confirmarSenha = etConfirmarSenha.getText().toString();
+        String nome = mNomeEditText.getText().toString();
+        String email = mEmailEditText.getText().toString();
+        String senha = mSenhaEditText.getText().toString();
+        String confirmarSenha = mConfirmarSenhaEditText.getText().toString();
 
         if (!Validacao.nome(nome)) {
             valido = false;
@@ -275,8 +302,8 @@ public class CadastroActivity extends AppCompatActivity {
         return valido;
     }
 
-    public void cadastrar(View v) {
-        loader = ProgressDialog.show(CadastroActivity.this, "", getString(R.string.cadastro_pdlg_criando_conta), true);
+    public void cadastrar() {
+        mProgressDialog = ProgressDialog.show(CadastroActivity.this, "", getString(R.string.cadastro_pdlg_criando_conta), true);
 
         Boolean valido = validar();
 
@@ -285,10 +312,10 @@ public class CadastroActivity extends AppCompatActivity {
         inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
         if (!valido) {
-            loader.dismiss();
+            mProgressDialog.dismiss();
         } else {
-            String email = etEmail.getText().toString();
-            String senha = etSenha.getText().toString();
+            String email = mEmailEditText.getText().toString();
+            String senha = mSenhaEditText.getText().toString();
 
             mAuth.createUserWithEmailAndPassword(email, senha)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -323,11 +350,7 @@ public class CadastroActivity extends AppCompatActivity {
         }
     }
 
-    public void irParaLogin(View v) {
-        finish();
-    }
-
-    public void trocarFoto(View v) {
+    public void trocarFoto() {
 //        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         Intent intent = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.INTERNAL_CONTENT_URI);
@@ -339,6 +362,6 @@ public class CadastroActivity extends AppCompatActivity {
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
         intent.putExtra("return-data", true);
-        startActivityForResult(intent, ESCOLHER_FOTO);
+        startActivityForResult(intent, REQUEST_CODE_ESCOLHER_FOTO);
     }
 }

@@ -15,16 +15,16 @@ public class LauncherActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
+        Intent it;
 
         if (auth.getCurrentUser() != null) {
-            Intent it = new Intent(LauncherActivity.this, MainActivity.class);
-            finish();
-            startActivity(it);
+            it = new Intent(this, MainActivity.class);
         } else {
-            Intent it = new Intent(LauncherActivity.this, LoginActivity.class);
-            finish();
-            startActivity(it);
+            it = new Intent(this, LoginActivity.class);
         }
+
+        finish();
+        startActivity(it);
 
     }
 }

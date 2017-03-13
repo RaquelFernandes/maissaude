@@ -57,7 +57,6 @@
 
         <Button
             android:id="@+id/login_btn_entrar"
-            android:onClick="entrar"
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:layout_marginBottom="10dp"
@@ -67,7 +66,7 @@
             android:textColor="@color/textButton" />
 
         <Button
-            android:id="@+id/cadastro_btn_login"
+            android:id="@+id/login_btn_cadastro"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:layout_gravity="center"

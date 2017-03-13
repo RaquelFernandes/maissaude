@@ -15,6 +15,8 @@ import com.example.a1514290074.saude.R;
 
 public class FiltroActivity extends AppCompatActivity {
 
+    private static final String EXTRA_FILTROS = "filtros";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,9 +29,20 @@ public class FiltroActivity extends AppCompatActivity {
         return true;
     }
 
-    public void aplicar(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_aplicar:
+                aplicar();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void aplicar() {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("dados", "teste");
+        returnIntent.putExtra(EXTRA_FILTROS, "teste");
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }

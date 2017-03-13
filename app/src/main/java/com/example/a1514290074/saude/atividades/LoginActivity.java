@@ -33,10 +33,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
-    private EditText etEmail;
-    private EditText etSenha;
-    private Button btnEntrar;
+    private EditText mEmailEditText;
+    private EditText mSenhaEditText;
+    private Button mEntrarButton;
+    private Button mCadastroButton;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,27 +52,35 @@ public class LoginActivity extends AppCompatActivity {
                 FirebaseUser usuario = firebaseAuth.getCurrentUser();
                 if (usuario != null) {
                     // Usuário entrou
-                    Log.d("teste", "onAuthStateChanged:signed_in:" + usuario.getUid());
-                    Intent it = new Intent(LoginActivity.this, MainActivity.class);
                     finish();
-                    startActivity(it);
-
-                } else {
-                    // Usuário não entrou
-                    Log.d("teste", "onAuthStateChanged:signed_out");
+                    startActivity(MainActivity.newIntent(LoginActivity.this));
                 }
             }
         };
 
-        etEmail = (EditText) findViewById(R.id.login_et_email);
-        etSenha = (EditText) findViewById(R.id.login_et_senha);
-        btnEntrar = (Button) findViewById(R.id.login_btn_entrar);
+        mEmailEditText = (EditText) findViewById(R.id.login_et_email);
+        mSenhaEditText = (EditText) findViewById(R.id.login_et_senha);
+        mEntrarButton = (Button) findViewById(R.id.login_btn_entrar);
+        mCadastroButton = (Button) findViewById(R.id.login_btn_cadastro);
 
-        etSenha.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+        mEntrarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                entrar();
+            }
+        });
+        mCadastroButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                irParaCadastro();
+            }
+        });
+
+        mSenhaEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    btnEntrar.performClick();
+                    mEntrarButton.performClick();
                     return true;
                 }
                 return false;
@@ -93,12 +102,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void irParaCadastro(View v) {
-        Intent intent = new Intent(this, CadastroActivity.class);
-        String email = etEmail.getText().toString();
-        String senha = etSenha.getText().toString();
-        intent.putExtra("email", email);
-        intent.putExtra("senha", senha);
+    public void irParaCadastro() {
+        String email = mEmailEditText.getText().toString();
+        String senha = mSenhaEditText.getText().toString();
+        Intent intent = CadastroActivity.newIntent(LoginActivity.this, email, senha);
         startActivity(intent);
     }
 
@@ -108,8 +115,8 @@ public class LoginActivity extends AppCompatActivity {
         TextInputLayout emailWrapper = (TextInputLayout) findViewById(R.id.login_et_email_wrapper);
         TextInputLayout senhaWrapper = (TextInputLayout) findViewById(R.id.login_et_senha_wrapper);
 
-        String email = etEmail.getText().toString();
-        String senha = etSenha.getText().toString();
+        String email = mEmailEditText.getText().toString();
+        String senha = mSenhaEditText.getText().toString();
 
         if (!Validacao.campoObrigatorio(email)) {
             valido = false;
@@ -128,28 +135,28 @@ public class LoginActivity extends AppCompatActivity {
         return valido;
     }
 
-    public void entrar(View v) {
-        final ProgressDialog loader = ProgressDialog.show(LoginActivity.this, "",
+    public void entrar() {
+        mProgressDialog = ProgressDialog.show(LoginActivity.this, "",
                 getString(R.string.login_pdlg_acessando_conta), true);
-        loader.show();
-
-        Boolean valido = validar();
+        mProgressDialog.show();
 
         // fecha teclado
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
+        Boolean valido = validar();
+
         if (!valido) {
-            loader.dismiss();
+            mProgressDialog.dismiss();
         } else {
-            String email = etEmail.getText().toString();
-            String senha = etSenha.getText().toString();
+            String email = mEmailEditText.getText().toString();
+            String senha = mSenhaEditText.getText().toString();
 
             mAuth.signInWithEmailAndPassword(email, senha)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            loader.dismiss();
+                            mProgressDialog.dismiss();
                             if (!task.isSuccessful()) {
 
                                 String erro = getString(R.string.erro_firebase_login_generico);

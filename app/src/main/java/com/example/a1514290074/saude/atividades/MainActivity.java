@@ -1,5 +1,6 @@
 package com.example.a1514290074.saude.atividades;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
@@ -28,12 +29,12 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
-    private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private SearchView searchView;
+    private Toolbar mToolbar;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+    private SearchView mSearchView;
 
-    private final static int FILTRAR = 1;
+    private final static int REQUEST_CODE_FILTRAR = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +43,14 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(mViewPager);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+        mTabLayout.setupWithViewPager(mViewPager);
 
     }
 
@@ -107,9 +108,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_filtrar:
+                filtrar();
+                return true;
+            case R.id.action_sobre:
+                sobre();
+                return true;
+            case R.id.action_sair:
+                sair();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if (requestCode == FILTRAR) {
+        if (requestCode == REQUEST_CODE_FILTRAR) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 // The user picked a contact.
@@ -120,12 +138,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void filtrar(MenuItem item) {
-        Intent it = new Intent(MainActivity.this, FiltroActivity.class);
-        startActivityForResult(it, FILTRAR);
+    public static Intent newIntent(Context contexto) {
+        return new Intent(contexto, MainActivity.class);
     }
 
-    public void sobre(MenuItem item) {
+    public void filtrar() {
+        Intent it = new Intent(MainActivity.this, FiltroActivity.class);
+        startActivityForResult(it, REQUEST_CODE_FILTRAR);
+    }
+
+    public void sobre() {
         AlertDialog.Builder dialogo = new AlertDialog.Builder(MainActivity.this);
         dialogo.setMessage(R.string.main_dlg_sobre)
                 .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
@@ -135,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 }).create().show();
     }
 
-    public void sair(MenuItem item) {
+    public void sair() {
         FirebaseAuth.getInstance().signOut();
         Intent it = new Intent(MainActivity.this, LoginActivity.class);
         finish();
