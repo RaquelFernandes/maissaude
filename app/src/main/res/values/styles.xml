@@ -4,12 +4,17 @@
 
     </style>
 
+    <style name="Detalhes" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
     <style name="Filtrar" parent="MaterialTheme.Base">
         <item name="windowNoTitle">false</item>
         <item name="windowActionBar">true</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_close</item>
     </style>
-
 
     <style name="Login" parent="MaterialTheme.Base">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -34,5 +39,10 @@
     <style name="MaterialTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="MaterialTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="ExpandedTitulo" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
+        <item name="android:textSize">26sp</item>
+        <!--<item name="android:textColor">@color/colorPrimary</item>-->
+    </style>
 
 </resources>

@@ -1,13 +1,16 @@
 package com.example.a1514290074.saude.fragmentos;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -76,8 +79,43 @@ public class ProximosFragment extends Fragment{
 
             @Override
             public void onLongClick(View view, int position) {
-                Toast.makeText(getActivity(), "Clique longo na posição:" + position,
-                        Toast.LENGTH_LONG).show();
+
+                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+
+                final int ADICIONAR_AOS_FAVORITOS = 0;
+                final int ABRIR_NO_GMAPS = 1;
+                final int COMPARTILHAR = 2;
+
+                final CharSequence[] items = {
+                        "Adicionar aos Favoritos",
+                        "Abrir no Google Maps",
+                        "Compartilhar"
+                };
+
+                Movie filme = mAdapter.getItem(position);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                builder.setTitle(filme.getTitle());
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        switch (item) {
+                            case ADICIONAR_AOS_FAVORITOS:
+                                Toast.makeText(getActivity(), "Adicionar aos Favoritos", Toast.LENGTH_SHORT).show();
+                                return;
+                            case ABRIR_NO_GMAPS:
+                                Toast.makeText(getActivity(), "Abrir no Google Maps", Toast.LENGTH_SHORT).show();
+                                return;
+                            case COMPARTILHAR:
+                                Toast.makeText(getActivity(), "Compartilhar", Toast.LENGTH_SHORT).show();
+                                return;
+                            default:
+                                Toast.makeText(getActivity(), "Nenhum", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                builder.show();
             }
         }));
 

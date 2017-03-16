@@ -41,12 +41,8 @@
         <activity
             android:name=".atividades.DetalhesActivity"
             android:label="Detalhes"
-            android:parentActivityName=".atividades.MainActivity"
-            android:theme="@style/Filtrar" />
-        <activity
-            android:name=".atividades.ScrollingActivity"
-            android:label="@string/title_activity_scrolling"
-            android:theme="@style/MaterialTheme"></activity>
+            android:theme="@style/Detalhes"
+            android:parentActivityName=".atividades.MainActivity" />
     </application>
 
 </manifest>
