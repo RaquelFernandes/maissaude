@@ -59,8 +59,6 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onMapReady(GoogleMap map) {
-        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-
         UiSettings mapConfig = map.getUiSettings();
         mapConfig.setCompassEnabled(false);
         mapConfig.setMapToolbarEnabled(false);
