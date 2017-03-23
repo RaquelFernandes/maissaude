@@ -87,8 +87,10 @@ public class ProximosFragment extends Fragment{
                 final int COMPARTILHAR = 2;
 
                 final CharSequence[] items = {
-                        "Adicionar aos Favoritos",
+                        "Ligar",
                         "Abrir no Google Maps",
+                        "Enviar rotas ao Google Maps",
+                        "Adicionar aos Favoritos",
                         "Compartilhar"
                 };
 

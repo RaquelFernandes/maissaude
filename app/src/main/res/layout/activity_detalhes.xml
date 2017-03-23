@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -90,41 +91,88 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+
         <!-- Dummy Data -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingTop="24dp">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical"-->
+            <!--android:paddingTop="24dp">-->
 
-            <TextView
-                android:id="@+id/detalhes_tv_nome"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.09"
-                android:text="TextView"
-                android:textSize="50sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/detalhes_tv_nome"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="0.09"-->
+                <!--android:text="TextView"-->
+                <!--android:textSize="50sp" />-->
 
-            <TextView
-                android:id="@+id/detalhes_tv_genero"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.09"
-                android:text="TextView"
-                android:textSize="50sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/detalhes_tv_genero"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="0.09"-->
+                <!--android:text="TextView"-->
+                <!--android:textSize="50sp" />-->
 
-            <TextView
-                android:id="@+id/detalhes_tv_ano"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="TextView"
-                android:textSize="50sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/detalhes_tv_ano"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:text="TextView"-->
+                <!--android:textSize="50sp" />-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
         <!-- / Dummy Data -->
 
 
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/detalhes_btn_compartilhar"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:drawablePadding="15dp"
+                android:drawableTop="@drawable/ic_share"
+                android:text="Compartilhar"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <Button
+                android:id="@+id/detalhes_btn_favoritos"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:drawablePadding="15dp"
+                android:drawableTop="@drawable/ic_favorite"
+                android:text="Adicionar \n aos favoritos"
+                app:layout_constraintTop_toTopOf="@+id/detalhes_btn_compartilhar"
+                app:layout_constraintLeft_toRightOf="@+id/detalhes_btn_compartilhar"
+                android:layout_marginLeft="8dp"/>
+
+            <Button
+                android:id="@+id/detalhes_btn_ligar"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="15dp"
+                android:drawableTop="@drawable/ic_call"
+                android:text="Ligar"
+                app:layout_constraintTop_toTopOf="@+id/detalhes_btn_compartilhar"
+                android:layout_marginTop="0dp"
+                app:layout_constraintLeft_toRightOf="@+id/detalhes_btn_favoritos"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"/>
+        </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton

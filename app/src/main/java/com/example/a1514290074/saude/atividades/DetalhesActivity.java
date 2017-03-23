@@ -45,13 +45,13 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
 
         setupCoordinatorLayout(filme.getTitle());
 
-        TextView nome = (TextView) findViewById(R.id.detalhes_tv_nome);
-        TextView genero = (TextView) findViewById(R.id.detalhes_tv_genero);
-        TextView ano = (TextView) findViewById(R.id.detalhes_tv_ano);
-
-        nome.setText(filme.getTitle());
-        genero.setText(filme.getGenre());
-        ano.setText(filme.getYear());
+//        TextView nome = (TextView) findViewById(R.id.detalhes_tv_nome);
+//        TextView genero = (TextView) findViewById(R.id.detalhes_tv_genero);
+//        TextView ano = (TextView) findViewById(R.id.detalhes_tv_ano);
+//
+//        nome.setText(filme.getTitle());
+//        genero.setText(filme.getGenre());
+//        ano.setText(filme.getYear());
 
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapaa);
         mapFragment.getMapAsync(this);

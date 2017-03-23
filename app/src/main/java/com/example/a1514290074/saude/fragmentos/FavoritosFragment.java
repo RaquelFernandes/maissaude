@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.a1514290074.saude.listeners.RecyclerClickListener;
+import com.example.a1514290074.saude.listeners.RecyclerTouchListener;
 import com.example.a1514290074.saude.modelos.Movie;
 import com.example.a1514290074.saude.adaptadores.MoviesAdapter;
 import com.example.a1514290074.saude.R;
@@ -55,6 +57,9 @@ public class FavoritosFragment extends Fragment{
             separador.setDrawable(getContext().getDrawable(R.drawable.separador_lista));
         }
         recyclerView.addItemDecoration(separador);
+
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
+                recyclerView, new RecyclerClickListener(getActivity(), mAdapter)));
 
         prepareMovieData();
 
