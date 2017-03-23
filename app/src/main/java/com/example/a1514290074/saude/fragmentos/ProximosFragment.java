@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.a1514290074.saude.atividades.DetalhesActivity;
 import com.example.a1514290074.saude.atividades.MainActivity;
 import com.example.a1514290074.saude.listeners.ClickListener;
+import com.example.a1514290074.saude.listeners.RecyclerClickListener;
 import com.example.a1514290074.saude.modelos.Movie;
 import com.example.a1514290074.saude.adaptadores.MoviesAdapter;
 import com.example.a1514290074.saude.listeners.RecyclerTouchListener;
@@ -67,59 +68,7 @@ public class ProximosFragment extends Fragment{
         recyclerView.addItemDecoration(separador);
 
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
-                recyclerView, new ClickListener() {
-
-            @Override
-            public void onClick(View view, int position) {
-                Movie filme = mAdapter.getItem(position);
-                Intent it = new Intent(getActivity(), DetalhesActivity.class);
-                it.putExtra("filme", filme);
-                startActivity(it);
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-
-                final int ADICIONAR_AOS_FAVORITOS = 0;
-                final int ABRIR_NO_GMAPS = 1;
-                final int COMPARTILHAR = 2;
-
-                final CharSequence[] items = {
-                        "Ligar",
-                        "Abrir no Google Maps",
-                        "Enviar rotas ao Google Maps",
-                        "Adicionar aos Favoritos",
-                        "Compartilhar"
-                };
-
-                Movie filme = mAdapter.getItem(position);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-                builder.setTitle(filme.getTitle());
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int item) {
-                        switch (item) {
-                            case ADICIONAR_AOS_FAVORITOS:
-                                Toast.makeText(getActivity(), "Adicionar aos Favoritos", Toast.LENGTH_SHORT).show();
-                                return;
-                            case ABRIR_NO_GMAPS:
-                                Toast.makeText(getActivity(), "Abrir no Google Maps", Toast.LENGTH_SHORT).show();
-                                return;
-                            case COMPARTILHAR:
-                                Toast.makeText(getActivity(), "Compartilhar", Toast.LENGTH_SHORT).show();
-                                return;
-                            default:
-                                Toast.makeText(getActivity(), "Nenhum", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-                builder.show();
-            }
-        }));
+                recyclerView, new RecyclerClickListener(getActivity(), mAdapter)));
 
         prepareMovieData();
 
