@@ -1,59 +1,48 @@
 package com.example.a1514290074.saude.atividades;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.a1514290074.saude.R;
-import com.example.a1514290074.saude.modelos.Movie;
+import com.example.a1514290074.saude.modelos.Estabelecimento;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.InputStream;
-
 public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    Estabelecimento mEstabelecimento;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhes);
 
-        Movie filme = (Movie) getIntent().getSerializableExtra("filme");
+        mEstabelecimento = (Estabelecimento) getIntent().getSerializableExtra("filme");
 
-        setupCoordinatorLayout(filme.getTitle());
+        setupCoordinatorLayout(mEstabelecimento.getNomeFantasia());
 
 //        TextView nome = (TextView) findViewById(R.id.detalhes_tv_nome);
 //        TextView genero = (TextView) findViewById(R.id.detalhes_tv_genero);
 //        TextView ano = (TextView) findViewById(R.id.detalhes_tv_ano);
 //
-//        nome.setText(filme.getTitle());
-//        genero.setText(filme.getGenre());
-//        ano.setText(filme.getYear());
+//        nome.setText(mEstabelecimento.getNomeFantasia());
+//        genero.setText(mEstabelecimento.getTipoUnidade());
+//        ano.setText(mEstabelecimento.getRetencao());
 
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapaa);
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.detalhes_mapa);
         mapFragment.getMapAsync(this);
     }
 
@@ -63,9 +52,17 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         mapConfig.setCompassEnabled(false);
         mapConfig.setMapToolbarEnabled(false);
 
+        LatLng posicao = new LatLng(mEstabelecimento.getLatitude(), mEstabelecimento.getLongitude());
+
+        CameraPosition posicaoDaCamera = new CameraPosition.Builder()
+                .target(posicao)
+                .zoom(16)
+                .build();
+
+        map.moveCamera(CameraUpdateFactory.newCameraPosition(posicaoDaCamera));
         map.addMarker(new MarkerOptions()
-                .position(new LatLng(-15.6197972, -47.6512968))
-                .title("Marker"));
+                .position(posicao)
+                .title(mEstabelecimento.getNomeFantasia()));
 
     }
 
@@ -77,14 +74,15 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.appbar).getLayoutParams();
-        AppBarLayout.Behavior behavior = new AppBarLayout.Behavior();
-        behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
-            @Override
-            public boolean canDrag(AppBarLayout appBarLayout) {
-                return false;
-            }
-        });
-        params.setBehavior(behavior);
+//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.appbar).getLayoutParams();
+//        AppBarLayout.Behavior behavior = new AppBarLayout.Behavior();
+//        behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
+//            @Override
+//            public boolean canDrag(AppBarLayout appBarLayout) {
+//                if (appBarLayout.set)
+//                return false;
+//            }
+//        });
+//        params.setBehavior(behavior);
     }
 }

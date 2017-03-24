@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(mViewPager);
-
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -65,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new FavoritosFragment(), getString(R.string.tab_favoritos));
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(1);
+        viewPager.setOffscreenPageLimit(2);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -93,32 +93,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
-        }
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_contexto, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case R.id.context_add_favoritos:
-                addFavoritos();
-                return true;
-            case R.id.context_abrir_gmaps:
-                abrirGMaps();
-                return true;
-            case R.id.context_compartilhar:
-                compartilhar();
-                return true;
-            default:
-                return super.onContextItemSelected(item);
         }
     }
 
@@ -156,15 +130,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
+        if (resultCode != RESULT_OK) {
+            return;
+        }
         if (requestCode == REQUEST_CODE_FILTRAR) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                // The user picked a contact.
-                // The Intent's data Uri identifies which contact was selected.
-
-                // Do something with the contact here (bigger example below)
-            }
+            // TODO
         }
     }
 
@@ -192,17 +162,5 @@ public class MainActivity extends AppCompatActivity {
         Intent it = new Intent(MainActivity.this, LoginActivity.class);
         finish();
         startActivity(it);
-    }
-
-    private void addFavoritos() {
-        // TODO
-    }
-
-    private void abrirGMaps() {
-        // TODO
-    }
-
-    private void compartilhar() {
-        // TODO
     }
 }

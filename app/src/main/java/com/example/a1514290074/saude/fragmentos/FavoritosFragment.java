@@ -11,10 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.a1514290074.saude.listeners.RecyclerClickListener;
-import com.example.a1514290074.saude.listeners.RecyclerTouchListener;
-import com.example.a1514290074.saude.modelos.Movie;
-import com.example.a1514290074.saude.adaptadores.MoviesAdapter;
+import com.example.a1514290074.saude.modelos.Estabelecimento;
+import com.example.a1514290074.saude.adaptadores.EstabelecimentosAdapter;
 import com.example.a1514290074.saude.R;
 
 import java.util.ArrayList;
@@ -22,9 +20,9 @@ import java.util.List;
 
 public class FavoritosFragment extends Fragment{
 
-    private List<Movie> movieList = new ArrayList<>();
+    private List<Estabelecimento> mEstabelecimentoList = new ArrayList<>();
     private RecyclerView recyclerView;
-    private MoviesAdapter mAdapter;
+    private EstabelecimentosAdapter mAdapter;
 
     public FavoritosFragment() {
         // Required empty public constructor
@@ -41,10 +39,9 @@ public class FavoritosFragment extends Fragment{
 
         View view = inflater.inflate(R.layout.fragment_proximos, container, false);
 
-
         recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
 
-        mAdapter = new MoviesAdapter(movieList);
+        mAdapter = new EstabelecimentosAdapter(mEstabelecimentoList);
 
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -56,10 +53,8 @@ public class FavoritosFragment extends Fragment{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             separador.setDrawable(getContext().getDrawable(R.drawable.separador_lista));
         }
-        recyclerView.addItemDecoration(separador);
 
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
-                recyclerView, new RecyclerClickListener(getActivity(), mAdapter)));
+        recyclerView.addItemDecoration(separador);
 
         prepareMovieData();
 
@@ -67,17 +62,17 @@ public class FavoritosFragment extends Fragment{
     }
 
     private void prepareMovieData() {
-        Movie movie = new Movie("Mad Max: Fury Road", "Action & Adventure", "2015");
-        movieList.add(movie);
+        Estabelecimento estabelecimento = new Estabelecimento("Mad Max: Fury Road", "Action & Adventure", "2015", -15.6197972, -47.6512968);
+        mEstabelecimentoList.add(estabelecimento);
 
-        movie = new Movie("Iron Man", "Action & Adventure", "2008");
-        movieList.add(movie);
+        estabelecimento = new Estabelecimento("Iron Man", "Action & Adventure", "2008", -15.6197972, -47.6512968);
+        mEstabelecimentoList.add(estabelecimento);
 
-        movie = new Movie("Back to the Future", "Science Fiction", "1985");
-        movieList.add(movie);
+        estabelecimento = new Estabelecimento("Back to the Future", "Science Fiction", "1985", -15.6197972, -47.6512968);
+        mEstabelecimentoList.add(estabelecimento);
 
-        movie = new Movie("Guardians of the Galaxy", "Science Fiction & Fantasy", "2014");
-        movieList.add(movie);
+        estabelecimento = new Estabelecimento("Guardians of the Galaxy", "Science Fiction & Fantasy", "2014", -15.6197972, -47.6512968);
+        mEstabelecimentoList.add(estabelecimento);
 
         mAdapter.notifyDataSetChanged();
     }

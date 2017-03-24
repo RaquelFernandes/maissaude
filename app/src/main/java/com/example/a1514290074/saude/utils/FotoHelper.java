@@ -16,9 +16,7 @@ public class FotoHelper {
 
     public static Drawable imagemCircular(Resources res, int src) {
         Bitmap bmp = BitmapFactory.decodeResource(res, src);
-        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, bmp);
-        drawable.setCircular(true);
-        return drawable;
+        return imagemCircular(res, bmp);
     }
 
     public static Drawable imagemCircular(Resources res, Bitmap bmp) {
