@@ -6,4 +6,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="card_margin">16dp</dimen>
+    <dimen name="detalhes_mapa">275dp</dimen>
 </resources>
