@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
+    android:clickable="true"
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/nomeFantasia"
+        android:textColor="@color/cinza_escuro"
+        android:textSize="16sp"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tipoUnidade"
+        android:layout_below="@id/nomeFantasia"
+        android:textColor="@color/cinza_claro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RatingBar
+        android:id="@+id/classificacao"
+        android:layout_marginBottom="7dp"
+        style="?android:attr/ratingBarStyleSmall"
+        android:rating="2.5"
+        android:stepSize="0.5"
+        android:numStars="5"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/distancia"
+        android:textColor="@color/cinza_claro"
+        android:layout_below="@id/classificacao"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

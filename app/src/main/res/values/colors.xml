@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="light_blue">#4bbcd7</color>
-    <color name="dark_blue">#2ca6c3</color>
-    <color name="pure_white">#FFFFFF</color>
+    <color name="azul_escuro">#2ca6c3</color>
+    <color name="azul_claro">#4bbcd7</color>
+    <color name="amarelo">#FFCB03</color>
+    <color name="branco">#FFFFFF</color>
+    <color name="cinza_bem_claro">#f4f4f4</color>
+    <color name="cinza_claro">#B2B2B2</color>
+    <!--<color name="cinza_claro">#a0a0a0</color>-->
+    <color name="cinza_escuro">#434343</color>
 </resources>
