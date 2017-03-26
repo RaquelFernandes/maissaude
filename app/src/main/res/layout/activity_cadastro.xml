@@ -109,9 +109,9 @@
             android:layout_height="65dp"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="@color/light_blue"
             android:text="@string/cadastro_btn_criar_conta"
-            android:textColor="@color/textButton" />
+            android:textColor="@color/pure_white" />
 
         <Button
             android:id="@+id/cadastro_btn_login"
@@ -124,7 +124,7 @@
             android:paddingRight="10dp"
             android:paddingTop="8dp"
             android:text="@string/cadastro_btn_acessar_conta"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/light_blue" />
 
     </LinearLayout>
 </ScrollView>

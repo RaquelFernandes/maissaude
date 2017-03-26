@@ -35,7 +35,6 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         }
     }
 
-
     public EstabelecimentosAdapter(List<Estabelecimento> moviesList) {
         this.mMoviesList = moviesList;
     }

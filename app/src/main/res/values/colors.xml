@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#4bbcd7</color>
-    <color name="colorPrimaryDark">#2ca6c3</color>
-    <color name="colorBackground">#FFFFFF</color>
-    <color name="textButton">#FFFFFF</color>
-    <color name="tabIndicator">#FFFFFF</color>
+    <color name="light_blue">#4bbcd7</color>
+    <color name="dark_blue">#2ca6c3</color>
+    <color name="pure_white">#FFFFFF</color>
 </resources>
