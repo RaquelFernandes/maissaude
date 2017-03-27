@@ -3,9 +3,11 @@ package com.example.a1514290074.saude.atividades;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.example.a1514290074.saude.R;
 import com.example.a1514290074.saude.modelos.Estabelecimento;
@@ -24,6 +26,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     Estabelecimento mEstabelecimento;
+    AppBarLayout mAppBarLayout;
+    FloatingActionButton mFloatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +37,8 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         mEstabelecimento = (Estabelecimento) getIntent().getSerializableExtra("filme");
 
         setupCoordinatorLayout(mEstabelecimento.getNomeFantasia());
+
+        setupFABBehavior();
 
 //        TextView nome = (TextView) findViewById(R.id.detalhes_tv_nome);
 //        TextView genero = (TextView) findViewById(R.id.detalhes_tv_genero);
@@ -44,6 +50,30 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
 
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.detalhes_mapa);
         mapFragment.getMapAsync(this);
+    }
+
+    private void setupFABBehavior() {
+        mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_rotas);
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                // Not collapsed
+                if (verticalOffset == 0) {
+                    mFloatingActionButton.show();
+                }
+                // Collapsed
+                else {
+                    mFloatingActionButton.hide(new FloatingActionButton.OnVisibilityChangedListener() {
+                        @Override
+                        public void onHidden(FloatingActionButton fab) {
+                            super.onShown(fab);
+                            fab.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override

@@ -20,6 +20,10 @@
     </style>
 
     <style name="Base" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!--<item name="colorPrimary">@color/azul_claro</item>-->
+        <!--<item name="colorPrimaryDark">@color/azul_escuro</item>-->
+        <!--<item name="colorAccent">@color/azul_claro</item>-->
+
         <item name="colorPrimary">@color/azul_claro</item>
         <item name="colorPrimaryDark">@color/azul_escuro</item>
         <item name="colorAccent">@color/azul_claro</item>

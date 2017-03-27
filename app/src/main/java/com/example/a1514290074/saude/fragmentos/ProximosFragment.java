@@ -1,6 +1,5 @@
 package com.example.a1514290074.saude.fragmentos;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,11 +8,9 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.a1514290074.saude.atividades.DetalhesActivity;
 import com.example.a1514290074.saude.modelos.Estabelecimento;
 import com.example.a1514290074.saude.adaptadores.EstabelecimentosAdapter;
 import com.example.a1514290074.saude.R;
@@ -40,10 +37,10 @@ public class ProximosFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_proximos, container, false);
+        View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
 
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
         mAdapter = new EstabelecimentosAdapter(mEstabelecimentoList);
 

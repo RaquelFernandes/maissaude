@@ -103,8 +103,9 @@
                 android:layout_marginTop="16dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:drawablePadding="15dp"
-                android:drawableTint="@color/azul_claro"
+                android:drawableTint="?attr/colorPrimary"
                 android:drawableTop="@drawable/ic_call"
+                android:textColor="?attr/colorPrimary"
                 android:text="Ligar"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
@@ -120,7 +121,8 @@
                 android:layout_marginStart="8dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:drawablePadding="15dp"
-                android:drawableTint="@color/azul_claro"
+                android:drawableTint="?attr/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:drawableTop="@drawable/ic_share"
                 android:text="Compartilhar"
                 app:layout_constraintLeft_toRightOf="@+id/detalhes_btn_ligar"
@@ -136,7 +138,8 @@
                 android:layout_marginRight="8dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:drawablePadding="15dp"
-                android:drawableTint="@color/azul_claro"
+                android:drawableTint="?attr/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:drawableTop="@drawable/ic_favorite"
                 android:text="Salvar"
                 app:layout_constraintRight_toRightOf="parent"
@@ -425,13 +428,14 @@
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_rotas"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        app:backgroundTint="@color/roxo"
         app:layout_anchor="@id/backdrop_bottom"
-        app:backgroundTint="@color/branco"
         app:layout_anchorGravity="top|right|end"
         android:src="@drawable/ic_directions"
         android:layout_margin="@dimen/fab_margin"
-        android:clickable="true"/>
+        android:clickable="true" />
 
 </android.support.design.widget.CoordinatorLayout>
