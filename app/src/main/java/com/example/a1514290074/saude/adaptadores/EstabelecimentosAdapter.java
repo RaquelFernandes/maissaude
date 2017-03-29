@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,22 @@ import android.widget.Toast;
 import com.example.a1514290074.saude.R;
 import com.example.a1514290074.saude.atividades.DetalhesActivity;
 import com.example.a1514290074.saude.modelos.Estabelecimento;
+import com.example.a1514290074.saude.servicos.ApiEstabelecimentosInterface;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EstabelecimentosAdapter extends RecyclerView.Adapter<EstabelecimentosAdapter.MyViewHolder> {
 
-    private List<Estabelecimento> mMoviesList;
+    private Context mContext;
+    private ApiEstabelecimentosInterface mServico;
+    private List<Estabelecimento> mEstabelecimentos;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -33,8 +44,32 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         }
     }
 
-    public EstabelecimentosAdapter(List<Estabelecimento> moviesList) {
-        this.mMoviesList = moviesList;
+    public EstabelecimentosAdapter(Context context) {
+
+        mContext = context;
+        mEstabelecimentos = new ArrayList<>();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiEstabelecimentosInterface.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        mServico = retrofit.create(ApiEstabelecimentosInterface.class);
+
+        Call<List<Estabelecimento>> call = mServico.getTodosEstabelecimentos(0);
+        call.enqueue(new Callback<List<Estabelecimento>>() {
+            @Override
+            public void onResponse(Call<List<Estabelecimento>> call, Response<List<Estabelecimento>> response) {
+                EstabelecimentosAdapter.this.mEstabelecimentos = response.body();
+                Log.i("EstAdapter", Integer.toString(response.body().size()));
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<List<Estabelecimento>> call, Throwable t) {
+                Toast.makeText(EstabelecimentosAdapter.this.mContext, "erro", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -49,7 +84,7 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final int index = position;
 
-        Estabelecimento estabelecimento = mMoviesList.get(position);
+        Estabelecimento estabelecimento = mEstabelecimentos.get(position);
         holder.title.setText(estabelecimento.getNomeFantasia());
         holder.genre.setText(estabelecimento.getTipoUnidade());
         holder.distancia.setText("25km");
@@ -71,11 +106,11 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
 
     @Override
     public int getItemCount() {
-        return mMoviesList.size();
+        return mEstabelecimentos.size();
     }
 
     public Estabelecimento getItem(int position) {
-        return mMoviesList.get(position);
+        return mEstabelecimentos.get(position);
     }
 
     private void onClickViewHolder(View view, int position) {

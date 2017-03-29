@@ -2,7 +2,6 @@ package com.example.a1514290074.saude.atividades;
 
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,11 +15,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -82,7 +78,7 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         mapConfig.setCompassEnabled(false);
         mapConfig.setMapToolbarEnabled(false);
 
-        LatLng posicao = new LatLng(mEstabelecimento.getLatitude(), mEstabelecimento.getLongitude());
+        LatLng posicao = new LatLng(mEstabelecimento.getLat(), mEstabelecimento.getLong());
 
         CameraPosition posicaoDaCamera = new CameraPosition.Builder()
                 .target(posicao)

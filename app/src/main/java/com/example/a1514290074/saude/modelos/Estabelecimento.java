@@ -1,61 +1,173 @@
 package com.example.a1514290074.saude.modelos;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class Estabelecimento implements Serializable {
 
-    private String codUnidade;
-    private String nomeFantasia;
-    private String descricaoCompleta;
-    private String tipoUnidade;
-    private String retencao;
+    private static final String SIM = "Sim";
+    private static final String NAO = "Não";
+
+    @SerializedName("bairro")
+    @Expose
+    private String bairro;
+    @SerializedName("categoriaUnidade")
+    @Expose
     private String categoriaUnidade;
-    private String endereco;
+    @SerializedName("cep")
+    @Expose
+    private String cep;
+    @SerializedName("cidade")
+    @Expose
+    private String cidade;
+    @SerializedName("cnpj")
+    @Expose
+    private String cnpj;
+    @SerializedName("codCnes")
+    @Expose
+    private Integer codCnes;
+    @SerializedName("codIbge")
+    @Expose
+    private Integer codIbge;
+    @SerializedName("codUnidade")
+    @Expose
+    private String codUnidade;
+    @SerializedName("descricaoCompleta")
+    @Expose
+    private String descricaoCompleta;
+    @SerializedName("email")
+    @Expose
+    private String email;
+    @SerializedName("esferaAdministrativa")
+    @Expose
+    private String esferaAdministrativa;
+    @SerializedName("fluxoClientela")
+    @Expose
+    private String fluxoClientela;
+    @SerializedName("grupo")
+    @Expose
+    private String grupo;
+    @SerializedName("lat")
+    @Expose
+    private double lat;
+    @SerializedName("logradouro")
+    @Expose
+    private String logradouro;
+    @SerializedName("long")
+    @Expose
+    private double _long;
+    @SerializedName("natureza")
+    @Expose
+    private String natureza;
+    @SerializedName("nomeFantasia")
+    @Expose
+    private String nomeFantasia;
+    @SerializedName("numero")
+    @Expose
+    private String numero;
+    @SerializedName("origemGeografica")
+    @Expose
+    private String origemGeografica;
+    @SerializedName("retencao")
+    @Expose
+    private String retencao;
+    @SerializedName("telefone")
+    @Expose
     private String telefone;
+    @SerializedName("temAtendimentoAmbulatorial")
+    @Expose
+    private String temAtendimentoAmbulatorial;
+    @SerializedName("temAtendimentoUrgencia")
+    @Expose
+    private String temAtendimentoUrgencia;
+    @SerializedName("temCentroCirurgico")
+    @Expose
+    private String temCentroCirurgico;
+    @SerializedName("temDialise")
+    @Expose
+    private String temDialise;
+    @SerializedName("temNeoNatal")
+    @Expose
+    private String temNeoNatal;
+    @SerializedName("temObstetra")
+    @Expose
+    private String temObstetra;
+    @SerializedName("tipoUnidade")
+    @Expose
+    private String tipoUnidade;
+    @SerializedName("tipoUnidadeCnes")
+    @Expose
+    private String tipoUnidadeCnes;
+    @SerializedName("turnoAtendimento")
+    @Expose
     private String turnoAtendimento;
-    private double latitude;
-    private double longitude;
-    private boolean vinculoSus;
-    private boolean temAtendimentoUrgencia;
-    private boolean temAtendimentoAmbulatorial;
-    private boolean temCentroCirurgico;
-    private boolean temObstetra;
-    private boolean temNeoNatal;
-    private boolean temDialise;
+    @SerializedName("uf")
+    @Expose
+    private String uf;
+    @SerializedName("vinculoSus")
+    @Expose
+    private String temVinculoSus;
 
-    public Estabelecimento() {
+    public String getEndereco() {
+        return bairro + ", " + numero + ", " + cidade + ", " + uf;
     }
 
-    public Estabelecimento(String nomeFantasia, String tipoUnidade, String retencao, double latitude, double longitude) {
-        this.nomeFantasia = nomeFantasia;
-        this.tipoUnidade = tipoUnidade;
-        this.retencao = retencao;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public String getBairro() {
+        return bairro;
     }
 
-    public String getNomeFantasia() {
-        return nomeFantasia;
+    public void setBairro(String bairro) {
+        this.bairro = bairro;
     }
 
-    public void setNomeFantasia(String name) {
-        this.nomeFantasia = name;
+    public String getCategoriaUnidade() {
+        return categoriaUnidade;
     }
 
-    public String getRetencao() {
-        return retencao;
+    public void setCategoriaUnidade(String categoriaUnidade) {
+        this.categoriaUnidade = categoriaUnidade;
     }
 
-    public void setRetencao(String retencao) {
-        this.retencao = retencao;
+    public String getCep() {
+        return cep;
     }
 
-    public String getTipoUnidade() {
-        return tipoUnidade;
+    public void setCep(String cep) {
+        this.cep = cep;
     }
 
-    public void setTipoUnidade(String tipoUnidade) {
-        this.tipoUnidade = tipoUnidade;
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    public Integer getCodCnes() {
+        return codCnes;
+    }
+
+    public void setCodCnes(Integer codCnes) {
+        this.codCnes = codCnes;
+    }
+
+    public Integer getCodIbge() {
+        return codIbge;
+    }
+
+    public void setCodIbge(Integer codIbge) {
+        this.codIbge = codIbge;
     }
 
     public String getCodUnidade() {
@@ -74,20 +186,100 @@ public class Estabelecimento implements Serializable {
         this.descricaoCompleta = descricaoCompleta;
     }
 
-    public String getCategoriaUnidade() {
-        return categoriaUnidade;
+    public String getEmail() {
+        return email;
     }
 
-    public void setCategoriaUnidade(String categoriaUnidade) {
-        this.categoriaUnidade = categoriaUnidade;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getEndereco() {
-        return endereco;
+    public String getEsferaAdministrativa() {
+        return esferaAdministrativa;
     }
 
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
+    public void setEsferaAdministrativa(String esferaAdministrativa) {
+        this.esferaAdministrativa = esferaAdministrativa;
+    }
+
+    public String getFluxoClientela() {
+        return fluxoClientela;
+    }
+
+    public void setFluxoClientela(String fluxoClientela) {
+        this.fluxoClientela = fluxoClientela;
+    }
+
+    public String getGrupo() {
+        return grupo;
+    }
+
+    public void setGrupo(String grupo) {
+        this.grupo = grupo;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public String getLogradouro() {
+        return logradouro;
+    }
+
+    public void setLogradouro(String logradouro) {
+        this.logradouro = logradouro;
+    }
+
+    public double getLong() {
+        return _long;
+    }
+
+    public void setLong(Integer _long) {
+        this._long = _long;
+    }
+
+    public String getNatureza() {
+        return natureza;
+    }
+
+    public void setNatureza(String natureza) {
+        this.natureza = natureza;
+    }
+
+    public String getNomeFantasia() {
+        return nomeFantasia;
+    }
+
+    public void setNomeFantasia(String nomeFantasia) {
+        this.nomeFantasia = nomeFantasia;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
+    public String getOrigemGeografica() {
+        return origemGeografica;
+    }
+
+    public void setOrigemGeografica(String origemGeografica) {
+        this.origemGeografica = origemGeografica;
+    }
+
+    public String getRetencao() {
+        return retencao;
+    }
+
+    public void setRetencao(String retencao) {
+        this.retencao = retencao;
     }
 
     public String getTelefone() {
@@ -98,6 +290,70 @@ public class Estabelecimento implements Serializable {
         this.telefone = telefone;
     }
 
+    public boolean temAtendimentoAmbulatorial() {
+        return temAtendimentoAmbulatorial.equals(SIM);
+    }
+
+    public void setTemAtendimentoAmbulatorial(boolean temAtendimentoAmbulatorial) {
+        this.temAtendimentoAmbulatorial = temAtendimentoAmbulatorial ? SIM : NAO;
+    }
+
+    public boolean temAtendimentoUrgencia() {
+        return temAtendimentoUrgencia.equals(SIM);
+    }
+
+    public void setTemAtendimentoUrgencia(boolean temAtendimentoUrgencia) {
+        this.temAtendimentoUrgencia = temAtendimentoUrgencia ? SIM : NAO;
+    }
+
+    public boolean temCentroCirurgico() {
+        return temCentroCirurgico.equals(SIM);
+    }
+
+    public void setTemCentroCirurgico(boolean temCentroCirurgico) {
+        this.temCentroCirurgico = temCentroCirurgico ? SIM : NAO;
+    }
+
+    public boolean temDialise() {
+        return temDialise.equals(SIM);
+    }
+
+    public void setTemDialise(boolean temDialise) {
+        this.temDialise = temDialise ? SIM : NAO;
+    }
+
+    public boolean temNeoNatal() {
+        return temNeoNatal.equals(SIM);
+    }
+
+    public void setTemNeoNatal(boolean temNeoNatal) {
+        this.temNeoNatal = temNeoNatal ? SIM : NAO;
+    }
+
+    public boolean temObstetra() {
+        return temObstetra.equals(SIM);
+    }
+
+    public void setTemObstetra(boolean temObstetra) {
+        this.temObstetra = temObstetra ? SIM : NAO;
+    }
+
+    public String getTipoUnidade() {
+        return tipoUnidade;
+    }
+
+    public void setTipoUnidade(String tipoUnidade) {
+        this.tipoUnidade = tipoUnidade;
+    }
+
+    public String getTipoUnidadeCnes() {
+        return tipoUnidadeCnes;
+    }
+
+    public void setTipoUnidadeCnes(String tipoUnidadeCnes) {
+        this.tipoUnidadeCnes = tipoUnidadeCnes;
+    }
+
     public String getTurnoAtendimento() {
         return turnoAtendimento;
     }
@@ -106,75 +362,20 @@ public class Estabelecimento implements Serializable {
         this.turnoAtendimento = turnoAtendimento;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public String getUf() {
+        return uf;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setUf(String uf) {
+        this.uf = uf;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public boolean temVinculoSus() {
+        return temVinculoSus.equals(SIM);
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setTemVinculoSus(boolean vinculoSus) {
+        this.temVinculoSus = vinculoSus ? SIM : NAO;
     }
 
-    public boolean isVinculoSus() {
-        return vinculoSus;
-    }
-
-    public void setVinculoSus(boolean vinculoSus) {
-        this.vinculoSus = vinculoSus;
-    }
-
-    public boolean isTemAtendimentoUrgencia() {
-        return temAtendimentoUrgencia;
-    }
-
-    public void setTemAtendimentoUrgencia(boolean temAtendimentoUrgencia) {
-        this.temAtendimentoUrgencia = temAtendimentoUrgencia;
-    }
-
-    public boolean isTemAtendimentoAmbulatorial() {
-        return temAtendimentoAmbulatorial;
-    }
-
-    public void setTemAtendimentoAmbulatorial(boolean temAtendimentoAmbulatorial) {
-        this.temAtendimentoAmbulatorial = temAtendimentoAmbulatorial;
-    }
-
-    public boolean isTemCentroCirurgico() {
-        return temCentroCirurgico;
-    }
-
-    public void setTemCentroCirurgico(boolean temCentroCirurgico) {
-        this.temCentroCirurgico = temCentroCirurgico;
-    }
-
-    public boolean isTemObstetra() {
-        return temObstetra;
-    }
-
-    public void setTemObstetra(boolean temObstetra) {
-        this.temObstetra = temObstetra;
-    }
-
-    public boolean isTemNeoNatal() {
-        return temNeoNatal;
-    }
-
-    public void setTemNeoNatal(boolean temNeoNatal) {
-        this.temNeoNatal = temNeoNatal;
-    }
-
-    public boolean isTemDialise() {
-        return temDialise;
-    }
-
-    public void setTemDialise(boolean temDialise) {
-        this.temDialise = temDialise;
-    }
 }

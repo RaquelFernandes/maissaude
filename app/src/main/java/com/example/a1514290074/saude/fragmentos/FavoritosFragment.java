@@ -41,7 +41,7 @@ public class FavoritosFragment extends Fragment{
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        mAdapter = new EstabelecimentosAdapter(mEstabelecimentoList);
+        mAdapter = new EstabelecimentosAdapter(getActivity());
 
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -56,25 +56,25 @@ public class FavoritosFragment extends Fragment{
 
         recyclerView.addItemDecoration(separador);
 
-        prepareMovieData();
+//        prepareMovieData();
 
         return view;
     }
 
-    private void prepareMovieData() {
-        Estabelecimento estabelecimento = new Estabelecimento("Mad Max: Fury Road", "Action & Adventure", "2015", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Iron Man", "Action & Adventure", "2008", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Back to the Future", "Science Fiction", "1985", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Guardians of the Galaxy", "Science Fiction & Fantasy", "2014", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        mAdapter.notifyDataSetChanged();
-    }
+//    private void prepareMovieData() {
+//        Estabelecimento estabelecimento = new Estabelecimento("Mad Max: Fury Road", "Action & Adventure", "2015", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Iron Man", "Action & Adventure", "2008", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Back to the Future", "Science Fiction", "1985", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Guardians of the Galaxy", "Science Fiction & Fantasy", "2014", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        mAdapter.notifyDataSetChanged();
+//    }
 
 }

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.a1514290074.saude.modelos.Estabelecimento;
+import com.example.a1514290074.saude.modelos.Estabelecimento;
 import com.example.a1514290074.saude.adaptadores.EstabelecimentosAdapter;
 import com.example.a1514290074.saude.R;
 
@@ -42,7 +43,7 @@ public class ProximosFragment extends Fragment{
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        mAdapter = new EstabelecimentosAdapter(mEstabelecimentoList);
+        mAdapter = new EstabelecimentosAdapter(getActivity());
 
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -56,60 +57,60 @@ public class ProximosFragment extends Fragment{
         }
         recyclerView.addItemDecoration(separador);
 
-        prepareMovieData();
+//        prepareMovieData();
 
         return view;
     }
 
-    private void prepareMovieData() {
-        Estabelecimento estabelecimento = new Estabelecimento("Mad Max: Fury Road", "Action & Adventure", "2015", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Inside Out", "Animation, Kids & Family", "2015", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Star Wars: Episode VII - The Force Awakens", "Action", "2015", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Shaun the Sheep", "Animation", "2015", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("The Martian", "Science Fiction & Fantasy", "2015", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Mission: Impossible Rogue Nation", "Action", "2015", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Up", "Animation", "2009", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Star Trek", "Science Fiction", "2009", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("The LEGO Estabelecimento", "Animation", "2014", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Iron Man", "Action & Adventure", "2008", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Aliens", "Science Fiction", "1986", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Chicken Run", "Animation", "2000", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Back to the Future", "Science Fiction", "1985", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Raiders of the Lost Ark", "Action & Adventure", "1981", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Goldfinger", "Action & Adventure", "1965", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        estabelecimento = new Estabelecimento("Guardians of the Galaxy", "Science Fiction & Fantasy", "2014", -15.6197972, -47.6512968);
-        mEstabelecimentoList.add(estabelecimento);
-
-        mAdapter.notifyDataSetChanged();
-    }
+//    private void prepareMovieData() {
+//        Estabelecimento estabelecimento = new Estabelecimento("Mad Max: Fury Road", "Action & Adventure", "2015", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Inside Out", "Animation, Kids & Family", "2015", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Star Wars: Episode VII - The Force Awakens", "Action", "2015", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Shaun the Sheep", "Animation", "2015", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("The Martian", "Science Fiction & Fantasy", "2015", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Mission: Impossible Rogue Nation", "Action", "2015", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Up", "Animation", "2009", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Star Trek", "Science Fiction", "2009", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("The LEGO Estabelecimento", "Animation", "2014", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Iron Man", "Action & Adventure", "2008", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Aliens", "Science Fiction", "1986", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Chicken Run", "Animation", "2000", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Back to the Future", "Science Fiction", "1985", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Raiders of the Lost Ark", "Action & Adventure", "1981", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Goldfinger", "Action & Adventure", "1965", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        estabelecimento = new Estabelecimento("Guardians of the Galaxy", "Science Fiction & Fantasy", "2014", -15.6197972, -47.6512968);
+//        mEstabelecimentoList.add(estabelecimento);
+//
+//        mAdapter.notifyDataSetChanged();
+//    }
 }
