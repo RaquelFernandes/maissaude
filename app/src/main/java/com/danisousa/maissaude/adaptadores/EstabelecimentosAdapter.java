@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,9 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
     private ApiEstabelecimentosInterface mServico;
     private List<Estabelecimento> mEstabelecimentos;
 
+    private ProgressBar mInicioProgressBar;
+    private ProgressBar mInifiniteScrollProgressBar;
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         public TextView title, genre, distancia;
@@ -46,11 +50,15 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         }
     }
 
-    public EstabelecimentosAdapter(Context context) {
-
+    public EstabelecimentosAdapter(Context context, ProgressBar inicioProgressBar) {
         mContext = context;
+        mInicioProgressBar = inicioProgressBar;
         mEstabelecimentos = new ArrayList<>();
 
+        loadData();
+    }
+
+    private void loadData() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiEstabelecimentosInterface.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -65,6 +73,7 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
                 EstabelecimentosAdapter.this.mEstabelecimentos = response.body();
                 Log.i("EstAdapter", Integer.toString(response.body().size()));
                 notifyDataSetChanged();
+                mInicioProgressBar.setVisibility(View.GONE);
             }
 
             @Override

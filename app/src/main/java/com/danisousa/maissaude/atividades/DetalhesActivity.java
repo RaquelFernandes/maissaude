@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
     Estabelecimento mEstabelecimento;
     AppBarLayout mAppBarLayout;
     FloatingActionButton mFloatingActionButton;
+    FrameLayout mMapLoadingBackground;
 
     TextView mNomeTextView;
     TextView mEnderecoTextView;
@@ -63,6 +65,8 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void setupView() {
+        mMapLoadingBackground = (FrameLayout) findViewById(R.id.map_background);
+
         mNomeTextView = (TextView) findViewById(R.id.detalhes_tv_nome);
         mEnderecoTextView = (TextView) findViewById(R.id.detalhes_tv_endereco);
         mTipoTextView = (TextView) findViewById(R.id.detalhes_tv_tipo);
@@ -144,6 +148,13 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         map.addMarker(new MarkerOptions()
                 .position(posicao)
                 .title(mEstabelecimento.getNomeFantasia()));
+
+        map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                mMapLoadingBackground.setVisibility(View.GONE);
+            }
+        });
 
     }
 

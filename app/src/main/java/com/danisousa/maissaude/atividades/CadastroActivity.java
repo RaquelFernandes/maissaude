@@ -334,6 +334,7 @@ public class CadastroActivity extends AppCompatActivity {
                                 } catch (Exception e) {
                                     Log.e("AUTH", e.getMessage());
                                 }
+                                mProgressDialog.dismiss();
                                 AlertDialog.Builder builder = new AlertDialog.Builder(CadastroActivity.this);
                                 builder.setTitle(R.string.cadastro_erro_titulo)
                                         .setMessage(erro)
