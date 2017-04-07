@@ -10,7 +10,7 @@
     android:orientation="vertical"
     android:padding="30dp"
     android:rowCount="3"
-    tools:context="com.example.a1514290074.saude.atividades.FiltroActivity">
+    tools:context=".atividades.FiltroActivity">
 
     <TextView
         android:layout_columnWeight="0.3"

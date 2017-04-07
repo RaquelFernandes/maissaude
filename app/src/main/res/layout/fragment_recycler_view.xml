@@ -1,10 +1,10 @@
-<FrameLayout
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.a1514290074.saude.fragmentos.ProximosFragment">
+    tools:context=".fragmentos.ProximosFragment" >
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -12,4 +12,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-</FrameLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

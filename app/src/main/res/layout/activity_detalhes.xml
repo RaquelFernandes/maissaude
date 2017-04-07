@@ -155,13 +155,34 @@
                 android:id="@+id/separador1"/>
 
             <ImageView
-                android:id="@+id/detalhes_ico_endereco"
+                android:id="@+id/detalhes_ico_nome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="24dp"
                 app:layout_constraintLeft_toLeftOf="@+id/detalhes_btn_ligar"
                 app:layout_constraintTop_toBottomOf="@+id/separador1"
+                app:srcCompat="@drawable/ic_short_text"/>
+
+            <TextView
+                android:id="@+id/detalhes_tv_nome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="2dp"
+                android:textColor="?attr/editTextColor"
+                app:layout_constraintLeft_toRightOf="@+id/detalhes_ico_nome"
+                app:layout_constraintTop_toTopOf="@+id/detalhes_ico_nome"
+                tools:text="Nome"/>
+
+            <ImageView
+                android:id="@+id/detalhes_ico_endereco"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="24dp"
+                app:layout_constraintLeft_toLeftOf="@+id/detalhes_btn_ligar"
+                app:layout_constraintTop_toBottomOf="@+id/detalhes_ico_nome"
                 app:srcCompat="@drawable/ic_location"/>
 
             <TextView
@@ -173,7 +194,7 @@
                 android:textColor="?attr/editTextColor"
                 app:layout_constraintLeft_toRightOf="@+id/detalhes_ico_endereco"
                 app:layout_constraintTop_toTopOf="@+id/detalhes_ico_endereco"
-                android:text="Endereço Completo"/>
+                tools:text="Endereço Completo"/>
 
             <ImageView
                 android:id="@+id/detalhes_ico_tipo"
@@ -194,7 +215,7 @@
                 android:textColor="?attr/editTextColor"
                 app:layout_constraintLeft_toRightOf="@+id/detalhes_ico_tipo"
                 app:layout_constraintTop_toTopOf="@+id/detalhes_ico_tipo"
-                android:text="Tipo do Estabelecimento" />
+                tools:text="Tipo do Estabelecimento" />
 
             <ImageView
                 android:id="@+id/detalhes_ico_retencao"
@@ -215,7 +236,7 @@
                 android:textColor="?attr/editTextColor"
                 app:layout_constraintLeft_toRightOf="@+id/detalhes_ico_retencao"
                 app:layout_constraintTop_toTopOf="@+id/detalhes_ico_retencao"
-                android:text="Público ou Privado" />
+                tools:text="Público ou Privado" />
 
             <ImageView
                 android:id="@+id/detalhes_ico_telefone"
@@ -236,7 +257,7 @@
                 android:textColor="?attr/editTextColor"
                 app:layout_constraintLeft_toRightOf="@+id/detalhes_ico_telefone"
                 app:layout_constraintTop_toTopOf="@+id/detalhes_ico_telefone"
-                android:text="Telefone" />
+                tools:text="Telefone" />
 
             <ImageView
                 android:id="@+id/detalhes_ico_turno"
@@ -257,7 +278,7 @@
                 android:textColor="?attr/editTextColor"
                 app:layout_constraintLeft_toRightOf="@+id/detalhes_ico_turno"
                 app:layout_constraintTop_toTopOf="@+id/detalhes_ico_turno"
-                android:text="Turno do Atendimento" />
+                tools:text="Turno do Atendimento" />
 
             <View
                 style="@style/Separador"
@@ -276,7 +297,7 @@
                 android:layout_marginTop="24dp"
                 app:layout_constraintLeft_toLeftOf="@+id/detalhes_btn_ligar"
                 app:layout_constraintTop_toBottomOf="@+id/separador2"
-                app:srcCompat="@drawable/ic_done"/>
+                tools:src="@drawable/ic_done" />
 
             <TextView
                 android:id="@+id/detalhes_tv_sus"
@@ -297,7 +318,7 @@
                 android:layout_marginTop="24dp"
                 app:layout_constraintLeft_toLeftOf="@+id/detalhes_btn_ligar"
                 app:layout_constraintTop_toBottomOf="@+id/detalhes_ico_sus"
-                app:srcCompat="@drawable/ic_clear"/>
+                tools:src="@drawable/ic_clear"/>
 
             <TextView
                 android:id="@+id/detalhes_tv_urgencia"
@@ -318,7 +339,7 @@
                 android:layout_marginTop="24dp"
                 app:layout_constraintLeft_toLeftOf="@+id/detalhes_btn_ligar"
                 app:layout_constraintTop_toBottomOf="@+id/detalhes_ico_urgencia"
-                app:srcCompat="@drawable/ic_clear"/>
+                tools:src="@drawable/ic_clear"/>
 
             <TextView
                 android:id="@+id/detalhes_tv_ambulatorial"
@@ -339,7 +360,7 @@
                 android:layout_marginTop="24dp"
                 app:layout_constraintLeft_toLeftOf="@+id/detalhes_btn_ligar"
                 app:layout_constraintTop_toBottomOf="@+id/detalhes_ico_ambulatorial"
-                app:srcCompat="@drawable/ic_done"/>
+                tools:src="@drawable/ic_done"/>
 
             <TextView
                 android:id="@+id/detalhes_tv_centro_cirurgico"
@@ -360,7 +381,7 @@
                 android:layout_marginTop="24dp"
                 app:layout_constraintLeft_toLeftOf="@+id/detalhes_btn_ligar"
                 app:layout_constraintTop_toBottomOf="@+id/detalhes_ico_centro_cirurgico"
-                app:srcCompat="@drawable/ic_done"/>
+                tools:src="@drawable/ic_done"/>
 
             <TextView
                 android:id="@+id/detalhes_tv_obstetra"
@@ -381,7 +402,7 @@
                 android:layout_marginTop="24dp"
                 app:layout_constraintLeft_toLeftOf="@+id/detalhes_btn_ligar"
                 app:layout_constraintTop_toBottomOf="@+id/detalhes_ico_obstetra"
-                app:srcCompat="@drawable/ic_clear"/>
+                tools:src="@drawable/ic_clear"/>
 
             <TextView
                 android:id="@+id/detalhes_tv_neonatal"
@@ -402,7 +423,7 @@
                 android:layout_marginTop="24dp"
                 app:layout_constraintLeft_toLeftOf="@+id/detalhes_btn_ligar"
                 app:layout_constraintTop_toBottomOf="@+id/detalhes_ico_neonatal"
-                app:srcCompat="@drawable/ic_done"/>
+                tools:src="@drawable/ic_done"/>
 
             <TextView
                 android:id="@+id/detalhes_tv_dialise"
@@ -434,7 +455,7 @@
         app:backgroundTint="@color/roxo"
         app:layout_anchor="@id/backdrop_bottom"
         app:layout_anchorGravity="top|right|end"
-        android:src="@drawable/ic_directions"
+        app:srcCompat="@drawable/ic_directions"
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true" />
 

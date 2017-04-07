@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:336333231204:android:8c83754fa9c6c24c",
+        "mobilesdk_app_id": "1:336333231204:android:b1b60e54e4568fc6",
         "android_client_info": {
-          "package_name": "com.example.a1514290074.saude"
+          "package_name": "com.danisousa.maissaude"
         }
       },
       "oauth_client": [
@@ -22,6 +22,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyAVifZMYsPeN2MRvpJOINPpTMDUT-sLUjM"
+        },
+        {
+          "current_key": "AIzaSyAIG4vPwkABo0SZVzUoEwPtsEH0ImsPJKE"
         }
       ],
       "services": {

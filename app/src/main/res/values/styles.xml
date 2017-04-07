@@ -19,6 +19,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="NoAnimations" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
     <style name="Base" parent="Theme.AppCompat.Light.DarkActionBar">
         <!--<item name="colorPrimary">@color/azul_claro</item>-->
         <!--<item name="colorPrimaryDark">@color/azul_escuro</item>-->
