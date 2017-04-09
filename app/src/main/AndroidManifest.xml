@@ -15,9 +15,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBEji60KxxI1tZOFU40tjq6B1pr709nzqI" />
 
-        <!--<activity-->
-            <!--android:name=".atividades.LauncherActivity"-->
-            <!--android:theme="@android:style/Theme.NoDisplay">-->
         <activity
             android:name=".atividades.LauncherActivity"
             android:theme="@android:style/Theme.NoDisplay">

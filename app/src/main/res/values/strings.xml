@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Saúde</string>
+    <string name="app_name">+Saúde</string>
 
     <string name="login_hint_email">Email</string>
     <string name="login_hint_senha">Senha</string>
@@ -52,5 +52,6 @@
     <string name="main_dlg_sobre">Desenvolvido por:\n\nDaniel Sousa\nsousa.dfs@gmail.com</string>
 
     <string name="cheese_ipsum">Isso é um texto temporário</string>
+    <string name="compartilhar_txt">Enviar para...</string>
 
 </resources>

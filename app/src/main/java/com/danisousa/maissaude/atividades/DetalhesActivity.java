@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
 import com.danisousa.maissaude.modelos.Estabelecimento;
+import com.danisousa.maissaude.utils.IntentHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -26,9 +28,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     Estabelecimento mEstabelecimento;
+
     AppBarLayout mAppBarLayout;
-    FloatingActionButton mFloatingActionButton;
     FrameLayout mMapLoadingBackground;
+
+    FloatingActionButton mFloatingActionButton;
+
+    Button mLigarButton;
+    Button mCompartilharButton;
+    Button mSalvarButton;
 
     TextView mNomeTextView;
     TextView mEnderecoTextView;
@@ -65,6 +73,14 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void setupView() {
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+
+        mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_rotas);
+
+        mLigarButton = (Button) findViewById(R.id.detalhes_btn_ligar);
+        mCompartilharButton = (Button) findViewById(R.id.detalhes_btn_compartilhar);
+        mSalvarButton = (Button) findViewById(R.id.detalhes_btn_salvar);
+
         mMapLoadingBackground = (FrameLayout) findViewById(R.id.map_background);
 
         mNomeTextView = (TextView) findViewById(R.id.detalhes_tv_nome);
@@ -84,12 +100,38 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void bindView() {
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IntentHelper.direcoesDoMapa(DetalhesActivity.this, mEstabelecimento);
+            }
+        });
+
+        mLigarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IntentHelper.ligar(DetalhesActivity.this, mEstabelecimento);
+            }
+        });
+        mCompartilharButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IntentHelper.compartilharTexto(DetalhesActivity.this, mEstabelecimento);
+            }
+        });
+        mSalvarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO
+            }
+        });
+
         mNomeTextView.setText(mEstabelecimento.getNomeFantasia());
-        mEnderecoTextView.setText(mEstabelecimento.getNomeFantasia());
-        mTipoTextView.setText(mEstabelecimento.getNomeFantasia());
-        mRetencaoTextView.setText(mEstabelecimento.getNomeFantasia());
-        mTelefoneTextView.setText(mEstabelecimento.getNomeFantasia());
-        mTurnoTextView.setText(mEstabelecimento.getNomeFantasia());
+        mEnderecoTextView.setText(mEstabelecimento.getEndereco());
+        mTipoTextView.setText(mEstabelecimento.getTipoUnidade());
+        mRetencaoTextView.setText(mEstabelecimento.getRetencao());
+        mTelefoneTextView.setText(mEstabelecimento.getTelefone());
+        mTurnoTextView.setText(mEstabelecimento.getTurnoAtendimento());
 
         mTemSus.setImageResource(getBooleanImageView(mEstabelecimento.temVinculoSus()));
         mTemUrgencia.setImageResource(getBooleanImageView(mEstabelecimento.temAtendimentoUrgencia()));
@@ -108,8 +150,6 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void setupFABBehavior() {
-        mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_rotas);
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {

@@ -130,11 +130,11 @@
                 android:drawableTop="@drawable/ic_share"
                 android:text="Compartilhar"
                 app:layout_constraintLeft_toRightOf="@+id/detalhes_btn_ligar"
-                app:layout_constraintRight_toLeftOf="@+id/detalhes_btn_favoritos"
+                app:layout_constraintRight_toLeftOf="@+id/detalhes_btn_salvar"
                 app:layout_constraintTop_toTopOf="@+id/detalhes_btn_ligar"/>
 
             <Button
-                android:id="@+id/detalhes_btn_favoritos"
+                android:id="@+id/detalhes_btn_salvar"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

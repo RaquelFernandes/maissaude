@@ -37,7 +37,7 @@
         app:fabSize="normal"
         android:id="@+id/fab_emergencia"
         android:layout_gravity="bottom|right"
-        app:srcCompat="@drawable/ic_directions_car"
+        app:srcCompat="@drawable/ic_hospital"
         app:backgroundTint="@color/roxo"
         app:layout_anchor="@+id/viewpager"
         app:layout_anchorGravity="bottom|end"

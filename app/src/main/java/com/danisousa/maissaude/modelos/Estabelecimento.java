@@ -111,7 +111,7 @@ public class Estabelecimento implements Serializable {
     private String temVinculoSus;
 
     public String getEndereco() {
-        return bairro + ", " + numero + ", " + cidade + ", " + uf;
+        return logradouro + ", " + numero + " - " + bairro + ". " + cidade + " - " + uf;
     }
 
     public String getBairro() {

@@ -3,6 +3,7 @@ package com.danisousa.maissaude.adaptadores;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +18,8 @@ import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.atividades.DetalhesActivity;
 import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.servicos.ApiEstabelecimentosInterface;
+import com.danisousa.maissaude.utils.ClipboardHelper;
+import com.danisousa.maissaude.utils.IntentHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +61,11 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         loadData();
     }
 
-    private void loadData() {
+    public void loadData() {
+        loadData(null);
+    }
+
+    public void loadData(final SwipeRefreshLayout swipeRefreshLayout) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiEstabelecimentosInterface.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -74,6 +81,9 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
                 Log.i("EstAdapter", Integer.toString(response.body().size()));
                 notifyDataSetChanged();
                 mInicioProgressBar.setVisibility(View.GONE);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
 
             @Override
@@ -145,36 +155,38 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
 
         final CharSequence[] items = {
                 "Ligar",
-                "Abrir no Google Maps",
+                "Abrir no Mapa",
                 "Compartilhar",
                 "Copiar Telefone",
                 "Copiar Endereço",
                 "Adicionar aos Favoritos"
         };
 
-        Estabelecimento filme = getItem(position);
+        final Estabelecimento estabelecimento = getItem(position);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-        builder.setTitle(filme.getNomeFantasia());
+        builder.setTitle(estabelecimento.getNomeFantasia());
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 switch (item) {
                     case LIGAR:
-                        Toast.makeText(context, "Ligar", Toast.LENGTH_SHORT).show();
+                        IntentHelper.ligar(mContext, estabelecimento);
                         return;
                     case ABRIR_NO_GMAPS:
-                        Toast.makeText(context, "Abrir no Google Maps", Toast.LENGTH_SHORT).show();
+                        IntentHelper.abrirMapa(mContext, estabelecimento);
                         return;
                     case COMPARTILHAR:
-                        Toast.makeText(context, "Compartilhar", Toast.LENGTH_SHORT).show();
+                        IntentHelper.compartilharTexto(mContext, estabelecimento);
                         return;
                     case COPIAR_TELEFONE:
-                        Toast.makeText(context, "Copiar Telefone", Toast.LENGTH_SHORT).show();
+                        ClipboardHelper.copiarTexto(mContext, estabelecimento.getTelefone());
+//                        Toast.makeText(context, "Telefone copiado para a área de transferência", Toast.LENGTH_SHORT).show();
                         return;
                     case COPIAR_ENDEREÇO:
-                        Toast.makeText(context, "Copiar Endereço", Toast.LENGTH_SHORT).show();
+                        ClipboardHelper.copiarTexto(mContext, estabelecimento.getEndereco());
+//                        Toast.makeText(context, "Endereço copiado para a área de transferência", Toast.LENGTH_SHORT).show();
                         return;
                     case ADICIONAR_AOS_FAVORITOS:
                         Toast.makeText(context, "Adicionar aos Favoritos", Toast.LENGTH_SHORT).show();
