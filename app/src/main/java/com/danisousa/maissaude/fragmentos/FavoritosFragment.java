@@ -21,7 +21,7 @@ import com.danisousa.maissaude.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FavoritosFragment extends Fragment{
+public class FavoritosFragment extends Fragment {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mInicioProgressBar;

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:focusable="true"
@@ -15,37 +18,55 @@
         android:id="@+id/nomeFantasia"
         android:textColor="@color/cinza_escuro"
         android:textSize="16sp"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="2dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="TITULO"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 
     <TextView
         android:id="@+id/tipoUnidade"
         android:layout_below="@id/nomeFantasia"
         android:textColor="@color/cinza_claro"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:text="SUBTITULO"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/nomeFantasia"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/nomeFantasia"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toLeftOf="@+id/classificacao"
+        android:textColor="@color/cinza_claro"
+        android:text="3,5"
+        android:layout_marginRight="3dp"
+        app:layout_constraintBottom_toBottomOf="@+id/distancia"
+        app:layout_constraintTop_toTopOf="@+id/distancia"
+        android:layout_marginBottom="0dp"/>
 
     <RatingBar
         android:id="@+id/classificacao"
-        android:layout_marginBottom="7dp"
         style="?android:attr/ratingBarStyleSmall"
-        android:progressTint="@color/amarelo"
-        android:progressBackgroundTint="@color/cinza_claro"
-        android:rating="2.5"
-        android:stepSize="0.5"
-        android:numStars="5"
-        android:layout_alignParentRight="true"
+        android:progressTint="@color/cinza_claro"
+        android:rating="1"
+        android:numStars="1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toLeftOf="@+id/distancia"
+        android:layout_marginRight="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/distancia"
+        app:layout_constraintTop_toTopOf="@+id/distancia"/>
 
     <TextView
         android:id="@+id/distancia"
-        android:textColor="@color/cinza_claro"
-        android:layout_below="@id/classificacao"
-        android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/cinza_claro"
+        tools:text="25km"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/tipoUnidade"/>
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

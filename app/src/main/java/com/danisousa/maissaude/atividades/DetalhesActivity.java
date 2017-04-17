@@ -1,5 +1,6 @@
 package com.danisousa.maissaude.atividades;
 
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
 import com.danisousa.maissaude.modelos.Estabelecimento;
+import com.danisousa.maissaude.utils.FotoHelper;
 import com.danisousa.maissaude.utils.IntentHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,6 +54,8 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
     ImageView mTemObstetra;
     ImageView mTemNeonatal;
     ImageView mTemDialise;
+
+    ImageView mFotoImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +101,8 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         mTemObstetra = (ImageView) findViewById(R.id.detalhes_ico_obstetra);
         mTemNeonatal = (ImageView) findViewById(R.id.detalhes_ico_neonatal);
         mTemDialise = (ImageView) findViewById(R.id.detalhes_ico_dialise);
+
+        mFotoImageView = (ImageView) findViewById(R.id.detalhes_foto_iv);
     }
 
     private void bindView() {
@@ -140,6 +146,9 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         mTemObstetra.setImageResource(getBooleanImageView(mEstabelecimento.temObstetra()));
         mTemNeonatal.setImageResource(getBooleanImageView(mEstabelecimento.temNeoNatal()));
         mTemDialise.setImageResource(getBooleanImageView(mEstabelecimento.temDialise()));
+
+        Drawable fotoCircular = FotoHelper.imagemCircular(getResources(), R.drawable.usuario);
+        mFotoImageView.setImageDrawable(fotoCircular);
     }
 
     private int getBooleanImageView(boolean verdadeiro) {

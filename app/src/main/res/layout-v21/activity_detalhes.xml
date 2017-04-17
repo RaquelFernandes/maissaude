@@ -541,6 +541,8 @@
 
             <RatingBar
                 android:id="@+id/detalhes_rating_bar"
+                android:progressTint="@color/amarelo"
+                android:secondaryProgressTint="@color/amarelo"
                 android:stepSize="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
