@@ -1,6 +1,7 @@
 package com.danisousa.maissaude.atividades;
 
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -26,41 +27,48 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
 
 public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    Estabelecimento mEstabelecimento;
+    private FirebaseAuth mAuth;
+    private FirebaseStorage mStorage;
+    private Estabelecimento mEstabelecimento;
 
-    AppBarLayout mAppBarLayout;
-    FrameLayout mMapLoadingBackground;
+    private AppBarLayout mAppBarLayout;
+    private FrameLayout mMapLoadingBackground;
 
-    FloatingActionButton mFloatingActionButton;
+    private FloatingActionButton mFloatingActionButton;
 
-    Button mLigarButton;
-    Button mCompartilharButton;
-    Button mSalvarButton;
+    private Button mLigarButton;
+    private Button mCompartilharButton;
+    private Button mSalvarButton;
 
-    TextView mNomeTextView;
-    TextView mEnderecoTextView;
-    TextView mTipoTextView;
-    TextView mRetencaoTextView;
-    TextView mTelefoneTextView;
-    TextView mTurnoTextView;
+    private TextView mNomeTextView;
+    private TextView mEnderecoTextView;
+    private TextView mTipoTextView;
+    private TextView mRetencaoTextView;
+    private TextView mTelefoneTextView;
+    private TextView mTurnoTextView;
 
-    ImageView mTemSus;
-    ImageView mTemUrgencia;
-    ImageView mTemAmbulatorial;
-    ImageView mTemCentroCirurgico;
-    ImageView mTemObstetra;
-    ImageView mTemNeonatal;
-    ImageView mTemDialise;
+    private ImageView mTemSus;
+    private ImageView mTemUrgencia;
+    private ImageView mTemAmbulatorial;
+    private ImageView mTemCentroCirurgico;
+    private ImageView mTemObstetra;
+    private ImageView mTemNeonatal;
+    private ImageView mTemDialise;
 
-    ImageView mFotoImageView;
+    private ImageView mFotoImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhes);
+
+        mAuth = FirebaseAuth.getInstance();
+        mStorage = FirebaseStorage.getInstance();
 
         mEstabelecimento = (Estabelecimento) getIntent()
                 .getSerializableExtra(EstabelecimentosAdapter.EXTRA_ESTABELECIMENTO);
@@ -147,8 +155,10 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         mTemNeonatal.setImageResource(getBooleanImageView(mEstabelecimento.temNeoNatal()));
         mTemDialise.setImageResource(getBooleanImageView(mEstabelecimento.temDialise()));
 
-        Drawable fotoCircular = FotoHelper.imagemCircular(getResources(), R.drawable.usuario);
-        mFotoImageView.setImageDrawable(fotoCircular);
+        Drawable placeholderCircular = FotoHelper.imagemCircular(getResources(), R.drawable.usuario);
+        mFotoImageView.setImageDrawable(placeholderCircular);
+
+        FotoHelper.setFotoUsuario(this, mFotoImageView, mStorage, mAuth);
     }
 
     private int getBooleanImageView(boolean verdadeiro) {

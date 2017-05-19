@@ -21,7 +21,9 @@ import com.danisousa.maissaude.fragmentos.MapaFragment;
 import com.danisousa.maissaude.fragmentos.ProximosFragment;
 import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.fragmentos.FavoritosFragment;
+import com.danisousa.maissaude.utils.FotoHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    private FirebaseStorage mStorage;
 
     private Toolbar mToolbar;
     private TabLayout mTabLayout;
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+        mStorage = FirebaseStorage.getInstance();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -55,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
 
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(mViewPager);
+
+        // Salva foto do usuario no armazenamento interno
+        FotoHelper.setFotoUsuario(this, null, mStorage, mAuth);
     }
 
     private void setupViewPager(ViewPager viewPager) {
