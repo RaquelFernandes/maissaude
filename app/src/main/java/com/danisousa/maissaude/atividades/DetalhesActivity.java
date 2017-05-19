@@ -200,7 +200,7 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
 
         CameraPosition posicaoDaCamera = new CameraPosition.Builder()
                 .target(posicao)
-                .zoom(16)
+                .zoom(14)
                 .build();
 
         map.moveCamera(CameraUpdateFactory.newCameraPosition(posicaoDaCamera));
