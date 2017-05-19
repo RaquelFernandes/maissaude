@@ -1,7 +1,10 @@
 package com.danisousa.maissaude.modelos;
 
+import com.danisousa.maissaude.utils.LocalizacaoHelper;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.google.maps.android.SphericalUtil;
 
 import java.io.Serializable;
 
@@ -110,7 +113,16 @@ public class Estabelecimento implements Serializable {
     @Expose
     private String temVinculoSus;
 
+    public String getDistancia(LatLng localUsuario) {
+        LatLng localEstabelecimento = new LatLng(this.lat, this._long);
+        Double metros = LocalizacaoHelper.calcularDistancia(localEstabelecimento, localUsuario);
+        return LocalizacaoHelper.formatarMetros(metros);
+    }
+
     public String getEndereco() {
+        if (logradouro == null || cidade == null || uf == null) {
+            return "";
+        }
         return logradouro + ", " + numero + " - " + bairro + ". " + cidade + " - " + uf;
     }
 

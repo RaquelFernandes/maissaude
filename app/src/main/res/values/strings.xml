@@ -50,8 +50,9 @@
     <string name="main_title_pesquisar">Pesquisar</string>
     <string name="main_title_filtrar">Filtrar</string>
     <string name="main_dlg_sobre">Desenvolvido por:\n\nDaniel Sousa\nsousa.dfs@gmail.com</string>
+    <string name="main_dlg_mensagem_localizacao_negada">Precisamos da sua localização para obter os Estabelecimento de saúde que se encontram perto de você.</string>
+    <string name="main_dlg_titulo_localizacao_negada">Localização negada</string>
 
-    <string name="cheese_ipsum">Isso é um texto temporário</string>
     <string name="compartilhar_txt">Enviar para…</string>
 
 </resources>

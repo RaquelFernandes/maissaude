@@ -2,7 +2,6 @@ package com.danisousa.maissaude.fragmentos;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -17,6 +16,7 @@ import android.widget.ProgressBar;
 import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
 import com.danisousa.maissaude.R;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +29,8 @@ public class FavoritosFragment extends Fragment {
     private EstabelecimentosAdapter mAdapter;
     private List<Estabelecimento> mEstabelecimentoList = new ArrayList<>();
 
+    private LatLng mLocalizacao;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,12 +42,14 @@ public class FavoritosFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
 
+        mLocalizacao = new LatLng(100, 100);
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.azul_claro);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mAdapter.loadData(mSwipeRefreshLayout);
+                mAdapter.atualizarProximos(mLocalizacao, mSwipeRefreshLayout);
             }
         });
 

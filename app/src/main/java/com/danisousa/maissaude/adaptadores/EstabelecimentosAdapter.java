@@ -20,6 +20,7 @@ import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.servicos.ApiEstabelecimentosInterface;
 import com.danisousa.maissaude.utils.ClipboardHelper;
 import com.danisousa.maissaude.utils.IntentHelper;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class EstabelecimentosAdapter extends RecyclerView.Adapter<EstabelecimentosAdapter.MyViewHolder> {
+public class EstabelecimentosAdapter extends RecyclerView.Adapter<EstabelecimentosAdapter.EstabelecimentoViewHolder> {
 
     public static final String EXTRA_ESTABELECIMENTO = "Estabelecimento";
 
@@ -38,17 +39,19 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
     private ApiEstabelecimentosInterface mServico;
     private List<Estabelecimento> mEstabelecimentos;
 
+    private LatLng mLocalizacao;
+
     private ProgressBar mInicioProgressBar;
     private ProgressBar mInifiniteScrollProgressBar;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class EstabelecimentoViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView title, genre, distancia;
+        public TextView nome, tipo, distancia;
 
-        public MyViewHolder(View view) {
+        public EstabelecimentoViewHolder(View view) {
             super(view);
-            title = (TextView) view.findViewById(R.id.nomeFantasia);
-            genre = (TextView) view.findViewById(R.id.tipoUnidade);
+            nome = (TextView) view.findViewById(R.id.nomeFantasia);
+            tipo = (TextView) view.findViewById(R.id.tipoUnidade);
             distancia = (TextView) view.findViewById(R.id.distancia);
         }
     }
@@ -57,15 +60,15 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         mContext = context;
         mInicioProgressBar = inicioProgressBar;
         mEstabelecimentos = new ArrayList<>();
-
-        loadData();
     }
 
-    public void loadData() {
-        loadData(null);
+    public void atualizarProximos(LatLng localizacao) {
+        atualizarProximos(localizacao, null);
     }
 
-    public void loadData(final SwipeRefreshLayout swipeRefreshLayout) {
+    public void atualizarProximos(LatLng localizacao, final SwipeRefreshLayout swipeRefreshLayout) {
+        mLocalizacao = localizacao;
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiEstabelecimentosInterface.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -73,10 +76,19 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
 
         mServico = retrofit.create(ApiEstabelecimentosInterface.class);
 
-        Call<List<Estabelecimento>> call = mServico.getTodosEstabelecimentos(0);
+        Call<List<Estabelecimento>> call = mServico.getEstabelecimentosPorCoordenadas(
+                mLocalizacao.latitude,
+                mLocalizacao.longitude,
+                100 // 100km de raio
+        );
+
         call.enqueue(new Callback<List<Estabelecimento>>() {
             @Override
             public void onResponse(Call<List<Estabelecimento>> call, Response<List<Estabelecimento>> response) {
+                if (response == null) {
+                    onFailure(call, new Exception("Null response from API"));
+                    return;
+                }
                 EstabelecimentosAdapter.this.mEstabelecimentos = response.body();
                 Log.i("EstAdapter", Integer.toString(response.body().size()));
                 notifyDataSetChanged();
@@ -88,27 +100,28 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
 
             @Override
             public void onFailure(Call<List<Estabelecimento>> call, Throwable t) {
-                Toast.makeText(EstabelecimentosAdapter.this.mContext, "erro", Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+                Toast.makeText(EstabelecimentosAdapter.this.mContext, "Erro ao tentar se comunicar com o servidor", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public EstabelecimentoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_lista, parent, false);
 
-        return new MyViewHolder(itemView);
+        return new EstabelecimentoViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(EstabelecimentoViewHolder holder, int position) {
         final int index = position;
 
         Estabelecimento estabelecimento = mEstabelecimentos.get(position);
-        holder.title.setText(estabelecimento.getNomeFantasia());
-        holder.genre.setText(estabelecimento.getTipoUnidade());
-        holder.distancia.setText("25km");
+        holder.nome.setText(estabelecimento.getNomeFantasia());
+        holder.tipo.setText(estabelecimento.getTipoUnidade());
+        holder.distancia.setText(estabelecimento.getDistancia(mLocalizacao));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

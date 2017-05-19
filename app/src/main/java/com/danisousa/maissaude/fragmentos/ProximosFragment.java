@@ -1,33 +1,38 @@
 package com.danisousa.maissaude.fragmentos;
 
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
 import com.danisousa.maissaude.R;
+import com.danisousa.maissaude.utils.LocalizacaoHelper;
+import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ProximosFragment extends Fragment {
+public class ProximosFragment extends Fragment implements LocationListener {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mInicioProgressBar;
     private RecyclerView mRecyclerView;
     private EstabelecimentosAdapter mAdapter;
-    private List<Estabelecimento> mEstabelecimentoList = new ArrayList<>();
+
+    private LatLng mLocalizacao;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +50,7 @@ public class ProximosFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mAdapter.loadData(mSwipeRefreshLayout);
+                mAdapter.atualizarProximos(mLocalizacao, mSwipeRefreshLayout);
             }
         });
 
@@ -66,6 +71,52 @@ public class ProximosFragment extends Fragment {
         }
         mRecyclerView.addItemDecoration(separador);
 
+        LocalizacaoHelper.getLocalizacao(getActivity(), this);
+
         return view;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case LocalizacaoHelper.REQUEST_LOCATION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("LOCALIZAÇÂO", "Permitido: " + grantResults.toString());
+                    LocalizacaoHelper.getLocalizacao(getActivity(), this);
+                } else {
+                    Log.d("LOCALIZAÇÂO", "Não permitido: " + grantResults.toString());
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.main_dlg_titulo_localizacao_negada)
+                            .setMessage(R.string.main_dlg_mensagem_localizacao_negada)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    LocalizacaoHelper.getLocalizacao(getActivity(), ProximosFragment.this);
+                                }
+                            })
+                            .show();
+                }
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLocalizacao = new LatLng(location.getLatitude(), location.getLongitude());
+        Log.d("LOCALIZAÇÂO", "Nova localização: " + mLocalizacao.toString());
+        mAdapter.atualizarProximos(mLocalizacao);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }

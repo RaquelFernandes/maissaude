@@ -17,7 +17,7 @@ public interface ApiEstabelecimentosInterface {
     @GET("rest/estabelecimentos?quantidade=" + QUANTIDADE)
     Call<List<Estabelecimento>> getTodosEstabelecimentos(@Query("pagina") int pagina);
 
-    @GET("rest/estabelecimentos/latitude/{latitude}/longitude/{longitude}/raio/{raio}")
+    @GET("rest/estabelecimentos/latitude/{latitude}/longitude/{longitude}/raio/{raio}?quantidade=" + QUANTIDADE)
     Call<List<Estabelecimento>> getEstabelecimentosPorCoordenadas(
             @Path("latitude") double latitude,
             @Path("longitude") double longitude,
