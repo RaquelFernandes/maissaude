@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -24,10 +23,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
 import com.danisousa.maissaude.fragmentos.MapaFragment;
 import com.danisousa.maissaude.fragmentos.ProximosFragment;
 import com.danisousa.maissaude.R;
@@ -39,7 +36,6 @@ import com.danisousa.maissaude.utils.LocalizacaoHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 
@@ -145,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     finish();
                     startActivity(getIntent());
-//                    mLocalizacao = LocalizacaoHelper.getLocalizacao(this, mGoogleApiClient);
                 } else {
                     LocalizacaoHelper.alertarLocalizacaoNegada(this);
                 }

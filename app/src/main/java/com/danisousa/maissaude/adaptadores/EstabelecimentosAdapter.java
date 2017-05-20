@@ -21,7 +21,6 @@ import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.servicos.ApiEstabelecimentosInterface;
 import com.danisousa.maissaude.utils.ClipboardHelper;
 import com.danisousa.maissaude.utils.IntentHelper;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -196,11 +195,9 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
                         return;
                     case COPIAR_TELEFONE:
                         ClipboardHelper.copiarTexto(mContext, estabelecimento.getTelefone());
-//                        Toast.makeText(context, "Telefone copiado para a área de transferência", Toast.LENGTH_SHORT).show();
                         return;
                     case COPIAR_ENDEREÇO:
                         ClipboardHelper.copiarTexto(mContext, estabelecimento.getEndereco());
-//                        Toast.makeText(context, "Endereço copiado para a área de transferência", Toast.LENGTH_SHORT).show();
                         return;
                     case ADICIONAR_AOS_FAVORITOS:
                         Toast.makeText(context, "Adicionar aos Favoritos", Toast.LENGTH_SHORT).show();

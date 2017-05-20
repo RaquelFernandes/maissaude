@@ -2,13 +2,9 @@ package com.danisousa.maissaude.utils;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -16,7 +12,6 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.danisousa.maissaude.R;
-import com.danisousa.maissaude.fragmentos.ProximosFragment;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
@@ -56,29 +51,6 @@ public class LocalizacaoHelper {
         }
         return null;
     }
-
-//    private static void getLocalizacao(Activity activity, Fragment fragment) {
-//        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-//                return;
-//            }
-//            String[] permissions = { Manifest.permission.ACCESS_FINE_LOCATION };
-//            if (fragment == null) {
-//                activity.requestPermissions(permissions, REQUEST_LOCATION);
-//            } else {
-//                fragment.requestPermissions(permissions, REQUEST_LOCATION);
-//            }
-//        } else {
-//            LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-//            Criteria criteria = new Criteria();
-//            criteria.setHorizontalAccuracy(Criteria.ACCURACY_MEDIUM);
-//            if (fragment == null) {
-//                locationManager.requestSingleUpdate(criteria, (LocationListener) activity, null);
-//            } else {
-//                locationManager.requestSingleUpdate(criteria, (LocationListener) fragment, null);
-//            }
-//        }
-//    }
 
     public static void alertarLocalizacaoNegada(Fragment fragment) {
         alertarLocalizacaoNegada(fragment.getActivity(), fragment);

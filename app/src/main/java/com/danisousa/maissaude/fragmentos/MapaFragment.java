@@ -1,7 +1,6 @@
 package com.danisousa.maissaude.fragmentos;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -10,19 +9,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.danisousa.maissaude.R;
-import com.danisousa.maissaude.atividades.DetalhesActivity;
-import com.danisousa.maissaude.atividades.MainActivity;
-import com.danisousa.maissaude.modelos.Estabelecimento;
-import com.danisousa.maissaude.servicos.ApiEstabelecimentosInterface;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 

@@ -4,7 +4,6 @@ import com.danisousa.maissaude.utils.LocalizacaoHelper;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.google.maps.android.SphericalUtil;
 
 import java.io.Serializable;
 
