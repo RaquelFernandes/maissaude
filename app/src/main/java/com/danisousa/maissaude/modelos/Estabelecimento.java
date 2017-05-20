@@ -113,8 +113,9 @@ public class Estabelecimento implements Serializable {
     @Expose
     private String temVinculoSus;
 
-    public String getDistancia(LatLng localUsuario) {
+    public String getDistancia(double latitude, double longitude) {
         LatLng localEstabelecimento = new LatLng(this.lat, this._long);
+        LatLng localUsuario = new LatLng(latitude, longitude);
         Double metros = LocalizacaoHelper.calcularDistancia(localEstabelecimento, localUsuario);
         return LocalizacaoHelper.formatarMetros(metros);
     }

@@ -3,6 +3,7 @@ package com.danisousa.maissaude.adaptadores;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -33,13 +34,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EstabelecimentosAdapter extends RecyclerView.Adapter<EstabelecimentosAdapter.EstabelecimentoViewHolder> {
 
-    public static final String EXTRA_ESTABELECIMENTO = "Estabelecimento";
-
     private Context mContext;
     private ApiEstabelecimentosInterface mServico;
     private List<Estabelecimento> mEstabelecimentos;
 
-    private LatLng mLocalizacao;
+    private Location mLocalizacao;
 
     private ProgressBar mInicioProgressBar;
     private ProgressBar mInifiniteScrollProgressBar;
@@ -62,11 +61,11 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         mEstabelecimentos = new ArrayList<>();
     }
 
-    public void atualizarProximos(LatLng localizacao) {
+    public void atualizarProximos(Location localizacao) {
         atualizarProximos(localizacao, null);
     }
 
-    public void atualizarProximos(LatLng localizacao, final SwipeRefreshLayout swipeRefreshLayout) {
+    public void atualizarProximos(Location localizacao, final SwipeRefreshLayout swipeRefreshLayout) {
         mLocalizacao = localizacao;
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -77,9 +76,11 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         mServico = retrofit.create(ApiEstabelecimentosInterface.class);
 
         Call<List<Estabelecimento>> call = mServico.getEstabelecimentosPorCoordenadas(
-                mLocalizacao.latitude,
-                mLocalizacao.longitude,
-                100 // 100km de raio
+                mLocalizacao.getLatitude(),
+                mLocalizacao.getLongitude(),
+                100, // 100km de raio
+                null, // categoria. null = todas
+                100 // quantidade de resultados
         );
 
         call.enqueue(new Callback<List<Estabelecimento>>() {
@@ -121,7 +122,7 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         Estabelecimento estabelecimento = mEstabelecimentos.get(position);
         holder.nome.setText(estabelecimento.getNomeFantasia());
         holder.tipo.setText(estabelecimento.getTipoUnidade());
-        holder.distancia.setText(estabelecimento.getDistancia(mLocalizacao));
+        holder.distancia.setText(estabelecimento.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude()));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +153,7 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
 
         Estabelecimento estabelecimento = getItem(position);
         Intent it = new Intent(context, DetalhesActivity.class);
-        it.putExtra(EXTRA_ESTABELECIMENTO, estabelecimento);
+        it.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, estabelecimento);
         context.startActivity(it);
     }
 

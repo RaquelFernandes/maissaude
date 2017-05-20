@@ -62,6 +62,8 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
 
     private ImageView mFotoImageView;
 
+    public static final String EXTRA_ESTABELECIMENTO = "Estabelecimento";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,8 +72,7 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
 
-        mEstabelecimento = (Estabelecimento) getIntent()
-                .getSerializableExtra(EstabelecimentosAdapter.EXTRA_ESTABELECIMENTO);
+        mEstabelecimento = (Estabelecimento) getIntent().getSerializableExtra(EXTRA_ESTABELECIMENTO);
 
         setupCoordinatorLayout(mEstabelecimento.getNomeFantasia());
 

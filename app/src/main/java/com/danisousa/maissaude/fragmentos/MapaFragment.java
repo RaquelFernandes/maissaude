@@ -1,6 +1,7 @@
 package com.danisousa.maissaude.fragmentos;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -9,8 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.danisousa.maissaude.R;
+import com.danisousa.maissaude.atividades.DetalhesActivity;
+import com.danisousa.maissaude.atividades.MainActivity;
+import com.danisousa.maissaude.modelos.Estabelecimento;
+import com.danisousa.maissaude.servicos.ApiEstabelecimentosInterface;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -20,14 +26,18 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class MapaFragment extends Fragment implements OnMapReadyCallback {
 
     MapView mMapView;
     private GoogleMap mMap;
-
-    public MapaFragment() {
-        // Construtor vazio
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,27 +63,64 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // For showing a move to my location button
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.d("PERMISSAO", "LOCALIZAÇÂO NEGADA");
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d("LOCALIZAÇÂO", "PERMISSÃO NEGADA");
             return;
         }
 
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(ApiEstabelecimentosInterface.BASE_URL)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//
+//        ApiEstabelecimentosInterface tcuAPI = retrofit.create(ApiEstabelecimentosInterface.class);
+//
+//        Call<List<Estabelecimento>> call = tcuAPI.getEstabelecimentosPorCoordenadas(
+//                mLocalizacao.getLatitude(),
+//                mLocalizacao.getLongitude(),
+//                100, // 100km de raio
+//                "URGÊNCIA", // categoria
+//                1 // quantidade de resultados
+//        );
+//
+//        call.enqueue(new Callback<List<Estabelecimento>>() {
+//            @Override
+//            public void onResponse(Call<List<Estabelecimento>> call, Response<List<Estabelecimento>> response) {
+//                if (response == null) {
+//                    onFailure(call, new Exception("Null response from API"));
+//                    return;
+//                }
+//                List<Estabelecimento> estabelecimentos = response.body();
+//                Log.i("EstAdapter", Integer.toString(response.body().size()));
+//
+//                Intent intent = new Intent(MainActivity.this, DetalhesActivity.class);
+//                intent.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, estabelecimentos.get(0));
+//                startActivity(intent);
+//                mProgessEmergencia.dismiss();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Estabelecimento>> call, Throwable t) {
+//                t.printStackTrace();
+//                mProgessEmergencia.dismiss();
+//                Toast.makeText(MainActivity.this, "Erro ao tentar se comunicar com o servidor", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
         googleMap.getUiSettings().setAllGesturesEnabled(true);
-//        googleMap.setMyLocationEnabled(true);
+        googleMap.setMyLocationEnabled(true);
 
         // For dropping a marker at a point on the Map
         LatLng sydney = new LatLng(-34, 151);
         googleMap.addMarker(new MarkerOptions().position(sydney).title("Título").snippet("Descrição"));
 
         // For zooming automatically to the location of the marker
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(sydney)
-                .zoom(12)
-                .build();
+//        CameraPosition cameraPosition = new CameraPosition.Builder()
+//                .target()
+//                .zoom(12)
+//                .build();
 
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     @Override

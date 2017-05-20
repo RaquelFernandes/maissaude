@@ -32,7 +32,7 @@ public class ProximosFragment extends Fragment implements LocationListener {
     private RecyclerView mRecyclerView;
     private EstabelecimentosAdapter mAdapter;
 
-    private LatLng mLocalizacao;
+    private Location mLocalizacao;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class ProximosFragment extends Fragment implements LocationListener {
         }
         mRecyclerView.addItemDecoration(separador);
 
-        LocalizacaoHelper.getLocalizacao(getActivity(), this);
+        LocalizacaoHelper.getLocalizacao(this);
 
         return view;
     }
@@ -81,27 +81,16 @@ public class ProximosFragment extends Fragment implements LocationListener {
         switch (requestCode) {
             case LocalizacaoHelper.REQUEST_LOCATION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("LOCALIZAÇÂO", "Permitido: " + grantResults.toString());
-                    LocalizacaoHelper.getLocalizacao(getActivity(), this);
+                    LocalizacaoHelper.getLocalizacao(this);
                 } else {
-                    Log.d("LOCALIZAÇÂO", "Não permitido: " + grantResults.toString());
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle(R.string.main_dlg_titulo_localizacao_negada)
-                            .setMessage(R.string.main_dlg_mensagem_localizacao_negada)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    LocalizacaoHelper.getLocalizacao(getActivity(), ProximosFragment.this);
-                                }
-                            })
-                            .show();
+                    LocalizacaoHelper.alertarLocalizacaoNegada(this);
                 }
         }
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        mLocalizacao = new LatLng(location.getLatitude(), location.getLongitude());
+        mLocalizacao = location;
         Log.d("LOCALIZAÇÂO", "Nova localização: " + mLocalizacao.toString());
         mAdapter.atualizarProximos(mLocalizacao);
     }

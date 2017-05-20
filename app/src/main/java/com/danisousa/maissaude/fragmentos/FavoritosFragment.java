@@ -29,8 +29,6 @@ public class FavoritosFragment extends Fragment {
     private EstabelecimentosAdapter mAdapter;
     private List<Estabelecimento> mEstabelecimentoList = new ArrayList<>();
 
-    private LatLng mLocalizacao;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,14 +40,12 @@ public class FavoritosFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
 
-        mLocalizacao = new LatLng(100, 100);
-
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.azul_claro);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mAdapter.atualizarProximos(mLocalizacao, mSwipeRefreshLayout);
+//                mAdapter.atualizarProximos(mLocalizacao, mSwipeRefreshLayout);
             }
         });
 

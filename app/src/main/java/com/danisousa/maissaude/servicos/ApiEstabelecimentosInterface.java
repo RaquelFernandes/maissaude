@@ -17,11 +17,13 @@ public interface ApiEstabelecimentosInterface {
     @GET("rest/estabelecimentos?quantidade=" + QUANTIDADE)
     Call<List<Estabelecimento>> getTodosEstabelecimentos(@Query("pagina") int pagina);
 
-    @GET("rest/estabelecimentos/latitude/{latitude}/longitude/{longitude}/raio/{raio}?quantidade=" + QUANTIDADE)
+    @GET("rest/estabelecimentos/latitude/{latitude}/longitude/{longitude}/raio/{raio}" + QUANTIDADE)
     Call<List<Estabelecimento>> getEstabelecimentosPorCoordenadas(
             @Path("latitude") double latitude,
             @Path("longitude") double longitude,
-            @Path("raio") float raio
+            @Path("raio") float raio,
+            @Query("categoria") String categoria,
+            @Query("quantidade") int quantidade
     );
 
     @GET("rest/estabelecimentos/unidade/{codUnidade}")

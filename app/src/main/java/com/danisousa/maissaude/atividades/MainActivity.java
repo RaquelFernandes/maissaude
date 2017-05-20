@@ -1,8 +1,13 @@
 package com.danisousa.maissaude.atividades;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -14,21 +19,36 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
 import com.danisousa.maissaude.fragmentos.MapaFragment;
 import com.danisousa.maissaude.fragmentos.ProximosFragment;
 import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.fragmentos.FavoritosFragment;
+import com.danisousa.maissaude.modelos.Estabelecimento;
+import com.danisousa.maissaude.servicos.ApiEstabelecimentosInterface;
 import com.danisousa.maissaude.utils.FotoHelper;
+import com.danisousa.maissaude.utils.LocalizacaoHelper;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class MainActivity extends AppCompatActivity implements LocationListener {
 
     private FirebaseAuth mAuth;
     private FirebaseStorage mStorage;
@@ -38,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private SearchView mSearchView;
     private FloatingActionButton mFloatingActionButton;
+    private ProgressDialog mProgessEmergencia;
+
+    private Location mLocalizacao;
 
     private final static int REQUEST_CODE_FILTRAR = 1;
 
@@ -53,6 +76,15 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_emergencia);
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mProgessEmergencia = new ProgressDialog(MainActivity.this);
+                mProgessEmergencia.setMessage("Buscando estabeleciento de urgências mais próximo");
+                mProgessEmergencia.show();
+                LocalizacaoHelper.getLocalizacao(MainActivity.this);
+            }
+        });
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(mViewPager);
@@ -164,8 +196,82 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case LocalizacaoHelper.REQUEST_LOCATION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    LocalizacaoHelper.getLocalizacao(this);
+                } else {
+                    LocalizacaoHelper.alertarLocalizacaoNegada(this);
+                }
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLocalizacao = location;
+        emergencia();
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
     public static Intent newIntent(Context contexto) {
         return new Intent(contexto, MainActivity.class);
+    }
+
+    private void emergencia() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(ApiEstabelecimentosInterface.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        ApiEstabelecimentosInterface tcuAPI = retrofit.create(ApiEstabelecimentosInterface.class);
+
+        Call<List<Estabelecimento>> call = tcuAPI.getEstabelecimentosPorCoordenadas(
+                mLocalizacao.getLatitude(),
+                mLocalizacao.getLongitude(),
+                100, // 100km de raio
+                "URGÊNCIA", // categoria
+                1 // quantidade de resultados
+        );
+
+        call.enqueue(new Callback<List<Estabelecimento>>() {
+            @Override
+            public void onResponse(Call<List<Estabelecimento>> call, Response<List<Estabelecimento>> response) {
+                if (response == null) {
+                    onFailure(call, new Exception("Null response from API"));
+                    return;
+                }
+                List<Estabelecimento> estabelecimentos = response.body();
+                Log.i("EstAdapter", Integer.toString(response.body().size()));
+
+                Intent intent = new Intent(MainActivity.this, DetalhesActivity.class);
+                intent.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, estabelecimentos.get(0));
+                startActivity(intent);
+                mProgessEmergencia.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<List<Estabelecimento>> call, Throwable t) {
+                t.printStackTrace();
+                mProgessEmergencia.dismiss();
+                Toast.makeText(MainActivity.this, "Erro ao tentar se comunicar com o servidor", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void filtrar() {
