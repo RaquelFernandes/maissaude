@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,9 @@ import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.servicos.ApiEstabelecimentosInterface;
 import com.danisousa.maissaude.utils.FotoHelper;
 import com.danisousa.maissaude.utils.LocalizacaoHelper;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
@@ -48,7 +52,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private FirebaseAuth mAuth;
     private FirebaseStorage mStorage;
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private FloatingActionButton mFloatingActionButton;
     private ProgressDialog mProgessEmergencia;
 
+    private GoogleApiClient mGoogleApiClient;
     private Location mLocalizacao;
 
     private final static int REQUEST_CODE_FILTRAR = 1;
@@ -68,6 +73,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        LocalizacaoHelper.pedirPermissao(this);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
@@ -82,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 mProgessEmergencia = new ProgressDialog(MainActivity.this);
                 mProgessEmergencia.setMessage("Buscando estabeleciento de urgências mais próximo");
                 mProgessEmergencia.show();
-                LocalizacaoHelper.getLocalizacao(MainActivity.this);
+                emergencia();
             }
         });
 
@@ -123,6 +136,47 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case LocalizacaoHelper.REQUEST_LOCATION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    finish();
+                    startActivity(getIntent());
+//                    mLocalizacao = LocalizacaoHelper.getLocalizacao(this, mGoogleApiClient);
+                } else {
+                    LocalizacaoHelper.alertarLocalizacaoNegada(this);
+                }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mLocalizacao = LocalizacaoHelper.getLocalizacao(this, mGoogleApiClient);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(this, R.string.erro_servidor, Toast.LENGTH_SHORT).show();
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -194,39 +248,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         if (requestCode == REQUEST_CODE_FILTRAR) {
             // TODO
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case LocalizacaoHelper.REQUEST_LOCATION:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    LocalizacaoHelper.getLocalizacao(this);
-                } else {
-                    LocalizacaoHelper.alertarLocalizacaoNegada(this);
-                }
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        mLocalizacao = location;
-        emergencia();
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
     public static Intent newIntent(Context contexto) {

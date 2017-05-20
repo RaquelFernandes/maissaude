@@ -102,7 +102,7 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
             @Override
             public void onFailure(Call<List<Estabelecimento>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(EstabelecimentosAdapter.this.mContext, "Erro ao tentar se comunicar com o servidor", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EstabelecimentosAdapter.this.mContext, R.string.erro_servidor, Toast.LENGTH_SHORT).show();
             }
         });
     }

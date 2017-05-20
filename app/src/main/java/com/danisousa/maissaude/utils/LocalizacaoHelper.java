@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
@@ -16,6 +17,8 @@ import android.util.Log;
 
 import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.fragmentos.ProximosFragment;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
@@ -23,36 +26,59 @@ public class LocalizacaoHelper {
 
     public static final int REQUEST_LOCATION = 0;
 
-    public static void getLocalizacao(Fragment fragment) {
-        getLocalizacao(fragment.getActivity(), fragment);
+    public static boolean pedirPermissao(Activity activity) {
+        return pedirPermissao(activity, null);
     }
 
-    public static void getLocalizacao(Activity activity) {
-        getLocalizacao(activity, null);
+    public static boolean pedirPermissao(Fragment fragment) {
+        return pedirPermissao(fragment.getActivity(), fragment);
     }
 
-    private static void getLocalizacao(Activity activity, Fragment fragment) {
+    private static boolean pedirPermissao(Activity activity, Fragment fragment) {
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-                return;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                return false;
             }
-            String[] permissions = { Manifest.permission.ACCESS_FINE_LOCATION };
+            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
             if (fragment == null) {
-                activity.requestPermissions(permissions, REQUEST_LOCATION);
+                ActivityCompat.requestPermissions(activity, permissions, REQUEST_LOCATION);
             } else {
                 fragment.requestPermissions(permissions, REQUEST_LOCATION);
             }
-        } else {
-            LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-            criteria.setHorizontalAccuracy(Criteria.ACCURACY_MEDIUM);
-            if (fragment == null) {
-                locationManager.requestSingleUpdate(criteria, (LocationListener) activity, null);
-            } else {
-                locationManager.requestSingleUpdate(criteria, (LocationListener) fragment, null);
-            }
+            return false;
         }
+        return true;
     }
+
+    public static Location getLocalizacao(Activity activity, GoogleApiClient googleApiClient) {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        }
+        return null;
+    }
+
+//    private static void getLocalizacao(Activity activity, Fragment fragment) {
+//        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+//                return;
+//            }
+//            String[] permissions = { Manifest.permission.ACCESS_FINE_LOCATION };
+//            if (fragment == null) {
+//                activity.requestPermissions(permissions, REQUEST_LOCATION);
+//            } else {
+//                fragment.requestPermissions(permissions, REQUEST_LOCATION);
+//            }
+//        } else {
+//            LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+//            Criteria criteria = new Criteria();
+//            criteria.setHorizontalAccuracy(Criteria.ACCURACY_MEDIUM);
+//            if (fragment == null) {
+//                locationManager.requestSingleUpdate(criteria, (LocationListener) activity, null);
+//            } else {
+//                locationManager.requestSingleUpdate(criteria, (LocationListener) fragment, null);
+//            }
+//        }
+//    }
 
     public static void alertarLocalizacaoNegada(Fragment fragment) {
         alertarLocalizacaoNegada(fragment.getActivity(), fragment);
@@ -71,11 +97,7 @@ public class LocalizacaoHelper {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (fragment == null) {
-                            LocalizacaoHelper.getLocalizacao(activity);
-                        } else {
-                            LocalizacaoHelper.getLocalizacao(fragment);
-                        }
+                        pedirPermissao(activity);
                     }
                 })
                 .show();

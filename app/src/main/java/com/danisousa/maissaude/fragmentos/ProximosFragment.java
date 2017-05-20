@@ -1,5 +1,6 @@
 package com.danisousa.maissaude.fragmentos;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -7,6 +8,7 @@ import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -19,19 +21,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
 import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.utils.LocalizacaoHelper;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 
-public class ProximosFragment extends Fragment implements LocationListener {
+public class ProximosFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mInicioProgressBar;
     private RecyclerView mRecyclerView;
     private EstabelecimentosAdapter mAdapter;
 
+    private GoogleApiClient mGoogleApiClient;
     private Location mLocalizacao;
 
     @Override
@@ -71,41 +78,43 @@ public class ProximosFragment extends Fragment implements LocationListener {
         }
         mRecyclerView.addItemDecoration(separador);
 
-        LocalizacaoHelper.getLocalizacao(this);
+        mGoogleApiClient = new GoogleApiClient.Builder(this.getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
         return view;
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case LocalizacaoHelper.REQUEST_LOCATION:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    LocalizacaoHelper.getLocalizacao(this);
-                } else {
-                    LocalizacaoHelper.alertarLocalizacaoNegada(this);
-                }
+    public void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mLocalizacao = LocalizacaoHelper.getLocalizacao(this.getActivity(), mGoogleApiClient);
+        if (mLocalizacao != null) {
+            Log.d("LOCALIZAÇÂO", "Nova localização: " + mLocalizacao.toString());
+            mAdapter.atualizarProximos(mLocalizacao);
         }
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-        mLocalizacao = location;
-        Log.d("LOCALIZAÇÂO", "Nova localização: " + mLocalizacao.toString());
-        mAdapter.atualizarProximos(mLocalizacao);
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
+    public void onConnectionSuspended(int i) {
 
     }
 
     @Override
-    public void onProviderDisabled(String provider) {
-
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(this.getActivity(), R.string.erro_servidor, Toast.LENGTH_SHORT).show();
     }
 }
