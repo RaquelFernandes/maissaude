@@ -54,6 +54,7 @@
     <string name="main_dlg_titulo_localizacao_negada">Localização negada</string>
 
     <string name="compartilhar_txt">Enviar para…</string>
-    <string name="erro_servidor">Erro ao tentar se comunicar com o servidor</string>
+    <string name="erro_servidor">Erro: O servidor não está respondendo</string>
+    <string name="erro_inesperado">Erro Inesperado: Tente novamente mais tarde</string>
 
 </resources>
