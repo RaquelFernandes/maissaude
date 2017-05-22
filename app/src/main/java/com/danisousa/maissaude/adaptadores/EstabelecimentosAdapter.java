@@ -1,5 +1,6 @@
 package com.danisousa.maissaude.adaptadores;
 
+import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,12 +20,15 @@ import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.atividades.DetalhesActivity;
 import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.servicos.ApiEstabelecimentosInterface;
+import com.danisousa.maissaude.servicos.TcuApi;
 import com.danisousa.maissaude.utils.ClipboardHelper;
 import com.danisousa.maissaude.utils.IntentHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -58,6 +62,8 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         mContext = context;
         mInicioProgressBar = inicioProgressBar;
         mEstabelecimentos = new ArrayList<>();
+
+        mServico = TcuApi.getInstance().getServico();
     }
 
     public void atualizarProximos(Location localizacao) {
@@ -66,13 +72,6 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
 
     public void atualizarProximos(Location localizacao, final SwipeRefreshLayout swipeRefreshLayout) {
         mLocalizacao = localizacao;
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ApiEstabelecimentosInterface.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        mServico = retrofit.create(ApiEstabelecimentosInterface.class);
 
         Call<List<Estabelecimento>> call = mServico.getEstabelecimentosPorCoordenadas(
                 mLocalizacao.getLatitude(),
@@ -85,8 +84,8 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         call.enqueue(new Callback<List<Estabelecimento>>() {
             @Override
             public void onResponse(Call<List<Estabelecimento>> call, Response<List<Estabelecimento>> response) {
-                if (response == null) {
-                    onFailure(call, new Exception("Null response from API"));
+                if (response.body() == null) {
+                    onFailure(call, new NetworkErrorException("Null response from API"));
                     return;
                 }
                 EstabelecimentosAdapter.this.mEstabelecimentos = response.body();
@@ -101,7 +100,7 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
             @Override
             public void onFailure(Call<List<Estabelecimento>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(EstabelecimentosAdapter.this.mContext, R.string.erro_servidor, Toast.LENGTH_SHORT).show();
+                Toast.makeText(EstabelecimentosAdapter.this.mContext, R.string.erro_servidor, Toast.LENGTH_LONG).show();
             }
         });
     }

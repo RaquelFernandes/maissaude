@@ -31,6 +31,7 @@ import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.fragmentos.FavoritosFragment;
 import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.servicos.ApiEstabelecimentosInterface;
+import com.danisousa.maissaude.servicos.TcuApi;
 import com.danisousa.maissaude.utils.FotoHelper;
 import com.danisousa.maissaude.utils.LocalizacaoHelper;
 import com.google.android.gms.common.ConnectionResult;
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private FirebaseAuth mAuth;
     private FirebaseStorage mStorage;
+
+    private ApiEstabelecimentosInterface mServico;
 
     private Toolbar mToolbar;
     private TabLayout mTabLayout;
@@ -80,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
+
+        mServico = TcuApi.getInstance().getServico();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -250,14 +255,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void emergencia() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ApiEstabelecimentosInterface.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        ApiEstabelecimentosInterface tcuAPI = retrofit.create(ApiEstabelecimentosInterface.class);
-
-        Call<List<Estabelecimento>> call = tcuAPI.getEstabelecimentosPorCoordenadas(
+        Call<List<Estabelecimento>> call = mServico.getEstabelecimentosPorCoordenadas(
                 mLocalizacao.getLatitude(),
                 mLocalizacao.getLongitude(),
                 100, // 100km de raio

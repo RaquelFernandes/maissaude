@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.danisousa.maissaude.R;
+import com.danisousa.maissaude.servicos.ApiEstabelecimentosInterface;
+import com.danisousa.maissaude.servicos.TcuApi;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
@@ -30,10 +32,13 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback {
 
     MapView mMapView;
     private GoogleMap mMap;
+    private ApiEstabelecimentosInterface mServico;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_mapa, container, false);
+
+        mServico = TcuApi.getInstance().getServico();
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -60,14 +65,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback {
             return;
         }
 
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(ApiEstabelecimentosInterface.BASE_URL)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//
-//        ApiEstabelecimentosInterface tcuAPI = retrofit.create(ApiEstabelecimentosInterface.class);
-//
-//        Call<List<Estabelecimento>> call = tcuAPI.getEstabelecimentosPorCoordenadas(
+//        Call<List<Estabelecimento>> call = mServico.getEstabelecimentosPorCoordenadas(
 //                mLocalizacao.getLatitude(),
 //                mLocalizacao.getLongitude(),
 //                100, // 100km de raio
