@@ -69,8 +69,9 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         mInicioProgressBar = inicioProgressBar;
     }
 
-    public EstabelecimentosAdapter(Context context, List<Estabelecimento> estabelecimentos) {
+    public EstabelecimentosAdapter(Context context, List<Estabelecimento> estabelecimentos, Location localizacao) {
         this(context);
+        mLocalizacao = localizacao;
         mEstabelecimentos = estabelecimentos;
         notifyDataSetChanged();
     }
@@ -97,10 +98,14 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
                     onFailure(call, new NetworkErrorException("Null response from API"));
                     return;
                 }
+
                 EstabelecimentosAdapter.this.mEstabelecimentos = response.body();
                 Log.i("EstAdapter", Integer.toString(response.body().size()));
                 notifyDataSetChanged();
-                mInicioProgressBar.setVisibility(View.GONE);
+
+                if (mInicioProgressBar != null) {
+                    mInicioProgressBar.setVisibility(View.GONE);
+                }
                 if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
@@ -160,7 +165,7 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
 
         Estabelecimento estabelecimento = getItem(position);
         Intent it = new Intent(context, DetalhesActivity.class);
-        it.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, (Parcelable) estabelecimento);
+        it.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, estabelecimento);
         context.startActivity(it);
     }
 

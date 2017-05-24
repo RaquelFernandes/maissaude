@@ -37,6 +37,7 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
     private List<Estabelecimento> mEstabelecimentos;
 
     private static final String ESTABELECIMENTOS = "Estabelecimentos";
+    private static final String LOCALIZACAO = "Localização";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
         mMainActivity = (MainActivity) this.getActivity();
         if (savedInstanceState != null) {
             mEstabelecimentos = (ArrayList<Estabelecimento>) savedInstanceState.getSerializable(ESTABELECIMENTOS);
+            mLocalizacao = savedInstanceState.getParcelable(LOCALIZACAO);
         }
     }
 
@@ -66,7 +68,7 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
         if (mEstabelecimentos != null) {
-            mAdapter = new EstabelecimentosAdapter(getActivity(), mEstabelecimentos);
+            mAdapter = new EstabelecimentosAdapter(getActivity(), mEstabelecimentos, mLocalizacao);
             mInicioProgressBar.setVisibility(View.GONE);
         } else {
             mAdapter = new EstabelecimentosAdapter(getActivity(), mInicioProgressBar);
@@ -94,7 +96,7 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
         super.onSaveInstanceState(outState);
         ArrayList<Estabelecimento> estabelecimentos = (ArrayList<Estabelecimento>) mAdapter.getEstabelecimentos();
         outState.putSerializable(ESTABELECIMENTOS, estabelecimentos);
-        outState.putParcelable(LOCALIZACAO);
+        outState.putParcelable(LOCALIZACAO, mLocalizacao);
     }
 
     @Override
