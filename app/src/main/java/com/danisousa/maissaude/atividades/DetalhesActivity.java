@@ -225,16 +225,5 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-//        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) findViewById(R.id.appbar).getLayoutParams();
-//        AppBarLayout.Behavior behavior = new AppBarLayout.Behavior();
-//        behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
-//            @Override
-//            public boolean canDrag(AppBarLayout appBarLayout) {
-//                if (appBarLayout.set)
-//                return false;
-//            }
-//        });
-//        params.setBehavior(behavior);
     }
 }

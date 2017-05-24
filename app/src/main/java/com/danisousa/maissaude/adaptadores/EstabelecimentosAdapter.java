@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +25,7 @@ import com.danisousa.maissaude.servicos.TcuApi;
 import com.danisousa.maissaude.utils.ClipboardHelper;
 import com.danisousa.maissaude.utils.IntentHelper;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -40,9 +42,7 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
     private Context mContext;
     private ApiEstabelecimentosInterface mServico;
     private List<Estabelecimento> mEstabelecimentos;
-
     private Location mLocalizacao;
-
     private ProgressBar mInicioProgressBar;
     private ProgressBar mInifiniteScrollProgressBar;
 
@@ -58,12 +58,21 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         }
     }
 
-    public EstabelecimentosAdapter(Context context, ProgressBar inicioProgressBar) {
+    private EstabelecimentosAdapter(Context context) {
         mContext = context;
-        mInicioProgressBar = inicioProgressBar;
         mEstabelecimentos = new ArrayList<>();
-
         mServico = TcuApi.getInstance().getServico();
+    }
+
+    public EstabelecimentosAdapter(Context context, ProgressBar inicioProgressBar) {
+        this(context);
+        mInicioProgressBar = inicioProgressBar;
+    }
+
+    public EstabelecimentosAdapter(Context context, List<Estabelecimento> estabelecimentos) {
+        this(context);
+        mEstabelecimentos = estabelecimentos;
+        notifyDataSetChanged();
     }
 
     public void atualizarProximos(Location localizacao) {
@@ -151,7 +160,7 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
 
         Estabelecimento estabelecimento = getItem(position);
         Intent it = new Intent(context, DetalhesActivity.class);
-        it.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, estabelecimento);
+        it.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, (Parcelable) estabelecimento);
         context.startActivity(it);
     }
 
@@ -208,6 +217,10 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         });
         builder.show();
         return true;
+    }
+
+    public List<Estabelecimento> getEstabelecimentos() {
+        return mEstabelecimentos;
     }
 
 }

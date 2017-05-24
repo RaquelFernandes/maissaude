@@ -19,7 +19,13 @@ import com.google.maps.android.SphericalUtil;
 
 public class LocalizacaoHelper {
 
-    public static final int REQUEST_LOCATION = 0;
+    public static final int REQUEST_LOCALIZACAO = 0;
+    public static final String LOCALIZACAO_ACTION = "com.danisousa.maissaude.localizacao";
+    public static final String LOCALIZACAO_EXTRA = "localizacao";
+
+    public interface LocalizacaoListener {
+        void onLocalizacaoChanged(Location localizacao);
+    }
 
     public static boolean pedirPermissao(Activity activity) {
         return pedirPermissao(activity, null);
@@ -36,9 +42,9 @@ public class LocalizacaoHelper {
             }
             String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
             if (fragment == null) {
-                ActivityCompat.requestPermissions(activity, permissions, REQUEST_LOCATION);
+                ActivityCompat.requestPermissions(activity, permissions, REQUEST_LOCALIZACAO);
             } else {
-                fragment.requestPermissions(permissions, REQUEST_LOCATION);
+                fragment.requestPermissions(permissions, REQUEST_LOCALIZACAO);
             }
             return false;
         }

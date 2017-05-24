@@ -1,11 +1,14 @@
 package com.danisousa.maissaude.atividades;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +16,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -46,25 +50,22 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private ApiEstabelecimentosInterface mServico;
     private FirebaseAuth mAuth;
     private FirebaseStorage mStorage;
-
-    private ApiEstabelecimentosInterface mServico;
-
     private Toolbar mToolbar;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private SearchView mSearchView;
     private FloatingActionButton mFloatingActionButton;
     private ProgressDialog mProgessEmergencia;
-
+    private LocalBroadcastManager mLocalBroadcastManager;
     private GoogleApiClient mGoogleApiClient;
     private Location mLocalizacao;
+    private List<LocalizacaoHelper.LocalizacaoListener> mLocalizacaoListeners;
 
     private final static int REQUEST_CODE_FILTRAR = 1;
 
@@ -72,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mLocalizacaoListeners = new ArrayList<>();
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
+        configurarLocalBroadcast();
 
         LocalizacaoHelper.pedirPermissao(this);
 
@@ -110,6 +115,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         FotoHelper.setFotoUsuario(this, null, mStorage, mAuth);
     }
 
+    private void configurarLocalBroadcast() {
+        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Location localizacao = intent.getParcelableExtra(LocalizacaoHelper.LOCALIZACAO_EXTRA);
+                for (LocalizacaoHelper.LocalizacaoListener localizacaoListener : mLocalizacaoListeners) {
+                    localizacaoListener.onLocalizacaoChanged(localizacao);
+                }
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(LocalizacaoHelper.LOCALIZACAO_ACTION);
+        mLocalBroadcastManager.registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    public void addLocalizacaoListener(LocalizacaoHelper.LocalizacaoListener listener) {
+        mLocalizacaoListeners.add(listener);
+    }
+
+    public void atualizarLocalizacao() {
+        onConnected(new Bundle());
+    }
+
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new MapaFragment(), getString(R.string.tab_mapa));
@@ -142,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case LocalizacaoHelper.REQUEST_LOCATION:
+            case LocalizacaoHelper.REQUEST_LOCALIZACAO:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     finish();
                     startActivity(getIntent());
@@ -167,6 +195,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         mLocalizacao = LocalizacaoHelper.getLocalizacao(this, mGoogleApiClient);
+        if (mLocalizacao != null) {
+            Intent intent = new Intent(LocalizacaoHelper.LOCALIZACAO_ACTION);
+            intent.putExtra(LocalizacaoHelper.LOCALIZACAO_EXTRA, mLocalizacao);
+            mLocalBroadcastManager.sendBroadcast(intent);
+        }
     }
 
     @Override
@@ -274,7 +307,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Log.i("EstAdapter", Integer.toString(response.body().size()));
 
                 Intent intent = new Intent(MainActivity.this, DetalhesActivity.class);
-                intent.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, estabelecimentos.get(0));
+                Estabelecimento estabelecimento = estabelecimentos.get(0);
+                intent.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, estabelecimento);
                 startActivity(intent);
                 mProgessEmergencia.dismiss();
             }

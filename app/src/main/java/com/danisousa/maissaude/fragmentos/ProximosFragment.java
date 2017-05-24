@@ -3,8 +3,6 @@ package com.danisousa.maissaude.fragmentos;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -16,28 +14,37 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
 import com.danisousa.maissaude.R;
+import com.danisousa.maissaude.atividades.MainActivity;
+import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.utils.LocalizacaoHelper;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 
-public class ProximosFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+import java.util.ArrayList;
+import java.util.List;
 
+public class ProximosFragment extends Fragment implements LocalizacaoHelper.LocalizacaoListener {
+
+    private MainActivity mMainActivity;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mInicioProgressBar;
     private RecyclerView mRecyclerView;
     private EstabelecimentosAdapter mAdapter;
-
     private GoogleApiClient mGoogleApiClient;
     private Location mLocalizacao;
+    private List<Estabelecimento> mEstabelecimentos;
+
+    private static final String ESTABELECIMENTOS = "Estabelecimentos";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mMainActivity = (MainActivity) this.getActivity();
+        if (savedInstanceState != null) {
+            mEstabelecimentos = (ArrayList<Estabelecimento>) savedInstanceState.getSerializable(ESTABELECIMENTOS);
+        }
     }
 
     @Override
@@ -58,7 +65,12 @@ public class ProximosFragment extends Fragment implements GoogleApiClient.Connec
         mInicioProgressBar = (ProgressBar) view.findViewById(R.id.inicio_progress_bar);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        mAdapter = new EstabelecimentosAdapter(getActivity(), mInicioProgressBar);
+        if (mEstabelecimentos != null) {
+            mAdapter = new EstabelecimentosAdapter(getActivity(), mEstabelecimentos);
+            mInicioProgressBar.setVisibility(View.GONE);
+        } else {
+            mAdapter = new EstabelecimentosAdapter(getActivity(), mInicioProgressBar);
+        }
 
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -72,43 +84,32 @@ public class ProximosFragment extends Fragment implements GoogleApiClient.Connec
         }
         mRecyclerView.addItemDecoration(separador);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this.getActivity())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        mMainActivity.addLocalizacaoListener(this);
 
         return view;
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ArrayList<Estabelecimento> estabelecimentos = (ArrayList<Estabelecimento>) mAdapter.getEstabelecimentos();
+        outState.putSerializable(ESTABELECIMENTOS, estabelecimentos);
+        outState.putParcelable(LOCALIZACAO);
+    }
+
+    @Override
+    public void onLocalizacaoChanged(Location localizacao) {
+        mLocalizacao = localizacao;
+        mAdapter.atualizarProximos(mLocalizacao);
+    }
+
+    @Override
     public void onStart() {
-        mGoogleApiClient.connect();
         super.onStart();
     }
 
     @Override
     public void onStop() {
-        mGoogleApiClient.disconnect();
         super.onStop();
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        mLocalizacao = LocalizacaoHelper.getLocalizacao(this.getActivity(), mGoogleApiClient);
-        if (mLocalizacao != null) {
-            Log.d("LOCALIZAÇÂO", "Nova localização: " + mLocalizacao.toString());
-            mAdapter.atualizarProximos(mLocalizacao);
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(this.getActivity(), R.string.erro_servidor, Toast.LENGTH_SHORT).show();
     }
 }
