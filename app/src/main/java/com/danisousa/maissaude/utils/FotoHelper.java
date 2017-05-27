@@ -6,14 +6,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
@@ -43,25 +39,21 @@ public class FotoHelper {
         } else {
             StorageReference httpsReference = storage.getReferenceFromUrl(fotoUri.toString());
             final long ONE_MEGABYTE = 1024 * 1024;
-            httpsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
+            httpsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                if (imageView != null) {
+                    Drawable imagemCircular = imagemCircular(ctx.getResources(), bitmap);
+                    imageView.setImageDrawable(imagemCircular);
+                }
 
-                    if (imageView != null) {
-                        Drawable imagemCircular = imagemCircular(ctx.getResources(), bitmap);
-                        imageView.setImageDrawable(imagemCircular);
-                    }
-
-                    try {
-                        FileOutputStream outStream = new FileOutputStream(foto);
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream);
-                        outStream.flush();
-                        outStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    FileOutputStream outStream = new FileOutputStream(foto);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream);
+                    outStream.flush();
+                    outStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             });
         }

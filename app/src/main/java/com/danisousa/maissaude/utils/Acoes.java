@@ -3,16 +3,50 @@ package com.danisousa.maissaude.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
+import android.support.annotation.NonNull;
 
 import com.danisousa.maissaude.R;
+import com.danisousa.maissaude.fragmentos.FavoritosFragment;
+import com.danisousa.maissaude.fragmentos.ProximosFragment;
 import com.danisousa.maissaude.modelos.Estabelecimento;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class IntentHelper {
+public class Acoes {
+
+    public static final int LIGAR = 0;
+    public static final int ABRIR_NO_GMAPS = 1;
+    public static final int COMPARTILHAR = 2;
+    public static final int COPIAR_TELEFONE = 3;
+    public static final int COPIAR_ENDEREÇO = 4;
+    public static final int ADICIONAR_OU_REMOVER_FAVORITOS = 5;
+
+    private static List<String> longPressNames = Arrays.asList(
+            "Ligar",
+            "Abrir no Mapa",
+            "Compartilhar",
+            "Copiar Telefone",
+            "Copiar Endereço",
+            "Adicionar aos Favoritos",
+            "Remover dos Favoritos"
+    );
+
+    @NonNull
+    public static CharSequence[] getLongPressNames(Class fragmentClass) {
+        List<String> names = new ArrayList<>(longPressNames);
+        if (fragmentClass == ProximosFragment.class) {
+            names.remove("Remover dos Favoritos");
+        } else if (fragmentClass == FavoritosFragment.class) {
+            names.remove("Adicionar aos Favoritos");
+        }
+        CharSequence[] namesArray = new CharSequence[names.size()];
+        return names.toArray(namesArray);
+    }
 
     public static void abrirMapa(Context context, Estabelecimento estabelecimento) {
         String nome = estabelecimento.getNomeFantasia();
@@ -20,7 +54,6 @@ public class IntentHelper {
         String lon = Double.toString(estabelecimento.getLong());
         String url = MessageFormat.format("geo:{0},{1}?q={0},{1}({2})", lat, lon, nome);
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-//                intent.setPackage("com.google.android.apps.maps");
         context.startActivity(intent);
     }
 
@@ -29,7 +62,6 @@ public class IntentHelper {
         String lon = Double.toString(estabelecimento.getLong());
         String uriStr = MessageFormat.format("google.navigation:q={0},{1}", lat, lon);
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriStr));
-//                intent.setPackage("com.google.android.apps.maps");
         context.startActivity(intent);
     }
 
