@@ -9,26 +9,26 @@ import android.view.MenuItem;
 
 import com.danisousa.maissaude.R;
 
-public class FiltroActivity extends AppCompatActivity {
+public class FiltrarActivity extends AppCompatActivity {
 
     private static final String EXTRA_FILTROS = "filtros";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_filtro);
+        setContentView(R.layout.activity_filtrar);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.filtro, menu);
+        getMenuInflater().inflate(R.menu.filtrar, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_aplicar:
+            case R.id.action_procurar:
                 aplicar();
                 return true;
             default:
