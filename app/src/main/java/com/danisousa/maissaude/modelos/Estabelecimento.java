@@ -2,6 +2,7 @@ package com.danisousa.maissaude.modelos;
 
 import com.danisousa.maissaude.utils.LocalizacaoHelper;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.Exclude;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,6 +13,8 @@ public class Estabelecimento implements Serializable {
     private static final String SIM = "Sim";
     private static final String NAO = "Não";
 
+    @Exclude
+    private String endereco;
     @SerializedName("bairro")
     @Expose
     private String bairro;
@@ -110,12 +113,16 @@ public class Estabelecimento implements Serializable {
     private String uf;
     @SerializedName("vinculoSus")
     @Expose
-    private String temVinculoSus;
+    private String vinculoSus;
 
-    public String getDistancia(double latitude, double longitude) {
+    public Double getDistancia(double latitude, double longitude) {
         LatLng localEstabelecimento = new LatLng(this.lat, this._long);
         LatLng localUsuario = new LatLng(latitude, longitude);
-        Double metros = LocalizacaoHelper.calcularDistancia(localEstabelecimento, localUsuario);
+        return LocalizacaoHelper.calcularDistancia(localEstabelecimento, localUsuario);
+    }
+
+    public String getDistanciaFormatada(double latitude, double longitude) {
+        Double metros = getDistancia(latitude, longitude);
         return LocalizacaoHelper.formatarMetros(metros);
     }
 
@@ -250,7 +257,7 @@ public class Estabelecimento implements Serializable {
         return _long;
     }
 
-    public void setLong(Integer _long) {
+    public void setLong(Double _long) {
         this._long = _long;
     }
 
@@ -306,48 +313,48 @@ public class Estabelecimento implements Serializable {
         return temAtendimentoAmbulatorial.equals(SIM);
     }
 
-    public void setTemAtendimentoAmbulatorial(boolean temAtendimentoAmbulatorial) {
-        this.temAtendimentoAmbulatorial = temAtendimentoAmbulatorial ? SIM : NAO;
+    public void setTemAtendimentoAmbulatorial(String temAtendimentoAmbulatorial) {
+        this.temAtendimentoAmbulatorial = temAtendimentoAmbulatorial;
     }
 
     public boolean temAtendimentoUrgencia() {
         return temAtendimentoUrgencia.equals(SIM);
     }
 
-    public void setTemAtendimentoUrgencia(boolean temAtendimentoUrgencia) {
-        this.temAtendimentoUrgencia = temAtendimentoUrgencia ? SIM : NAO;
+    public void setTemAtendimentoUrgencia(String temAtendimentoUrgencia) {
+        this.temAtendimentoUrgencia = temAtendimentoUrgencia;
     }
 
     public boolean temCentroCirurgico() {
         return temCentroCirurgico.equals(SIM);
     }
 
-    public void setTemCentroCirurgico(boolean temCentroCirurgico) {
-        this.temCentroCirurgico = temCentroCirurgico ? SIM : NAO;
+    public void setTemCentroCirurgico(String temCentroCirurgico) {
+        this.temCentroCirurgico = temCentroCirurgico;
     }
 
     public boolean temDialise() {
         return temDialise.equals(SIM);
     }
 
-    public void setTemDialise(boolean temDialise) {
-        this.temDialise = temDialise ? SIM : NAO;
+    public void setTemDialise(String temDialise) {
+        this.temDialise = temDialise;
     }
 
     public boolean temNeoNatal() {
         return temNeoNatal.equals(SIM);
     }
 
-    public void setTemNeoNatal(boolean temNeoNatal) {
-        this.temNeoNatal = temNeoNatal ? SIM : NAO;
+    public void setTemNeoNatal(String temNeoNatal) {
+        this.temNeoNatal = temNeoNatal;
     }
 
     public boolean temObstetra() {
         return temObstetra.equals(SIM);
     }
 
-    public void setTemObstetra(boolean temObstetra) {
-        this.temObstetra = temObstetra ? SIM : NAO;
+    public void setTemObstetra(String temObstetra) {
+        this.temObstetra = temObstetra;
     }
 
     public String getTipoUnidade() {
@@ -364,6 +371,34 @@ public class Estabelecimento implements Serializable {
 
     public void setTipoUnidadeCnes(String tipoUnidadeCnes) {
         this.tipoUnidadeCnes = tipoUnidadeCnes;
+    }
+
+    public String getTemAtendimentoAmbulatorial() {
+        return temAtendimentoAmbulatorial;
+    }
+
+    public String getTemAtendimentoUrgencia() {
+        return temAtendimentoUrgencia;
+    }
+
+    public String getTemCentroCirurgico() {
+        return temCentroCirurgico;
+    }
+
+    public String getTemDialise() {
+        return temDialise;
+    }
+
+    public String getTemNeoNatal() {
+        return temNeoNatal;
+    }
+
+    public String getTemObstetra() {
+        return temObstetra;
+    }
+
+    public String getVinculoSus() {
+        return vinculoSus;
     }
 
     public String getTurnoAtendimento() {
@@ -383,11 +418,50 @@ public class Estabelecimento implements Serializable {
     }
 
     public boolean temVinculoSus() {
-        return temVinculoSus.equals(SIM);
+        return vinculoSus.equals(SIM);
     }
 
-    public void setTemVinculoSus(boolean vinculoSus) {
-        this.temVinculoSus = vinculoSus ? SIM : NAO;
+    public void setVinculoSus(String vinculoSus) {
+        this.vinculoSus = vinculoSus;
     }
 
+    @Override
+    public String toString() {
+        return "Estabelecimento{" +
+                "endereco='" + endereco + '\'' +
+                ", bairro='" + bairro + '\'' +
+                ", categoriaUnidade='" + categoriaUnidade + '\'' +
+                ", cep='" + cep + '\'' +
+                ", cidade='" + cidade + '\'' +
+                ", cnpj='" + cnpj + '\'' +
+                ", codCnes=" + codCnes +
+                ", codIbge=" + codIbge +
+                ", codUnidade='" + codUnidade + '\'' +
+                ", descricaoCompleta='" + descricaoCompleta + '\'' +
+                ", email='" + email + '\'' +
+                ", esferaAdministrativa='" + esferaAdministrativa + '\'' +
+                ", fluxoClientela='" + fluxoClientela + '\'' +
+                ", grupo='" + grupo + '\'' +
+                ", lat=" + lat +
+                ", logradouro='" + logradouro + '\'' +
+                ", _long=" + _long +
+                ", natureza='" + natureza + '\'' +
+                ", nomeFantasia='" + nomeFantasia + '\'' +
+                ", numero='" + numero + '\'' +
+                ", origemGeografica='" + origemGeografica + '\'' +
+                ", retencao='" + retencao + '\'' +
+                ", telefone='" + telefone + '\'' +
+                ", temAtendimentoAmbulatorial='" + temAtendimentoAmbulatorial + '\'' +
+                ", temAtendimentoUrgencia='" + temAtendimentoUrgencia + '\'' +
+                ", temCentroCirurgico='" + temCentroCirurgico + '\'' +
+                ", temDialise='" + temDialise + '\'' +
+                ", temNeoNatal='" + temNeoNatal + '\'' +
+                ", temObstetra='" + temObstetra + '\'' +
+                ", tipoUnidade='" + tipoUnidade + '\'' +
+                ", tipoUnidadeCnes='" + tipoUnidadeCnes + '\'' +
+                ", turnoAtendimento='" + turnoAtendimento + '\'' +
+                ", uf='" + uf + '\'' +
+                ", vinculoSus='" + vinculoSus + '\'' +
+                '}';
+    }
 }
