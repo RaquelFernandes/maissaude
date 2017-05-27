@@ -10,20 +10,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.utils.Validacao;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
@@ -46,15 +40,12 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser usuario = firebaseAuth.getCurrentUser();
-                if (usuario != null) {
-                    // Usuário entrou
-                    finish();
-                    startActivity(MainActivity.newIntent(LoginActivity.this));
-                }
+        mAuthListener = firebaseAuth -> {
+            FirebaseUser usuario = firebaseAuth.getCurrentUser();
+            if (usuario != null) {
+                // Usuário entrou
+                finish();
+                startActivity(MainActivity.newIntent(LoginActivity.this));
             }
         };
 
@@ -63,28 +54,15 @@ public class LoginActivity extends AppCompatActivity {
         mEntrarButton = (Button) findViewById(R.id.login_btn_entrar);
         mCadastroButton = (Button) findViewById(R.id.login_btn_cadastro);
 
-        mEntrarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                entrar();
-            }
-        });
-        mCadastroButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                irParaCadastro();
-            }
-        });
+        mEntrarButton.setOnClickListener(v -> entrar());
+        mCadastroButton.setOnClickListener(v -> irParaCadastro());
 
-        mSenhaEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mEntrarButton.performClick();
-                    return true;
-                }
-                return false;
+        mSenhaEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                mEntrarButton.performClick();
+                return true;
             }
+            return false;
         });
     }
 
@@ -136,8 +114,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void entrar() {
-        mProgressDialog = ProgressDialog.show(LoginActivity.this, "",
-                getString(R.string.login_pdlg_acessando_conta), true);
+        mProgressDialog = ProgressDialog.show(LoginActivity.this, "", getString(R.string.login_pdlg_acessando_conta), true);
         mProgressDialog.show();
 
         // fecha teclado
@@ -153,32 +130,25 @@ public class LoginActivity extends AppCompatActivity {
             String senha = mSenhaEditText.getText().toString();
 
             mAuth.signInWithEmailAndPassword(email, senha)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            mProgressDialog.dismiss();
-                            if (!task.isSuccessful()) {
-
-                                String erro = getString(R.string.erro_firebase_login_generico);
-                                try {
-                                    throw task.getException();
-                                } catch (FirebaseNetworkException e) {
-                                    erro = getString(R.string.erro_firebase_login_internet);
-                                } catch (FirebaseAuthInvalidCredentialsException | FirebaseAuthInvalidUserException e) {
-                                    erro = getString(R.string.erro_firebase_login_credenciais);
-                                } catch (Exception e) {
-                                    Log.e("AUTH", e.getMessage());
-                                }
-
-                                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                                builder.setTitle(R.string.login_dlg_erro_titulo)
-                                        .setMessage(erro)
-                                        .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                dialog.cancel();
-                                            }
-                                        }).create().show();
+                    .addOnCompleteListener(this, task -> {
+                        mProgressDialog.dismiss();
+                        if (!task.isSuccessful()) {
+                            String erro = getString(R.string.erro_firebase_login_generico);
+                            try {
+                                throw task.getException();
+                            } catch (FirebaseNetworkException e) {
+                                erro = getString(R.string.erro_firebase_login_internet);
+                            } catch (FirebaseAuthInvalidCredentialsException | FirebaseAuthInvalidUserException e) {
+                                erro = getString(R.string.erro_firebase_login_credenciais);
+                            } catch (Exception e) {
+                                Log.e("AUTH", e.getMessage());
                             }
+                            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                            builder.setTitle(R.string.login_dlg_erro_titulo)
+                                    .setMessage(erro)
+                                    .setPositiveButton(R.string.btn_ok, (dialog, id) -> dialog.cancel())
+                                    .create()
+                                    .show();
                         }
                     })
             ;

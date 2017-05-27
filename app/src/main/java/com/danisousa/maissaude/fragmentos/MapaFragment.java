@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -32,7 +31,6 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
@@ -144,15 +142,12 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
         mClusterManager.setRenderer(new ClusterRenderer(getActivity(), mMap, mClusterManager));
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnInfoWindowClickListener(mClusterManager);
-        mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<Cluster>() {
-            @Override
-            public void onClusterItemInfoWindowClick(Cluster cluster) {
-                Context context = MapaFragment.this.getActivity();
-                Estabelecimento estabelecimento = cluster.getEstabelecimento();
-                Intent it = new Intent(context, DetalhesActivity.class);
-                it.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, estabelecimento);
-                context.startActivity(it);
-            }
+        mClusterManager.setOnClusterItemInfoWindowClickListener(cluster -> {
+            Context context = MapaFragment.this.getActivity();
+            Estabelecimento estabelecimento = cluster.getEstabelecimento();
+            Intent it = new Intent(context, DetalhesActivity.class);
+            it.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, estabelecimento);
+            context.startActivity(it);
         });
         adicionarMarcadores();
     }

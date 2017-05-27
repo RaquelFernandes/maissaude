@@ -3,13 +3,11 @@ package com.danisousa.maissaude.atividades;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -17,24 +15,17 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.utils.Validacao;
 import com.danisousa.maissaude.utils.FotoHelper;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -86,71 +77,43 @@ public class CadastroActivity extends AppCompatActivity {
         mCriarContaButton = (Button) findViewById(R.id.cadastro_btn_cadastrar);
         mLoginButton = (Button) findViewById(R.id.cadastro_btn_login);
 
-        mFotoImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                trocarFoto();
+        mFotoImageView.setOnClickListener(v -> trocarFoto());
+        mEditarFotoButton.setOnClickListener(v -> trocarFoto());
+        mCriarContaButton.setOnClickListener(v -> cadastrar());
+        mLoginButton.setOnClickListener(v -> finish());
+        mConfirmarSenhaEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                mCriarContaButton.performClick();
+                return true;
             }
-        });
-        mEditarFotoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                trocarFoto();
-            }
-        });
-        mCriarContaButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cadastrar();
-            }
-        });
-        mLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        mConfirmarSenhaEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mCriarContaButton.performClick();
-                    return true;
-                }
-                return false;
-            }
+            return false;
         });
 
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
         mStorageRef = mStorage.getReferenceFromUrl(STORAGE_URL);
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser usuario = firebaseAuth.getCurrentUser();
-
-                // Usuário entrou
-                if (usuario != null) {
-
-                    // BUG do Firebase: Não atualizou o perfil
-                    if (usuario.getDisplayName() == null) {
-                        Log.d("PERFIL", "NAO ATUALIZOU AINDA");
-                        uploadFotoDoPerfil(usuario);
-                    } else {
-                        mProgressDialog.dismiss();
-                        Toast.makeText(CadastroActivity.this, R.string.cadastro_toast_conta_criada,
-                                Toast.LENGTH_SHORT).show();
-                        finish();
-                        startActivity(MainActivity.newIntent(CadastroActivity.this));
-                    }
+        mAuthListener = firebaseAuth -> {
+            FirebaseUser usuario = firebaseAuth.getCurrentUser();
+            // Usuário entrou
+            if (usuario != null) {
+                // BUG do Firebase: Não atualizou o perfil
+                if (usuario.getDisplayName() == null) {
+                    Log.d("PERFIL", "NAO ATUALIZOU AINDA");
+                    uploadFotoDoPerfil(usuario);
+                } else {
+                    mProgressDialog.dismiss();
+                    Toast.makeText(CadastroActivity.this, R.string.cadastro_toast_conta_criada,
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                    startActivity(MainActivity.newIntent(CadastroActivity.this));
                 }
             }
         };
 
         if (savedInstanceState != null && savedInstanceState.containsKey(KEY_FOTO_PERFIL)) {
             // Carrega foto do usuário circular
-            Drawable fotoCircular = FotoHelper.imagemCircular(getResources(), (Bitmap) savedInstanceState.getParcelable(KEY_FOTO_PERFIL));
+            Drawable fotoCircular = FotoHelper.imagemCircular(getResources(), savedInstanceState.getParcelable(KEY_FOTO_PERFIL));
             mFotoImageView.setImageDrawable(fotoCircular);
         } else {
             // Carrega foto padrão circular
@@ -217,12 +180,9 @@ public class CadastroActivity extends AppCompatActivity {
         byte[] data = FotoHelper.imageViewToByteArray(mFotoImageView);
 
         UploadTask uploadTask = fotoRef.putBytes(data);
-        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    atualizarPerfil(usuario, downloadUrl);
-            }
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+                @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                atualizarPerfil(usuario, downloadUrl);
         });
 
     }
@@ -236,12 +196,9 @@ public class CadastroActivity extends AppCompatActivity {
                 .build();
 
         usuario.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            reautenticar();
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        reautenticar();
                     }
                 });
     }
@@ -316,43 +273,36 @@ public class CadastroActivity extends AppCompatActivity {
             String senha = mSenhaEditText.getText().toString();
 
             mAuth.createUserWithEmailAndPassword(email, senha)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (!task.isSuccessful()) {
-                                String erro = getString(R.string.erro_firebase_cadastro_generico);
-                                try {
-                                    throw task.getException();
-                                } catch(FirebaseAuthWeakPasswordException e) {
-                                    erro = getString(R.string.erro_firebase_cadastro_tamanho_senha);
-                                } catch(FirebaseAuthInvalidCredentialsException e) {
-                                    erro = getString(R.string.erro_firebase_cadastro_email);
-                                } catch(FirebaseAuthUserCollisionException e) {
-                                    erro = getString(R.string.erro_firebase_cadastro_email_usado);
-                                } catch (FirebaseNetworkException e) {
-                                    erro = getString(R.string.erro_firebase_cadastro_internet);
-                                } catch (Exception e) {
-                                    Log.e("AUTH", e.getMessage());
-                                }
-                                mProgressDialog.dismiss();
-                                AlertDialog.Builder builder = new AlertDialog.Builder(CadastroActivity.this);
-                                builder.setTitle(R.string.cadastro_erro_titulo)
-                                        .setMessage(erro)
-                                        .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                dialog.cancel();
-                                            }
-                                        }).create().show();
+                    .addOnCompleteListener(this, task -> {
+                        if (!task.isSuccessful()) {
+                            String erro = getString(R.string.erro_firebase_cadastro_generico);
+                            try {
+                                throw task.getException();
+                            } catch(FirebaseAuthWeakPasswordException e) {
+                                erro = getString(R.string.erro_firebase_cadastro_tamanho_senha);
+                            } catch(FirebaseAuthInvalidCredentialsException e) {
+                                erro = getString(R.string.erro_firebase_cadastro_email);
+                            } catch(FirebaseAuthUserCollisionException e) {
+                                erro = getString(R.string.erro_firebase_cadastro_email_usado);
+                            } catch (FirebaseNetworkException e) {
+                                erro = getString(R.string.erro_firebase_cadastro_internet);
+                            } catch (Exception e) {
+                                Log.e("AUTH", e.getMessage());
                             }
+                            mProgressDialog.dismiss();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(CadastroActivity.this);
+                            builder.setTitle(R.string.cadastro_erro_titulo)
+                                    .setMessage(erro)
+                                    .setPositiveButton(R.string.btn_ok, (dialog, id) -> dialog.cancel())
+                                    .create()
+                                    .show();
                         }
                     });
         }
     }
 
     public void trocarFoto() {
-//        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         intent.setType("image/*");
         intent.putExtra("crop", "true");
         intent.putExtra("scale", true);

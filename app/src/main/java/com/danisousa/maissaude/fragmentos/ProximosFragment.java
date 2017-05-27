@@ -9,7 +9,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.atividades.MainActivity;
 import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.utils.LocalizacaoHelper;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +30,6 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
     private ProgressBar mInicioProgressBar;
     private RecyclerView mRecyclerView;
     private EstabelecimentosAdapter mAdapter;
-    private GoogleApiClient mGoogleApiClient;
     private Location mLocalizacao;
     private List<Estabelecimento> mEstabelecimentos;
 
@@ -57,12 +54,7 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.azul_claro);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mAdapter.atualizarProximos(mLocalizacao, mSwipeRefreshLayout);
-            }
-        });
+        mSwipeRefreshLayout.setOnRefreshListener(() -> mAdapter.atualizarProximos(mLocalizacao, mSwipeRefreshLayout));
 
         mInicioProgressBar = (ProgressBar) view.findViewById(R.id.inicio_progress_bar);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
