@@ -16,12 +16,39 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
+        <LinearLayout
+            android:id="@+id/lista_vazia"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <ImageView
+                android:tint="@color/cinza_2"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:src="@drawable/cardiogram"
+                android:paddingBottom="30dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="5sp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@color/cinza_3"
+                android:text="@string/favoritos_vazio"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        </LinearLayout>
+
         <ProgressBar
             android:id="@+id/inicio_progress_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
-
     </FrameLayout>
 
 </android.support.v4.widget.SwipeRefreshLayout>

@@ -27,7 +27,7 @@
     <TextView
         android:id="@+id/tipoUnidade"
         android:layout_below="@id/nomeFantasia"
-        android:textColor="@color/cinza_claro"
+        android:textColor="@color/cinza_3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         tools:text="SUBTITULO"
@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintRight_toLeftOf="@+id/classificacao"
-        android:textColor="@color/cinza_claro"
+        android:textColor="@color/cinza_3"
         android:text="3,5"
         android:layout_marginRight="3dp"
         app:layout_constraintBottom_toBottomOf="@+id/distancia"
@@ -50,7 +50,7 @@
     <RatingBar
         android:id="@+id/classificacao"
         style="?android:attr/ratingBarStyleSmall"
-        android:progressTint="@color/cinza_claro"
+        android:progressTint="@color/cinza_3"
         android:rating="1"
         android:numStars="1"
         android:layout_width="wrap_content"
@@ -64,7 +64,7 @@
         android:id="@+id/distancia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/cinza_claro"
+        android:textColor="@color/cinza_3"
         tools:text="25km"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="@+id/tipoUnidade"/>

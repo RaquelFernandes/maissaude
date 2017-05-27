@@ -10,7 +10,7 @@
     android:orientation="vertical"
     android:padding="30dp"
     android:rowCount="3"
-    tools:context=".atividades.FiltroActivity">
+    tools:context=".atividades.FiltrarActivity">
 
     <TextView
         android:layout_columnWeight="0.3"

@@ -36,7 +36,7 @@
             android:label="Registrar"
             android:parentActivityName=".atividades.LoginActivity"  />
         <activity
-            android:name=".atividades.FiltroActivity"
+            android:name=".atividades.FiltrarActivity"
             android:label="Filtrar"
             android:parentActivityName=".atividades.MainActivity"
             android:theme="@style/CloseButtonAsUpIndicator" />

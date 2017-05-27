@@ -38,7 +38,7 @@
 
     <string name="menu_sobre">Sobre</string>
     <string name="menu_sair">Sair</string>
-    <string name="menu_aplicar">Aplicar</string>
+    <string name="menu_procurar">Procurar</string>
 
     <string name="btn_ok">OK</string>
 
@@ -56,5 +56,13 @@
     <string name="compartilhar_txt">Enviar para…</string>
     <string name="erro_servidor">Erro: O servidor não está respondendo</string>
     <string name="erro_inesperado">Erro Inesperado: Tente novamente mais tarde</string>
+    <string name="add_aos_favoritos">%1$s foi adicionado aos favoritos</string>
+    <string name="remover_dos_favoritos">%1$s foi removido dos favoritos</string>
+    <string name="snackbar_desfazer">DESFAZER</string>
+    <string name="acao_compartilhar">acao_compartilhar</string>
+    <string name="acao_ligar">Ligar</string>
+    <string name="acao_salvar">Salvar</string>
+    <string name="acao_remover">Remover</string>
+    <string name="favoritos_vazio">Você ainda não marcou nenhum estabelecimento como favorito</string>
 
 </resources>
