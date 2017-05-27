@@ -1,10 +1,11 @@
 package com.danisousa.maissaude.atividades;
 
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -15,10 +16,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.danisousa.maissaude.R;
-import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
+import com.danisousa.maissaude.dados.FavoritosDAO;
 import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.utils.FotoHelper;
-import com.danisousa.maissaude.utils.IntentHelper;
+import com.danisousa.maissaude.utils.Acoes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -36,6 +37,7 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
     private FirebaseStorage mStorage;
     private Estabelecimento mEstabelecimento;
 
+    private CoordinatorLayout mCoordinatorLayout;
     private AppBarLayout mAppBarLayout;
     private FrameLayout mMapLoadingBackground;
 
@@ -115,31 +117,16 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void bindView() {
-        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                IntentHelper.direcoesDoMapa(DetalhesActivity.this, mEstabelecimento);
-            }
-        });
+        mFloatingActionButton.setOnClickListener(v -> Acoes.direcoesDoMapa(DetalhesActivity.this, mEstabelecimento));
 
-        mLigarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                IntentHelper.ligar(DetalhesActivity.this, mEstabelecimento);
-            }
-        });
-        mCompartilharButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                IntentHelper.compartilharTexto(DetalhesActivity.this, mEstabelecimento);
-            }
-        });
-        mSalvarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO
-            }
-        });
+        mLigarButton.setOnClickListener(v -> Acoes.ligar(DetalhesActivity.this, mEstabelecimento));
+        mCompartilharButton.setOnClickListener(v -> Acoes.compartilharTexto(DetalhesActivity.this, mEstabelecimento));
+
+        if (FavoritosDAO.getInstance().estaNosFavoritos(mEstabelecimento.getCodUnidade())) {
+            configurarFavorito();
+        } else {
+            configurarNaoFavorito();
+        }
 
         mNomeTextView.setText(mEstabelecimento.getNomeFantasia());
         mEnderecoTextView.setText(mEstabelecimento.getEndereco());
@@ -160,6 +147,48 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         mFotoImageView.setImageDrawable(placeholderCircular);
 
         FotoHelper.setFotoUsuario(this, mFotoImageView, mStorage, mAuth);
+    }
+
+    private void configurarFavorito() {
+        Drawable topDrawable = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            topDrawable = getDrawable(R.drawable.ic_favorite);
+        } else {
+            topDrawable = getResources().getDrawable(R.drawable.ic_favorite);
+        }
+        mSalvarButton.setText(getString(R.string.acao_remover));
+        mSalvarButton.setCompoundDrawablesRelativeWithIntrinsicBounds(null, topDrawable, null, null);
+        mSalvarButton.setOnClickListener(v -> {
+            FavoritosDAO.getInstance().remover(mEstabelecimento);
+            String nome = mEstabelecimento.getNomeFantasia();
+            Snackbar.make(mCoordinatorLayout, getString(R.string.remover_dos_favoritos, nome), Snackbar.LENGTH_LONG)
+                    .setAction(R.string.snackbar_desfazer, view -> {
+                        FavoritosDAO.getInstance().salvar(mEstabelecimento);
+                        configurarFavorito();
+                    }).show();
+            configurarNaoFavorito();
+        });
+    }
+
+    private void configurarNaoFavorito() {
+        Drawable topDrawable = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            topDrawable = getDrawable(R.drawable.ic_favorite_border);
+        } else {
+            topDrawable = getResources().getDrawable(R.drawable.ic_favorite_border);
+        }
+        mSalvarButton.setText(getString(R.string.acao_salvar));
+        mSalvarButton.setCompoundDrawablesRelativeWithIntrinsicBounds(null, topDrawable, null, null);
+        mSalvarButton.setOnClickListener(v -> {
+            FavoritosDAO.getInstance().salvar(mEstabelecimento);
+            String nome = mEstabelecimento.getNomeFantasia();
+            Snackbar.make(mCoordinatorLayout, getString(R.string.add_aos_favoritos, nome), Snackbar.LENGTH_LONG)
+                    .setAction(R.string.snackbar_desfazer, view -> {
+                        FavoritosDAO.getInstance().remover(mEstabelecimento);
+                        configurarNaoFavorito();
+                    }).show();
+            configurarFavorito();
+        });
     }
 
     private int getBooleanImageView(boolean verdadeiro) {
@@ -209,16 +238,12 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
                 .position(posicao)
                 .title(mEstabelecimento.getNomeFantasia()));
 
-        map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-            @Override
-            public void onMapLoaded() {
-                mMapLoadingBackground.setVisibility(View.GONE);
-            }
-        });
+        map.setOnMapLoadedCallback(() -> mMapLoadingBackground.setVisibility(View.GONE));
 
     }
 
     private void setupCoordinatorLayout(String titulo) {
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_detalhes);
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(titulo);
 

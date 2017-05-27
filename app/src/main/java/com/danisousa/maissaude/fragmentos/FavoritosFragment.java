@@ -1,5 +1,6 @@
 package com.danisousa.maissaude.fragmentos;
 
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,49 +9,52 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.danisousa.maissaude.atividades.MainActivity;
+import com.danisousa.maissaude.dados.FavoritosDAO;
 import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
 import com.danisousa.maissaude.R;
-import com.google.android.gms.maps.model.LatLng;
+import com.danisousa.maissaude.utils.LocalizacaoHelper;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class FavoritosFragment extends Fragment {
+public class FavoritosFragment extends Fragment implements FavoritosDAO.FavoritosListener, LocalizacaoHelper.LocalizacaoListener {
 
+    private MainActivity mMainActivity;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressBar mInicioProgressBar;
     private RecyclerView mRecyclerView;
+    private LinearLayout mListaVazia;
     private EstabelecimentosAdapter mAdapter;
-    private List<Estabelecimento> mEstabelecimentoList = new ArrayList<>();
+    private Location mLocalizacao;
+
+    private static final String TAG = "FavoritosFragment";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mMainActivity = (MainActivity) this.getActivity();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.azul_claro);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-//                mAdapter.atualizarProximos(mLocalizacao, mSwipeRefreshLayout);
-            }
-        });
+        mSwipeRefreshLayout.setEnabled(false);
 
         mInicioProgressBar = (ProgressBar) view.findViewById(R.id.inicio_progress_bar);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mListaVazia = (LinearLayout) view.findViewById(R.id.lista_vazia);
 
         mAdapter = new EstabelecimentosAdapter(getActivity(), mInicioProgressBar);
 
@@ -67,6 +71,31 @@ public class FavoritosFragment extends Fragment {
 
         mRecyclerView.addItemDecoration(separador);
 
+        mMainActivity.addLocalizacaoListener(this);
+
         return view;
+    }
+
+    @Override
+    public void onLocalizacaoChanged(Location localizacao) {
+        mLocalizacao = localizacao;
+        FavoritosDAO.getInstance().setFavoritosListener(this);
+    }
+
+    @Override
+    public void onFavoritosChanged(List<Estabelecimento> estabelecimentos) {
+        Log.d(TAG, "Favoritos changed: " + estabelecimentos.size());
+
+        if (estabelecimentos.size() > 0) {
+            mListaVazia.setVisibility(View.GONE);
+            Collections.sort(estabelecimentos, (est1, est2) ->
+                    est1.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude())
+                    .compareTo(est2.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude())));
+        } else {
+            mListaVazia.setVisibility(View.VISIBLE);
+        }
+
+        mAdapter.atualizarFavoritos(mLocalizacao, estabelecimentos);
+        mInicioProgressBar.setVisibility(View.GONE);
     }
 }
