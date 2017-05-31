@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.danisousa.maissaude.R;
@@ -43,6 +44,7 @@ import retrofit2.Response;
 public class MapaFragment extends Fragment implements OnMapReadyCallback, LocalizacaoHelper.LocalizacaoListener {
 
     private MainActivity mMainActivity;
+    private FrameLayout mMapProgress;
     private MapView mMapView;
     private GoogleMap mMap;
     private ApiEstabelecimentosInterface mServico;
@@ -67,11 +69,12 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_mapa, container, false);
+        View view = inflater.inflate(R.layout.fragment_mapa, container, false);
 
         mServico = TcuApi.getInstance().getServico();
 
-        mMapView = (MapView) rootView.findViewById(R.id.mapView);
+        mMapProgress = (FrameLayout) view.findViewById(R.id.map_progress);
+        mMapView = (MapView) view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 
         try {
@@ -84,7 +87,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
 
         mMainActivity.addLocalizacaoListener(this);
 
-        return rootView;
+        return view;
     }
 
     @Override
@@ -188,6 +191,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "Mapa carregado");
         mMap = googleMap;
+        mMapProgress.setVisibility(View.GONE);
     }
 
     @Override
