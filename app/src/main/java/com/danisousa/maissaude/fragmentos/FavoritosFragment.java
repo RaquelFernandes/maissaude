@@ -35,6 +35,7 @@ public class FavoritosFragment extends Fragment implements FavoritosDAO.Favorito
     private LinearLayout mListaVazia;
     private EstabelecimentosAdapter mAdapter;
     private Location mLocalizacao;
+    private List<Estabelecimento> mEstabelecimentos;
 
     private static final String TAG = "FavoritosFragment";
 
@@ -72,6 +73,7 @@ public class FavoritosFragment extends Fragment implements FavoritosDAO.Favorito
         mRecyclerView.addItemDecoration(separador);
 
         mMainActivity.addLocalizacaoListener(this);
+        FavoritosDAO.getInstance().setFavoritosListener(this);
 
         return view;
     }
@@ -79,12 +81,13 @@ public class FavoritosFragment extends Fragment implements FavoritosDAO.Favorito
     @Override
     public void onLocalizacaoChanged(Location localizacao) {
         mLocalizacao = localizacao;
-        FavoritosDAO.getInstance().setFavoritosListener(this);
+        mAdapter.atualizarFavoritos(mLocalizacao, mEstabelecimentos);
     }
 
     @Override
     public void onFavoritosChanged(List<Estabelecimento> estabelecimentos) {
         Log.d(TAG, "Favoritos changed: " + estabelecimentos.size());
+        mEstabelecimentos = estabelecimentos;
 
         if (estabelecimentos.size() > 0) {
             mListaVazia.setVisibility(View.GONE);

@@ -151,9 +151,11 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         Estabelecimento estabelecimento = mEstabelecimentos.get(position);
         holder.nome.setText(estabelecimento.getNomeFantasia());
         holder.tipo.setText(estabelecimento.getTipoUnidade());
-        holder.distancia.setText(estabelecimento.getDistanciaFormatada(mLocalizacao.getLatitude(), mLocalizacao.getLongitude()));
         holder.itemView.setOnClickListener(v -> onClickViewHolder(v, index));
         holder.itemView.setOnLongClickListener(v -> onLongClickViewHolder(v, index));
+        if (mLocalizacao != null) {
+            holder.distancia.setText(estabelecimento.getDistanciaFormatada(mLocalizacao.getLatitude(), mLocalizacao.getLongitude()));
+        }
     }
 
     @Override

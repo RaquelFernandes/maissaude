@@ -36,6 +36,7 @@ public class FavoritosDAO {
     private FavoritosDAO() {
         mDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        mDatabase.setPersistenceEnabled(true);
         String id = mAuth.getCurrentUser().getUid();
         mUsuariosRef = mDatabase.getReference("usuarios");
         mFavoritosRef = mUsuariosRef.child(id).child("favoritos");
