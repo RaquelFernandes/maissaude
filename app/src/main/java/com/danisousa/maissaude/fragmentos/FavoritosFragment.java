@@ -23,6 +23,7 @@ import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
 import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.utils.LocalizacaoHelper;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class FavoritosFragment extends Fragment implements FavoritosDAO.Favorito
     private LinearLayout mListaVazia;
     private EstabelecimentosAdapter mAdapter;
     private Location mLocalizacao;
-    private List<Estabelecimento> mEstabelecimentos;
+    private List<Estabelecimento> mEstabelecimentos = new ArrayList<>();
 
     private static final String TAG = "FavoritosFragment";
 
@@ -48,7 +49,7 @@ public class FavoritosFragment extends Fragment implements FavoritosDAO.Favorito
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
+        View view = inflater.inflate(R.layout.recycler_view, container, false);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setEnabled(false);
@@ -91,9 +92,11 @@ public class FavoritosFragment extends Fragment implements FavoritosDAO.Favorito
 
         if (estabelecimentos.size() > 0) {
             mListaVazia.setVisibility(View.GONE);
-            Collections.sort(estabelecimentos, (est1, est2) ->
+            if (mLocalizacao != null) {
+                Collections.sort(estabelecimentos, (est1, est2) ->
                     est1.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude())
                     .compareTo(est2.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude())));
+            }
         } else {
             mListaVazia.setVisibility(View.VISIBLE);
         }
