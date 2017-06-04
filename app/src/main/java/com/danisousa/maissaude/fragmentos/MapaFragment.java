@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -31,6 +32,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterManager;
 
@@ -41,7 +43,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MapaFragment extends Fragment implements OnMapReadyCallback, LocalizacaoHelper.LocalizacaoListener {
+public class MapaFragment extends Fragment implements OnMapReadyCallback, LocalizacaoHelper.LocalizacaoListener, GoogleMap.OnCameraMoveListener {
 
     private MainActivity mMainActivity;
     private FrameLayout mMapProgress;
@@ -51,11 +53,13 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
     private Location mLocalizacao;
     private List<Estabelecimento> mEstabelecimentos;
     private ClusterManager<Cluster> mClusterManager;
+    private ClusterRenderer mClusterRenderer;
     private CameraPosition mPosicaoCamera;
 
     private static final String TAG = "MapaFragment";
     private static final String ESTABALECIMENTOS = "Estabelecimentos";
     private static final String POSICAO_CAMERA = "PosicaoCamera";
+    private static final int RAIO = 40; // km
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,7 +82,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
         mMapView.onCreate(savedInstanceState);
 
         try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
+            MapsInitializer.initialize(mMainActivity);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,36 +105,41 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
         Call<List<Estabelecimento>> call = mServico.getEstabelecimentosPorCoordenadas(
                 mLocalizacao.getLatitude(),
                 mLocalizacao.getLongitude(),
-                100, // 100km de raio
+                RAIO, // raio
                 null, // categoria
-                100 // quantidade de resultados
+                10000 // quantidade de resultados
         );
 
         call.enqueue(new Callback<List<Estabelecimento>>() {
             @Override
             public void onResponse(Call<List<Estabelecimento>> call, Response<List<Estabelecimento>> response) {
-                if (response == null) {
+                if (response.body() == null) {
                     onFailure(call, new Exception("Null response from API"));
                     return;
                 }
                 mEstabelecimentos = response.body();
-                Log.i(TAG, "Estabelecimentos carregados: " + Integer.toString(response.body().size()));
                 configurarMapa();
             }
 
             @Override
             public void onFailure(Call<List<Estabelecimento>> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(MapaFragment.this.getActivity(), "Erro ao tentar se comunicar com o servidor", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mMainActivity, "Erro ao tentar se comunicar com o servidor", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void configurarMapa() {
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(mMainActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "PERMISSÃO NEGADA");
             return;
         }
+
+        mMap.addCircle(new CircleOptions()
+                .center(new LatLng(mLocalizacao.getLatitude(), mLocalizacao.getLongitude()))
+                .radius(RAIO * 1000) // raio em metros
+                .strokeColor(Color.rgb(101, 141, 255))
+                .fillColor(Color.argb(98, 101, 141, 255)));
 
         mMap.getUiSettings().setAllGesturesEnabled(true);
         mMap.setMyLocationEnabled(true);
@@ -141,12 +150,14 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
     }
 
     private void configurarClusters() {
-        mClusterManager = new ClusterManager<>(getActivity(), mMap);
-        mClusterManager.setRenderer(new ClusterRenderer(getActivity(), mMap, mClusterManager));
+        mClusterManager = new ClusterManager<>(mMainActivity, mMap);
+        mClusterRenderer = new ClusterRenderer(mMainActivity, mMap, mClusterManager);
+        mClusterManager.setRenderer(mClusterRenderer);
+        mMap.setOnCameraMoveListener(this);
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnInfoWindowClickListener(mClusterManager);
         mClusterManager.setOnClusterItemInfoWindowClickListener(cluster -> {
-            Context context = MapaFragment.this.getActivity();
+            Context context = mMainActivity;
             Estabelecimento estabelecimento = cluster.getEstabelecimento();
             Intent it = new Intent(context, DetalhesActivity.class);
             it.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, estabelecimento);
@@ -156,13 +167,18 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
     }
 
     private void adicionarMarcadores() {
+        mClusterManager.clearItems();
+        List<Cluster> clusters = new ArrayList<>();
         for (Estabelecimento estabelecimento : mEstabelecimentos) {
             Cluster item = new Cluster(estabelecimento);
-            mClusterManager.addItem(item);
+            clusters.add(item);
         }
+        mClusterManager.addItems(clusters);
+        mClusterManager.cluster();
     }
 
     private void configurarCamera() {
+        mMapProgress.setVisibility(View.GONE);
         CameraPosition posicaoCamera = (mPosicaoCamera != null) ? mPosicaoCamera : new CameraPosition.Builder()
                 .target(new LatLng(mLocalizacao.getLatitude(), mLocalizacao.getLongitude()))
                 .zoom(12)
@@ -191,7 +207,20 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "Mapa carregado");
         mMap = googleMap;
-        mMapProgress.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onCameraMove() {
+        // Hack necessário porque...
+        // o ClusterRenderer tem um bug que não retira o cluster
+        // dos marcadores que têm a mesma localização
+//        Float zoomAtual = mMap.getCameraPosition().zoom;
+//        Log.d(TAG, "Zoom atual: " + zoomAtual.toString());
+//        if (zoomAtual >= 16) {
+//            mClusterRenderer.setMinClusterSize(999); // Desabilita clustering
+//        } else {
+//            mClusterRenderer.setMinClusterSize(4); // Habilita clustering
+//        }
     }
 
     @Override
