@@ -39,10 +39,10 @@ public class Acoes {
     @NonNull
     public static CharSequence[] getLongPressNames(Class fragmentClass) {
         List<String> names = new ArrayList<>(longPressNames);
-        if (fragmentClass == ProximosFragment.class) {
-            names.remove("Remover dos Favoritos");
-        } else if (fragmentClass == FavoritosFragment.class) {
+        if (fragmentClass == FavoritosFragment.class) {
             names.remove("Adicionar aos Favoritos");
+        } else {
+            names.remove("Remover dos Favoritos");
         }
         CharSequence[] namesArray = new CharSequence[names.size()];
         return names.toArray(namesArray);

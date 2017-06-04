@@ -262,10 +262,6 @@ public class CadastroActivity extends AppCompatActivity {
 
         Boolean valido = validar();
 
-        // fecha teclado
-        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
         if (!valido) {
             mProgressDialog.dismiss();
         } else {

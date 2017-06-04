@@ -41,6 +41,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

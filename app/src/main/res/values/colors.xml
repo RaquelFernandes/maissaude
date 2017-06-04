@@ -1,24 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<color name="azul_escuro">#0097A7</color>-->
-    <!--<color name="azul_claro">#00BCD4</color>-->
-    <!--<color name="roxo">#7C4DFF</color>-->
-    <!--<color name="branco">#FAFAFA</color>-->
-    <!--<color name="amarelo">#FFCB03</color>-->
-
     <color name="azul_escuro">#5476d6</color>
     <color name="azul_claro">#658DFF</color>
+    <color name="azul_claro_transparente">#32658dff</color>
     <color name="roxo">#713EFF</color>
     <color name="amarelo">#FFA352</color>
     <color name="branco">#fcfcfc</color>
-
     <color name="cinza_1">#f4f4f4</color>
     <color name="cinza_2">#ebeef2</color>
     <color name="cinza_3">#B2B2B2</color>
-    <!--<color name="cinza_claro">#a0a0a0</color>-->
+    <color name="cinza_4">#a0a0a0</color>
     <color name="cinza_escuro">#434343</color>
-
-    <!--<color name="azul_escuro">#2ca6c3</color>-->
-    <!--<color name="azul_claro">#4bbcd7</color>-->
-
 </resources>

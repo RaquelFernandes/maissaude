@@ -1,9 +1,10 @@
 package com.danisousa.maissaude.fragmentos;
 
+import android.accounts.NetworkErrorException;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -13,23 +14,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
 import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.atividades.MainActivity;
 import com.danisousa.maissaude.modelos.Estabelecimento;
+import com.danisousa.maissaude.servicos.ApiEstabelecimentosInterface;
+import com.danisousa.maissaude.servicos.TcuApi;
 import com.danisousa.maissaude.utils.LocalizacaoHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProximosFragment extends Fragment implements LocalizacaoHelper.LocalizacaoListener {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class ProximosFragment extends Fragment implements LocalizacaoHelper.LocalizacaoListener, EstabelecimentosAdapter.AtualizarEstablecimentos {
 
     private MainActivity mMainActivity;
+    private ProgressBar mInicioProgressBar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private EstabelecimentosAdapter mAdapter;
     private Location mLocalizacao;
     private List<Estabelecimento> mEstabelecimentos;
+    private ApiEstabelecimentosInterface mServico;
 
     private static final String ESTABELECIMENTOS = "Estabelecimentos";
     private static final String LOCALIZACAO = "Localização";
@@ -37,7 +47,8 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMainActivity = (MainActivity) this.getActivity();
+        mMainActivity = (MainActivity) getActivity();
+        mServico = TcuApi.getInstance().getServico();
         if (savedInstanceState != null) {
             mEstabelecimentos = (ArrayList<Estabelecimento>) savedInstanceState.getSerializable(ESTABELECIMENTOS);
             mLocalizacao = savedInstanceState.getParcelable(LOCALIZACAO);
@@ -45,40 +56,72 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.recycler_view, container, false);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.azul_claro);
-        mSwipeRefreshLayout.setOnRefreshListener(() -> mAdapter.atualizarProximos(mLocalizacao, mSwipeRefreshLayout));
+        mSwipeRefreshLayout.setOnRefreshListener(() -> mAdapter.atualizarEstabelecimentos());
 
-        ProgressBar inicioProgressBar = (ProgressBar) view.findViewById(R.id.inicio_progress_bar);
+        mInicioProgressBar = (ProgressBar) view.findViewById(R.id.inicio_progress_bar);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
+        mAdapter = new EstabelecimentosAdapter(mMainActivity, this);
+
         if (mEstabelecimentos != null) {
-            mAdapter = new EstabelecimentosAdapter(getActivity(), mEstabelecimentos, mLocalizacao);
-            inicioProgressBar.setVisibility(View.GONE);
-        } else {
-            mAdapter = new EstabelecimentosAdapter(getActivity(), inicioProgressBar);
+            mAdapter.setLocalizacao(mLocalizacao);
+            mAdapter.setEstabelecimentos(mEstabelecimentos);
+            mAdapter.notifyDataSetChanged();
+            mInicioProgressBar.setVisibility(View.GONE);
         }
 
         recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mMainActivity);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 
-        DividerItemDecoration separador = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            separador.setDrawable(getContext().getDrawable(R.drawable.separador_lista));
-        }
+        DividerItemDecoration separador = new DividerItemDecoration(mMainActivity, DividerItemDecoration.VERTICAL);
+        separador.setDrawable(ContextCompat.getDrawable(mMainActivity, R.drawable.separador_lista));
         recyclerView.addItemDecoration(separador);
 
         mMainActivity.addLocalizacaoListener(this);
 
         return view;
+    }
+
+    @Override
+    public void atualizarEstabelecimentos() {
+        Call<List<Estabelecimento>> call = mServico.getEstabelecimentosPorCoordenadas(
+                mLocalizacao.getLatitude(),
+                mLocalizacao.getLongitude(),
+                100, // 100km de raio
+                null, // categoria. null = todas
+                100 // quantidade de resultados
+        );
+
+        call.enqueue(new Callback<List<Estabelecimento>>() {
+            @Override
+            public void onResponse(Call<List<Estabelecimento>> call, Response<List<Estabelecimento>> response) {
+                if (response.body() == null) {
+                    onFailure(call, new NetworkErrorException("Null response from API"));
+                    return;
+                }
+                mEstabelecimentos = response.body();
+                mAdapter.setLocalizacao(mLocalizacao);
+                mAdapter.setEstabelecimentos(mEstabelecimentos);
+                mAdapter.notifyDataSetChanged();
+                mInicioProgressBar.setVisibility(View.GONE);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(Call<List<Estabelecimento>> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(mMainActivity, R.string.erro_servidor, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -92,7 +135,8 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
     @Override
     public void onLocalizacaoChanged(Location localizacao) {
         mLocalizacao = localizacao;
-        mAdapter.atualizarProximos(mLocalizacao);
+        mAdapter.setLocalizacao(mLocalizacao);
+        mAdapter.atualizarEstabelecimentos();
     }
 
     @Override

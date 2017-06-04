@@ -6,6 +6,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -143,19 +144,14 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         mTemNeonatal.setImageResource(getBooleanImageView(mEstabelecimento.temNeoNatal()));
         mTemDialise.setImageResource(getBooleanImageView(mEstabelecimento.temDialise()));
 
-        Drawable placeholderCircular = FotoHelper.imagemCircular(getResources(), R.drawable.usuario, 6);
+        Drawable placeholderCircular = FotoHelper.imagemCircular(getResources(), R.drawable.usuario, 8);
         mFotoImageView.setImageDrawable(placeholderCircular);
 
         FotoHelper.setFotoUsuario(this, mFotoImageView, mStorage, mAuth);
     }
 
     private void configurarFavorito() {
-        Drawable topDrawable = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            topDrawable = getDrawable(R.drawable.ic_favorite);
-        } else {
-            topDrawable = getResources().getDrawable(R.drawable.ic_favorite);
-        }
+        Drawable topDrawable = ContextCompat.getDrawable(this, R.drawable.ic_favorite);
         mSalvarButton.setText(getString(R.string.acao_remover));
         mSalvarButton.setCompoundDrawablesRelativeWithIntrinsicBounds(null, topDrawable, null, null);
         mSalvarButton.setOnClickListener(v -> {
@@ -171,12 +167,7 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void configurarNaoFavorito() {
-        Drawable topDrawable = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            topDrawable = getDrawable(R.drawable.ic_favorite_border);
-        } else {
-            topDrawable = getResources().getDrawable(R.drawable.ic_favorite_border);
-        }
+        Drawable topDrawable = ContextCompat.getDrawable(this, R.drawable.ic_favorite_border);
         mSalvarButton.setText(getString(R.string.acao_salvar));
         mSalvarButton.setCompoundDrawablesRelativeWithIntrinsicBounds(null, topDrawable, null, null);
         mSalvarButton.setOnClickListener(v -> {

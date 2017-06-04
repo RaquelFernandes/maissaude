@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterManager;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +61,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
     private static final String TAG = "MapaFragment";
     private static final String ESTABALECIMENTOS = "Estabelecimentos";
     private static final String POSICAO_CAMERA = "PosicaoCamera";
-    private static final int RAIO = 40; // km
+    private static final int RAIO = 20; // km
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,7 +100,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(ESTABALECIMENTOS, (ArrayList<Estabelecimento>) mEstabelecimentos);
-        outState.putParcelable(POSICAO_CAMERA, mMap.getCameraPosition());
+        if (mMap != null) outState.putParcelable(POSICAO_CAMERA, mMap.getCameraPosition());
     }
 
     private void carregarEstabelecimentos() {
@@ -138,8 +140,9 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
         mMap.addCircle(new CircleOptions()
                 .center(new LatLng(mLocalizacao.getLatitude(), mLocalizacao.getLongitude()))
                 .radius(RAIO * 1000) // raio em metros
-                .strokeColor(Color.rgb(101, 141, 255))
-                .fillColor(Color.argb(98, 101, 141, 255)));
+                .strokeColor(ContextCompat.getColor(mMainActivity, R.color.azul_claro))
+                .fillColor(ContextCompat.getColor(mMainActivity, R.color.azul_claro_transparente)));
+//                .fillColor(Color.argb(98, 101, 141, 255)));
 
         mMap.getUiSettings().setAllGesturesEnabled(true);
         mMap.setMyLocationEnabled(true);
@@ -181,7 +184,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
         mMapProgress.setVisibility(View.GONE);
         CameraPosition posicaoCamera = (mPosicaoCamera != null) ? mPosicaoCamera : new CameraPosition.Builder()
                 .target(new LatLng(mLocalizacao.getLatitude(), mLocalizacao.getLongitude()))
-                .zoom(12)
+                .zoom(9.8f)
                 .build();
         if (mPosicaoCamera != null) {
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(posicaoCamera));
@@ -214,13 +217,13 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
         // Hack necessário porque...
         // o ClusterRenderer tem um bug que não retira o cluster
         // dos marcadores que têm a mesma localização
-//        Float zoomAtual = mMap.getCameraPosition().zoom;
-//        Log.d(TAG, "Zoom atual: " + zoomAtual.toString());
-//        if (zoomAtual >= 16) {
-//            mClusterRenderer.setMinClusterSize(999); // Desabilita clustering
-//        } else {
-//            mClusterRenderer.setMinClusterSize(4); // Habilita clustering
-//        }
+        // https://github.com/googlemaps/android-maps-utils/issues/384
+        Float zoomAtual = mMap.getCameraPosition().zoom;
+        if (zoomAtual >= 16) {
+            mClusterRenderer.setMinClusterSize(9999); // Desabilita clustering
+        } else {
+            mClusterRenderer.setMinClusterSize(2); // Habilita clustering
+        }
     }
 
     @Override

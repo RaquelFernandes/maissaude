@@ -1,5 +1,8 @@
 package com.danisousa.maissaude.modelos;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.danisousa.maissaude.utils.LocalizacaoHelper;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.Exclude;

@@ -64,5 +64,6 @@
     <string name="acao_salvar">Salvar</string>
     <string name="acao_remover">Remover</string>
     <string name="favoritos_vazio">Você ainda não marcou nenhum estabelecimento como favorito</string>
+    <string name="nenhum_resultado_mensagem">Nenhum resultado encontrado</string>
 
 </resources>

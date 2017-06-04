@@ -1,7 +1,7 @@
 package com.danisousa.maissaude.atividades;
 
 import android.location.Location;
-import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,13 +18,13 @@ import android.widget.Toast;
 
 import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.adaptadores.EstabelecimentosAdapter;
-import com.danisousa.maissaude.fragmentos.MapaFragment;
 import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.modelos.Filtro;
 import com.danisousa.maissaude.servicos.ApiEstabelecimentosInterface;
 import com.danisousa.maissaude.servicos.TcuApi;
 import com.danisousa.maissaude.utils.LocalizacaoHelper;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,18 +32,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ResultadosActivity extends AppCompatActivity {
+public class ResultadosActivity extends AppCompatActivity implements EstabelecimentosAdapter.AtualizarEstablecimentos {
 
     private ProgressBar mInicioProgressBar;
-    private RecyclerView mRecyclerView;
     private LinearLayout mListaVazia;
-    private TextView mListaVaziaMensagem;
     private ApiEstabelecimentosInterface mServico;
     private EstabelecimentosAdapter mAdapter;
     private Filtro mFiltros;
     private Location mLocalizacao;
 
+    private ArrayList<Estabelecimento> mEstabelecimentos;
+
     private static final String TAG = "ResultadosAvtivity";
+    private static final String ESTABELECIMENTOS = "Estabelecimentos";
+    private static final String LOCALIZACAO = "Localização";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,39 +53,48 @@ public class ResultadosActivity extends AppCompatActivity {
         setContentView(R.layout.recycler_view);
 
         mServico = TcuApi.getInstance().getServico();
-        mLocalizacao = getIntent().getParcelableExtra(LocalizacaoHelper.LOCALIZACAO_EXTRA);
         mFiltros = (Filtro) getIntent().getSerializableExtra(BuscarActivity.EXTRA_FILTROS);
 
-        setupView();
-        carregarEstabelecimentos();
+        setupView(savedInstanceState);
     }
 
-    private void setupView() {
+    private void setupView(Bundle savedInstanceState) {
         SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         swipeRefreshLayout.setEnabled(false);
 
         mInicioProgressBar = (ProgressBar) findViewById(R.id.inicio_progress_bar);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mListaVazia = (LinearLayout) findViewById(R.id.lista_vazia);
-        mListaVaziaMensagem = (TextView) findViewById(R.id.lista_vazia_mensagem);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        TextView listaVaziaMensagem = (TextView) findViewById(R.id.lista_vazia_mensagem);
 
-        mAdapter = new EstabelecimentosAdapter(this, mInicioProgressBar);
-
-        mRecyclerView.setHasFixedSize(true);
+        mAdapter = new EstabelecimentosAdapter(this, this);
+        listaVaziaMensagem.setText(R.string.nenhum_resultado_mensagem);
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setAdapter(mAdapter);
-
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         DividerItemDecoration separador = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            separador.setDrawable(getDrawable(R.drawable.separador_lista));
-        }
+        separador.setDrawable(ContextCompat.getDrawable(this, R.drawable.separador_lista));
+        recyclerView.addItemDecoration(separador);
 
-        mRecyclerView.addItemDecoration(separador);
+        if (savedInstanceState == null) {
+            mLocalizacao = getIntent().getParcelableExtra(LocalizacaoHelper.LOCALIZACAO_EXTRA);
+            mAdapter.atualizarEstabelecimentos();
+        } else {
+            mLocalizacao = savedInstanceState.getParcelable(LOCALIZACAO);
+            mEstabelecimentos = (ArrayList<Estabelecimento>) savedInstanceState.getSerializable(ESTABELECIMENTOS);
+            mEstabelecimentos = mEstabelecimentos == null ? new ArrayList<>() : mEstabelecimentos;
+            mListaVazia.setVisibility(mEstabelecimentos.size() > 0 ? View.GONE : View.VISIBLE);
+            mAdapter.setLocalizacao(mLocalizacao);
+            mAdapter.setEstabelecimentos(mEstabelecimentos);
+            mAdapter.notifyDataSetChanged();
+            mInicioProgressBar.setVisibility(View.GONE);
+        }
     }
 
-    private void carregarEstabelecimentos() {
+    @Override
+    public void atualizarEstabelecimentos() {
         Call<List<Estabelecimento>> call = mServico.getTodosEstabelecimentos(
                 mFiltros.getNome(),
                 mFiltros.getCidade(),
@@ -104,17 +115,19 @@ public class ResultadosActivity extends AppCompatActivity {
                     onNotFound();
                     return;
                 }
-                List<Estabelecimento> estabelecimentos = response.body();
-                Log.d(TAG, "Resposta da API: " + estabelecimentos.toString());
+
+                mEstabelecimentos = (ArrayList<Estabelecimento>) response.body();
+                Log.d(TAG, "Resposta da API: " + mEstabelecimentos.toString());
 
                 if (mLocalizacao != null) {
-                    Collections.sort(estabelecimentos, (est1, est2) ->
+                    Collections.sort(mEstabelecimentos, (est1, est2) ->
                             est1.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude())
-                            .compareTo(est2.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude())));
+                                    .compareTo(est2.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude())));
                 }
 
-                mAdapter = new EstabelecimentosAdapter(ResultadosActivity.this, estabelecimentos, mLocalizacao);
-                mRecyclerView.setAdapter(mAdapter);
+                mAdapter.setLocalizacao(mLocalizacao);
+                mAdapter.setEstabelecimentos(mEstabelecimentos);
+                mAdapter.notifyDataSetChanged();
                 mInicioProgressBar.setVisibility(View.GONE);
             }
 
@@ -125,11 +138,17 @@ public class ResultadosActivity extends AppCompatActivity {
                 finish();
             }
 
-            public void onNotFound() {
-                mListaVaziaMensagem.setText("Nenhum resultado encontrado");
+            void onNotFound() {
                 mListaVazia.setVisibility(View.VISIBLE);
                 mInicioProgressBar.setVisibility(View.GONE);
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(ESTABELECIMENTOS, mEstabelecimentos);
+        outState.putParcelable(LOCALIZACAO, mLocalizacao);
     }
 }

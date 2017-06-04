@@ -117,10 +117,6 @@ public class LoginActivity extends AppCompatActivity {
         mProgressDialog = ProgressDialog.show(LoginActivity.this, "", getString(R.string.login_pdlg_acessando_conta), true);
         mProgressDialog.show();
 
-        // fecha teclado
-        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
         Boolean valido = validar();
 
         if (!valido) {

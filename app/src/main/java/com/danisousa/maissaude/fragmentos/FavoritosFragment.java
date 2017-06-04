@@ -1,9 +1,9 @@
 package com.danisousa.maissaude.fragmentos;
 
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FavoritosFragment extends Fragment implements FavoritosDAO.FavoritosListener, LocalizacaoHelper.LocalizacaoListener {
+public class FavoritosFragment extends Fragment implements FavoritosDAO.FavoritosListener, LocalizacaoHelper.LocalizacaoListener, EstabelecimentosAdapter.AtualizarEstablecimentos {
 
     private MainActivity mMainActivity;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -43,7 +43,7 @@ public class FavoritosFragment extends Fragment implements FavoritosDAO.Favorito
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMainActivity = (MainActivity) this.getActivity();
+        mMainActivity = (MainActivity) getActivity();
     }
 
     @Override
@@ -58,18 +58,16 @@ public class FavoritosFragment extends Fragment implements FavoritosDAO.Favorito
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mListaVazia = (LinearLayout) view.findViewById(R.id.lista_vazia);
 
-        mAdapter = new EstabelecimentosAdapter(getActivity(), mInicioProgressBar);
+        mAdapter = new EstabelecimentosAdapter(mMainActivity, this);
 
         mRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mMainActivity);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
 
-        DividerItemDecoration separador = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            separador.setDrawable(getContext().getDrawable(R.drawable.separador_lista));
-        }
+        DividerItemDecoration separador = new DividerItemDecoration(mMainActivity, DividerItemDecoration.VERTICAL);
+        separador.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.separador_lista));
 
         mRecyclerView.addItemDecoration(separador);
 
@@ -82,26 +80,31 @@ public class FavoritosFragment extends Fragment implements FavoritosDAO.Favorito
     @Override
     public void onLocalizacaoChanged(Location localizacao) {
         mLocalizacao = localizacao;
-        mAdapter.atualizarFavoritos(mLocalizacao, mEstabelecimentos);
+        mAdapter.atualizarEstabelecimentos();
     }
 
     @Override
     public void onFavoritosChanged(List<Estabelecimento> estabelecimentos) {
-        Log.d(TAG, "Favoritos changed: " + estabelecimentos.size());
         mEstabelecimentos = estabelecimentos;
+        mAdapter.atualizarEstabelecimentos();
+    }
 
-        if (estabelecimentos.size() > 0) {
-            mListaVazia.setVisibility(View.GONE);
-            if (mLocalizacao != null) {
-                Collections.sort(estabelecimentos, (est1, est2) ->
-                    est1.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude())
-                    .compareTo(est2.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude())));
-            }
-        } else {
-            mListaVazia.setVisibility(View.VISIBLE);
+    @Override
+    public void atualizarEstabelecimentos() {
+        if (mEstabelecimentos != null) {
+            mListaVazia.setVisibility(mEstabelecimentos.size() > 0 ? View.GONE : View.VISIBLE);
         }
 
-        mAdapter.atualizarFavoritos(mLocalizacao, estabelecimentos);
+        if (mLocalizacao != null) {
+            Collections.sort(mEstabelecimentos, (est1, est2) ->
+                    est1.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude())
+                    .compareTo(est2.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude())));
+        }
+
+        mAdapter.setFragmentClass(FavoritosFragment.class);
+        mAdapter.setLocalizacao(mLocalizacao);
+        mAdapter.setEstabelecimentos(mEstabelecimentos);
+        mAdapter.notifyDataSetChanged();
         mInicioProgressBar.setVisibility(View.GONE);
     }
 }
