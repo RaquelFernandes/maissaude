@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.danisousa.maissaude">
+          package="com.danisousa.maissaude">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -14,37 +14,43 @@
         android:theme="@style/Base">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBEji60KxxI1tZOFU40tjq6B1pr709nzqI" />
+            android:value="AIzaSyBEji60KxxI1tZOFU40tjq6B1pr709nzqI"/>
 
         <activity
             android:name=".atividades.LauncherActivity"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".atividades.MainActivity"
-            android:theme="@style/NoActionBar" />
+            android:theme="@style/NoActionBar"/>
         <activity
             android:name=".atividades.LoginActivity"
             android:theme="@style/WhiteStatusBar"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".atividades.CadastroActivity"
             android:label="Registrar"
-            android:parentActivityName=".atividades.LoginActivity"  />
-        <activity
-            android:name=".atividades.FiltrarActivity"
-            android:label="Filtrar"
-            android:parentActivityName=".atividades.MainActivity"
-            android:theme="@style/CloseButtonAsUpIndicator" />
+            android:parentActivityName=".atividades.LoginActivity"/>
         <activity
             android:name=".atividades.DetalhesActivity"
             android:label="Detalhes"
-            android:theme="@style/TransparentStatusBar"
-            android:parentActivityName=".atividades.MainActivity" />
+            android:parentActivityName=".atividades.MainActivity"
+            android:theme="@style/TransparentStatusBar"/>
+        <activity
+            android:name=".atividades.BuscarActivity"
+            android:label="Buscar"
+            android:parentActivityName=".atividades.MainActivity"
+            android:theme="@style/CloseButtonAsUpIndicator"/>
+        <activity
+            android:name=".atividades.ResultadosActivity"
+            android:label="Resultados da Busca"
+            android:parentActivityName=".atividades.BuscarActivity">
+        </activity>
     </application>
 
 </manifest>

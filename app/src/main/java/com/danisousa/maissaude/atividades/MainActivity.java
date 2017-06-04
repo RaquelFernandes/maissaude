@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.danisousa.maissaude.adaptadores.ViewPagerAdapter;
 import com.danisousa.maissaude.fragmentos.MapaFragment;
 import com.danisousa.maissaude.fragmentos.ProximosFragment;
 import com.danisousa.maissaude.R;
@@ -50,17 +51,12 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private ApiEstabelecimentosInterface mServico;
-    private FirebaseAuth mAuth;
-    private FirebaseStorage mStorage;
-    private Toolbar mToolbar;
-    private TabLayout mTabLayout;
-    private ViewPager mViewPager;
     private FloatingActionButton mFloatingActionButton;
     private ProgressDialog mProgessEmergencia;
     private LocalBroadcastManager mLocalBroadcastManager;
     private GoogleApiClient mGoogleApiClient;
     private Location mLocalizacao;
-    private List<LocalizacaoHelper.LocalizacaoListener> mLocalizacaoListeners;
+    private List<LocalizacaoHelper.LocalizacaoListener> mLocalizacaoListeners = new ArrayList<>();
 
     private final static int REQUEST_CODE_FILTRAR = 1;
 
@@ -69,25 +65,26 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mLocalizacaoListeners = new ArrayList<>();
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
+        LocalizacaoHelper.pedirPermissao(this);
         configurarLocalBroadcast();
 
-        LocalizacaoHelper.pedirPermissao(this);
-
+        mServico = TcuApi.getInstance().getServico();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
 
-        mAuth = FirebaseAuth.getInstance();
-        mStorage = FirebaseStorage.getInstance();
+        setupView();
+        setupViewPager();
 
-        mServico = TcuApi.getInstance().getServico();
+        // Salva foto do usuario no armazenamento interno
+        FotoHelper.setFotoUsuario(this, null, FirebaseStorage.getInstance(), FirebaseAuth.getInstance());
+    }
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+    private void setupView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_emergencia);
         mFloatingActionButton.setOnClickListener(v -> {
@@ -96,41 +93,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             mProgessEmergencia.show();
             emergencia();
         });
-
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(mViewPager);
-
-        mTabLayout = (TabLayout) findViewById(R.id.tabs);
-        mTabLayout.setupWithViewPager(mViewPager);
-
-        // Salva foto do usuario no armazenamento interno
-        FotoHelper.setFotoUsuario(this, null, mStorage, mAuth);
     }
 
-    private void configurarLocalBroadcast() {
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Location localizacao = intent.getParcelableExtra(LocalizacaoHelper.LOCALIZACAO_EXTRA);
-                for (LocalizacaoHelper.LocalizacaoListener localizacaoListener : mLocalizacaoListeners) {
-                    localizacaoListener.onLocalizacaoChanged(localizacao);
-                }
-            }
-        };
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(LocalizacaoHelper.LOCALIZACAO_ACTION);
-        mLocalBroadcastManager.registerReceiver(broadcastReceiver, intentFilter);
-    }
+    private void setupViewPager() {
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
-    public void addLocalizacaoListener(LocalizacaoHelper.LocalizacaoListener listener) {
-        mLocalizacaoListeners.add(listener);
-    }
-
-    public void atualizarLocalizacao() {
-        onConnected(new Bundle());
-    }
-
-    private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new MapaFragment(), getString(R.string.tab_mapa));
         adapter.addFragment(new ProximosFragment(), getString(R.string.tab_proximos));
@@ -157,6 +125,85 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             }
         });
+        tabLayout.setupWithViewPager(viewPager);
+    }
+
+    private void configurarLocalBroadcast() {
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
+        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Location localizacao = intent.getParcelableExtra(LocalizacaoHelper.LOCALIZACAO_EXTRA);
+                for (LocalizacaoHelper.LocalizacaoListener localizacaoListener : mLocalizacaoListeners) {
+                    localizacaoListener.onLocalizacaoChanged(localizacao);
+                }
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(LocalizacaoHelper.LOCALIZACAO_ACTION);
+        mLocalBroadcastManager.registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    public void addLocalizacaoListener(LocalizacaoHelper.LocalizacaoListener listener) {
+        mLocalizacaoListeners.add(listener);
+    }
+
+    public void atualizarLocalizacao() {
+        onConnected(new Bundle());
+    }
+
+    private void emergencia() {
+        Call<List<Estabelecimento>> call = mServico.getEstabelecimentosPorCoordenadas(
+                mLocalizacao.getLatitude(),
+                mLocalizacao.getLongitude(),
+                100, // 100km de raio
+                "URGÊNCIA", // categoria
+                1 // quantidade de resultados
+        );
+
+        call.enqueue(new Callback<List<Estabelecimento>>() {
+            @Override
+            public void onResponse(Call<List<Estabelecimento>> call, Response<List<Estabelecimento>> response) {
+                if (response.body() == null) {
+                    onFailure(call, new Exception("Null response from API"));
+                    return;
+                }
+                List<Estabelecimento> estabelecimentos = response.body();
+                Intent intent = new Intent(MainActivity.this, DetalhesActivity.class);
+                Estabelecimento estabelecimento = estabelecimentos.get(0);
+                intent.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, estabelecimento);
+                startActivity(intent);
+                mProgessEmergencia.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<List<Estabelecimento>> call, Throwable t) {
+                t.printStackTrace();
+                mProgessEmergencia.dismiss();
+                Toast.makeText(MainActivity.this, "Erro ao tentar se comunicar com o servidor", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void filtrar() {
+        Intent it = new Intent(MainActivity.this, BuscarActivity.class);
+        it.putExtra(LocalizacaoHelper.LOCALIZACAO_EXTRA, mLocalizacao);
+        startActivity(it);
+    }
+
+    private void sobre() {
+        AlertDialog.Builder dialogo = new AlertDialog.Builder(MainActivity.this);
+        dialogo.setMessage(R.string.main_dlg_sobre)
+                .setPositiveButton(R.string.btn_ok, (dialog, id) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
+    private void sair() {
+        FirebaseAuth.getInstance().signOut();
+        Intent it = new Intent(MainActivity.this, LoginActivity.class);
+        finish();
+        startActivity(it);
     }
 
     @Override
@@ -170,18 +217,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     LocalizacaoHelper.alertarLocalizacaoNegada(this);
                 }
         }
-    }
-
-    @Override
-    public void onStart() {
-        mGoogleApiClient.connect();
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
     }
 
     @Override
@@ -236,91 +271,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    public static Intent newIntent(Context contexto) {
-        return new Intent(contexto, MainActivity.class);
+    @Override
+    public void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
     }
 
-    private void emergencia() {
-        Call<List<Estabelecimento>> call = mServico.getEstabelecimentosPorCoordenadas(
-                mLocalizacao.getLatitude(),
-                mLocalizacao.getLongitude(),
-                100, // 100km de raio
-                "URGÊNCIA", // categoria
-                1 // quantidade de resultados
-        );
-
-        call.enqueue(new Callback<List<Estabelecimento>>() {
-            @Override
-            public void onResponse(Call<List<Estabelecimento>> call, Response<List<Estabelecimento>> response) {
-                if (response == null) {
-                    onFailure(call, new Exception("Null response from API"));
-                    return;
-                }
-                List<Estabelecimento> estabelecimentos = response.body();
-                Log.i("EstAdapter", Integer.toString(response.body().size()));
-
-                Intent intent = new Intent(MainActivity.this, DetalhesActivity.class);
-                Estabelecimento estabelecimento = estabelecimentos.get(0);
-                intent.putExtra(DetalhesActivity.EXTRA_ESTABELECIMENTO, estabelecimento);
-                startActivity(intent);
-                mProgessEmergencia.dismiss();
-            }
-
-            @Override
-            public void onFailure(Call<List<Estabelecimento>> call, Throwable t) {
-                t.printStackTrace();
-                mProgessEmergencia.dismiss();
-                Toast.makeText(MainActivity.this, "Erro ao tentar se comunicar com o servidor", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void filtrar() {
-        Intent it = new Intent(MainActivity.this, FiltrarActivity.class);
-        startActivityForResult(it, REQUEST_CODE_FILTRAR);
-    }
-
-    private void sobre() {
-        AlertDialog.Builder dialogo = new AlertDialog.Builder(MainActivity.this);
-        dialogo.setMessage(R.string.main_dlg_sobre)
-                .setPositiveButton(R.string.btn_ok, (dialog, id) -> dialog.dismiss())
-                .create()
-                .show();
-    }
-
-    private void sair() {
-        FirebaseAuth.getInstance().signOut();
-        Intent it = new Intent(MainActivity.this, LoginActivity.class);
-        finish();
-        startActivity(it);
-    }
-
-    private class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
+    @Override
+    public void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
     }
 }

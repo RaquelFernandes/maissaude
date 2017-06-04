@@ -18,4 +18,5 @@ public class ClusterRenderer extends DefaultClusterRenderer<Cluster> {
         markerOptions.snippet(item.getSnippet());
         super.onBeforeClusterItemRendered(item, markerOptions);
     }
+
 }

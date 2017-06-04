@@ -138,9 +138,7 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
 
     @Override
     public EstabelecimentoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_lista, parent, false);
-
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_lista, parent, false);
         return new EstabelecimentoViewHolder(itemView);
     }
 

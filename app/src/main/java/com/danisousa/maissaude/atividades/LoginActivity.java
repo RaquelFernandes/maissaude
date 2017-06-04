@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
             if (usuario != null) {
                 // Usuário entrou
                 finish();
-                startActivity(MainActivity.newIntent(LoginActivity.this));
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
             }
         };
 

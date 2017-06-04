@@ -28,20 +28,20 @@
             <ImageView
                 android:tint="@color/cinza_2"
                 android:layout_width="wrap_content"
-                android:layout_height="200dp"
+                android:layout_height="150dp"
                 android:src="@drawable/cardiogram"
-                android:paddingBottom="30dp" />
+                android:paddingBottom="20dp" />
 
             <TextView
+                android:id="@+id/lista_vazia_mensagem"
+                android:textColor="@color/cinza_3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:lineSpacingExtra="5sp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:textColor="@color/cinza_3"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
                 android:text="@string/favoritos_vazio"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
         </LinearLayout>
 
         <ProgressBar

@@ -46,16 +46,13 @@ public class FavoritosDAO {
         ValueEventListener valueListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "Favoritos changed");
                 List<Estabelecimento> estabelecimentos = new ArrayList<>();
-
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Estabelecimento estabelecimento = snapshot.getValue(Estabelecimento.class);
                     estabelecimentos.add(estabelecimento);
                 }
                 mEstabelecimentos = estabelecimentos;
                 listener.onFavoritosChanged(estabelecimentos);
-                Log.d(TAG, "Favoritos changed: " + estabelecimentos.size());
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -74,6 +71,7 @@ public class FavoritosDAO {
     }
 
     public boolean estaNosFavoritos(String codUnidade) {
+        if (mEstabelecimentos == null) return false;
         for (Estabelecimento estabelecimento : mEstabelecimentos) {
             if (estabelecimento.getCodUnidade().equals(codUnidade)) {
                 return true;

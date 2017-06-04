@@ -106,7 +106,7 @@ public class CadastroActivity extends AppCompatActivity {
                     Toast.makeText(CadastroActivity.this, R.string.cadastro_toast_conta_criada,
                             Toast.LENGTH_SHORT).show();
                     finish();
-                    startActivity(MainActivity.newIntent(CadastroActivity.this));
+                    startActivity(new Intent(CadastroActivity.this, MainActivity.class));
                 }
             }
         };

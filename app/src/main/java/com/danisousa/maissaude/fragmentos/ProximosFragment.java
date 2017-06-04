@@ -27,8 +27,6 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
 
     private MainActivity mMainActivity;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ProgressBar mInicioProgressBar;
-    private RecyclerView mRecyclerView;
     private EstabelecimentosAdapter mAdapter;
     private Location mLocalizacao;
     private List<Estabelecimento> mEstabelecimentos;
@@ -50,33 +48,33 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
+        View view = inflater.inflate(R.layout.recycler_view, container, false);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.azul_claro);
         mSwipeRefreshLayout.setOnRefreshListener(() -> mAdapter.atualizarProximos(mLocalizacao, mSwipeRefreshLayout));
 
-        mInicioProgressBar = (ProgressBar) view.findViewById(R.id.inicio_progress_bar);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        ProgressBar inicioProgressBar = (ProgressBar) view.findViewById(R.id.inicio_progress_bar);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
         if (mEstabelecimentos != null) {
             mAdapter = new EstabelecimentosAdapter(getActivity(), mEstabelecimentos, mLocalizacao);
-            mInicioProgressBar.setVisibility(View.GONE);
+            inicioProgressBar.setVisibility(View.GONE);
         } else {
-            mAdapter = new EstabelecimentosAdapter(getActivity(), mInicioProgressBar);
+            mAdapter = new EstabelecimentosAdapter(getActivity(), inicioProgressBar);
         }
 
-        mRecyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
 
         DividerItemDecoration separador = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             separador.setDrawable(getContext().getDrawable(R.drawable.separador_lista));
         }
-        mRecyclerView.addItemDecoration(separador);
+        recyclerView.addItemDecoration(separador);
 
         mMainActivity.addLocalizacaoListener(this);
 
