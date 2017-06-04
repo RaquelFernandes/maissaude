@@ -64,6 +64,13 @@ public class FotoHelper {
         return imagemCircular(res, bmp);
     }
 
+    public static Drawable imagemCircular(Resources res, int src, int inSampleSize) {
+        BitmapFactory.Options opcoes = new BitmapFactory.Options();
+        opcoes.inSampleSize = inSampleSize;
+        Bitmap bmp = BitmapFactory.decodeResource(res, src, opcoes);
+        return imagemCircular(res, bmp);
+    }
+
     public static Drawable imagemCircular(Resources res, Bitmap bmp) {
         RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, bmp);
         drawable.setCircular(true);

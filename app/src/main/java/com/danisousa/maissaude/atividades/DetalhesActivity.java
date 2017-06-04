@@ -143,7 +143,7 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
         mTemNeonatal.setImageResource(getBooleanImageView(mEstabelecimento.temNeoNatal()));
         mTemDialise.setImageResource(getBooleanImageView(mEstabelecimento.temDialise()));
 
-        Drawable placeholderCircular = FotoHelper.imagemCircular(getResources(), R.drawable.usuario);
+        Drawable placeholderCircular = FotoHelper.imagemCircular(getResources(), R.drawable.usuario, 6);
         mFotoImageView.setImageDrawable(placeholderCircular);
 
         FotoHelper.setFotoUsuario(this, mFotoImageView, mStorage, mAuth);
