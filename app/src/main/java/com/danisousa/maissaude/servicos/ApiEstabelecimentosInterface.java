@@ -15,7 +15,14 @@ public interface ApiEstabelecimentosInterface {
     int QUANTIDADE = 100;
 
     @GET("rest/estabelecimentos?quantidade=" + QUANTIDADE)
-    Call<List<Estabelecimento>> getTodosEstabelecimentos(@Query("pagina") int pagina);
+    Call<List<Estabelecimento>> getTodosEstabelecimentos(
+            @Query("nomeFantasia") String nome,
+            @Query("municipio") String municipio,
+            @Query("uf") String uf,
+            @Query("categoria") String categoria,
+            @Query("vinculoSus") String vinculoSus,
+            @Query("retencao") String retencao
+    );
 
     @GET("rest/estabelecimentos/latitude/{latitude}/longitude/{longitude}/raio/{raio}" + QUANTIDADE)
     Call<List<Estabelecimento>> getEstabelecimentosPorCoordenadas(
