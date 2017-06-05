@@ -36,14 +36,9 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
     private Context mContext;
     private Location mLocalizacao;
     private List<Estabelecimento> mEstabelecimentos;
-    private AtualizarEstablecimentos mAtualizarInterface;
     private Class mFragmentClass;
 
     private static final String TAG = "EstabelecimentosAdapter";
-
-    public interface AtualizarEstablecimentos {
-        void atualizarEstabelecimentos();
-    }
 
     public class EstabelecimentoViewHolder extends RecyclerView.ViewHolder {
 
@@ -57,16 +52,15 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         }
     }
 
-    public EstabelecimentosAdapter(Context context, AtualizarEstablecimentos atualizarInterface) {
+    public EstabelecimentosAdapter(Context context) {
         mContext = context;
         mEstabelecimentos = new ArrayList<>();
-        mAtualizarInterface = atualizarInterface;
     }
 
-    public void atualizarEstabelecimentos() {
-        if (mAtualizarInterface != null) {
-            mAtualizarInterface.atualizarEstabelecimentos();
-        }
+    public void atualizar(Location localizacao, List<Estabelecimento> estabelecimentos) {
+        mLocalizacao = localizacao;
+        mEstabelecimentos = estabelecimentos;
+        notifyDataSetChanged();
     }
 
     @Override

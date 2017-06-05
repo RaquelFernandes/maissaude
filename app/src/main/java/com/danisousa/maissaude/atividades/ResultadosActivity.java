@@ -32,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ResultadosActivity extends AppCompatActivity implements EstabelecimentosAdapter.AtualizarEstablecimentos {
+public class ResultadosActivity extends AppCompatActivity {
 
     private ProgressBar mInicioProgressBar;
     private LinearLayout mListaVazia;
@@ -67,7 +67,7 @@ public class ResultadosActivity extends AppCompatActivity implements Estabelecim
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         TextView listaVaziaMensagem = (TextView) findViewById(R.id.lista_vazia_mensagem);
 
-        mAdapter = new EstabelecimentosAdapter(this, this);
+        mAdapter = new EstabelecimentosAdapter(this);
         listaVaziaMensagem.setText(R.string.nenhum_resultado_mensagem);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
@@ -80,20 +80,17 @@ public class ResultadosActivity extends AppCompatActivity implements Estabelecim
 
         if (savedInstanceState == null) {
             mLocalizacao = getIntent().getParcelableExtra(LocalizacaoHelper.LOCALIZACAO_EXTRA);
-            mAdapter.atualizarEstabelecimentos();
+            atualizarEstabelecimentos();
         } else {
             mLocalizacao = savedInstanceState.getParcelable(LOCALIZACAO);
             mEstabelecimentos = (ArrayList<Estabelecimento>) savedInstanceState.getSerializable(ESTABELECIMENTOS);
             mEstabelecimentos = mEstabelecimentos == null ? new ArrayList<>() : mEstabelecimentos;
             mListaVazia.setVisibility(mEstabelecimentos.size() > 0 ? View.GONE : View.VISIBLE);
-            mAdapter.setLocalizacao(mLocalizacao);
-            mAdapter.setEstabelecimentos(mEstabelecimentos);
-            mAdapter.notifyDataSetChanged();
+            mAdapter.atualizar(mLocalizacao, mEstabelecimentos);
             mInicioProgressBar.setVisibility(View.GONE);
         }
     }
 
-    @Override
     public void atualizarEstabelecimentos() {
         Call<List<Estabelecimento>> call = mServico.getTodosEstabelecimentos(
                 mFiltros.getNome(),
@@ -125,9 +122,7 @@ public class ResultadosActivity extends AppCompatActivity implements Estabelecim
                                     .compareTo(est2.getDistancia(mLocalizacao.getLatitude(), mLocalizacao.getLongitude())));
                 }
 
-                mAdapter.setLocalizacao(mLocalizacao);
-                mAdapter.setEstabelecimentos(mEstabelecimentos);
-                mAdapter.notifyDataSetChanged();
+                mAdapter.atualizar(mLocalizacao, mEstabelecimentos);
                 mInicioProgressBar.setVisibility(View.GONE);
             }
 

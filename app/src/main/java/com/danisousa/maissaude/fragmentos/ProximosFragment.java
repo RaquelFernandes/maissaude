@@ -31,7 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ProximosFragment extends Fragment implements LocalizacaoHelper.LocalizacaoListener, EstabelecimentosAdapter.AtualizarEstablecimentos {
+public class ProximosFragment extends Fragment implements LocalizacaoHelper.LocalizacaoListener {
 
     private MainActivity mMainActivity;
     private ProgressBar mInicioProgressBar;
@@ -62,17 +62,15 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.azul_claro);
-        mSwipeRefreshLayout.setOnRefreshListener(() -> mAdapter.atualizarEstabelecimentos());
+        mSwipeRefreshLayout.setOnRefreshListener(this::atualizarEstabelecimentos);
 
         mInicioProgressBar = (ProgressBar) view.findViewById(R.id.inicio_progress_bar);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        mAdapter = new EstabelecimentosAdapter(mMainActivity, this);
+        mAdapter = new EstabelecimentosAdapter(mMainActivity);
 
         if (mEstabelecimentos != null) {
-            mAdapter.setLocalizacao(mLocalizacao);
-            mAdapter.setEstabelecimentos(mEstabelecimentos);
-            mAdapter.notifyDataSetChanged();
+            mAdapter.atualizar(mLocalizacao, mEstabelecimentos);
             mInicioProgressBar.setVisibility(View.GONE);
         }
 
@@ -91,8 +89,7 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
         return view;
     }
 
-    @Override
-    public void atualizarEstabelecimentos() {
+    private void atualizarEstabelecimentos() {
         Call<List<Estabelecimento>> call = mServico.getEstabelecimentosPorCoordenadas(
                 mLocalizacao.getLatitude(),
                 mLocalizacao.getLongitude(),
@@ -109,9 +106,7 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
                     return;
                 }
                 mEstabelecimentos = response.body();
-                mAdapter.setLocalizacao(mLocalizacao);
-                mAdapter.setEstabelecimentos(mEstabelecimentos);
-                mAdapter.notifyDataSetChanged();
+                mAdapter.atualizar(mLocalizacao, mEstabelecimentos);
                 mInicioProgressBar.setVisibility(View.GONE);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -135,8 +130,7 @@ public class ProximosFragment extends Fragment implements LocalizacaoHelper.Loca
     @Override
     public void onLocalizacaoChanged(Location localizacao) {
         mLocalizacao = localizacao;
-        mAdapter.setLocalizacao(mLocalizacao);
-        mAdapter.atualizarEstabelecimentos();
+        atualizarEstabelecimentos();
     }
 
     @Override
