@@ -11,16 +11,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -41,7 +37,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,8 +46,11 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private MapaFragment mMapaFragment;
+
     private ApiEstabelecimentosInterface mServico;
-    private FloatingActionButton mFloatingActionButton;
+    private FloatingActionButton mEmergenciaFAB;
+    private FloatingActionButton mLocalFAB;
     private ProgressDialog mProgessEmergencia;
     private LocalBroadcastManager mLocalBroadcastManager;
     private GoogleApiClient mGoogleApiClient;
@@ -69,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         LocalizacaoHelper.pedirPermissao(this);
         configurarLocalBroadcast();
 
+        mMapaFragment = new MapaFragment();
         mServico = TcuApi.getInstance().getServico();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -87,8 +86,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_emergencia);
-        mFloatingActionButton.setOnClickListener(v -> {
+        mLocalFAB = (FloatingActionButton) findViewById(R.id.fab_local);
+        mEmergenciaFAB = (FloatingActionButton) findViewById(R.id.fab_emergencia);
+        mLocalFAB.setOnClickListener(v -> mMapaFragment.onMapClick());
+        mEmergenciaFAB.setOnClickListener(v -> {
             mProgessEmergencia = new ProgressDialog(MainActivity.this);
             mProgessEmergencia.setMessage("Buscando estabeleciento de urgências mais próximo");
             mProgessEmergencia.show();
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new MapaFragment(), getString(R.string.tab_mapa));
+        adapter.addFragment(mMapaFragment, getString(R.string.tab_mapa));
         adapter.addFragment(new ProximosFragment(), getString(R.string.tab_proximos));
         adapter.addFragment(new FavoritosFragment(), getString(R.string.tab_favoritos));
         viewPager.setAdapter(adapter);
@@ -115,9 +116,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onPageSelected(int position) {
                 if (position == 0) {
-                    mFloatingActionButton.hide();
+                    mEmergenciaFAB.hide();
+                    mLocalFAB.show();
                 } else {
-                    mFloatingActionButton.show();
+                    mLocalFAB.hide();
+                    mEmergenciaFAB.show();
                 }
             }
 
@@ -185,6 +188,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
     }
+
+    public void habilitarLocalFAB() { mLocalFAB.show(); }
+
+    public void desabilitarLocalFAB() { mLocalFAB.hide(); }
 
     private void filtrar() {
         Intent it = new Intent(MainActivity.this, BuscarActivity.class);
