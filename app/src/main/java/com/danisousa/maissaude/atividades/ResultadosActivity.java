@@ -91,7 +91,7 @@ public class ResultadosActivity extends AppCompatActivity {
         }
     }
 
-    public void atualizarEstabelecimentos() {
+    private void atualizarEstabelecimentos() {
         Call<List<Estabelecimento>> call = mServico.getTodosEstabelecimentos(
                 mFiltros.getNome(),
                 mFiltros.getCidade(),

@@ -19,8 +19,6 @@ public class FavoritosDAO {
 
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mUsuariosRef;
-    private DatabaseReference mFavoritosRef;
     private List<Estabelecimento> mEstabelecimentos;
 
     private static final String TAG = "FavoritosDAO";
@@ -36,13 +34,12 @@ public class FavoritosDAO {
     private FavoritosDAO() {
         mDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        mDatabase.setPersistenceEnabled(true);
-        String id = mAuth.getCurrentUser().getUid();
-        mUsuariosRef = mDatabase.getReference("usuarios");
-        mFavoritosRef = mUsuariosRef.child(id).child("favoritos");
     }
 
     public void setFavoritosListener(final FavoritosDAO.FavoritosListener listener) {
+        String id = mAuth.getCurrentUser().getUid();
+        DatabaseReference favoritosRef = mDatabase.getReference("favoritos").child(id);
+
         ValueEventListener valueListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -59,15 +56,21 @@ public class FavoritosDAO {
                 Log.e(TAG, "Erro ao carregar favoritos: ", databaseError.toException());
             }
         };
-        mFavoritosRef.addValueEventListener(valueListener);
+        favoritosRef.addValueEventListener(valueListener);
     }
 
     public void salvar(Estabelecimento estabelecimento) {
-        mFavoritosRef.child(estabelecimento.getCodUnidade()).setValue(estabelecimento);
+        String id = mAuth.getCurrentUser().getUid();
+        DatabaseReference favoritosRef = mDatabase.getReference("favoritos").child(id);
+
+        favoritosRef.child(estabelecimento.getCodUnidade()).setValue(estabelecimento);
     }
 
     public void remover(Estabelecimento estabelecimento) {
-        mFavoritosRef.child(estabelecimento.getCodUnidade()).removeValue();
+        String id = mAuth.getCurrentUser().getUid();
+        DatabaseReference favoritosRef = mDatabase.getReference("favoritos").child(id);
+
+        favoritosRef.child(estabelecimento.getCodUnidade()).removeValue();
     }
 
     public boolean estaNosFavoritos(String codUnidade) {

@@ -72,9 +72,35 @@
             <View
                 android:id="@+id/backdrop_bottom"
                 android:layout_width="match_parent"
-                android:layout_height="85dp"
+                android:layout_height="77dp"
                 android:layout_gravity="center_horizontal|bottom"
                 android:background="@drawable/backdrop_bg_bottom" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|bottom"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="13dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/detalhes_quantidade_avaliacoes"
+                    tools:text="2 avaliações"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <RatingBar
+                    android:id="@+id/detalhes_mini_rating_bar"
+                    style="@style/Widget.AppCompat.RatingBar.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="2dp"
+                    tools:rating="4"
+                    android:isIndicator="true"
+                    android:progressTint="#FFF"
+                    android:progressBackgroundTint="#000"
+                    android:stepSize="1"/>
+            </LinearLayout>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -110,7 +136,7 @@
                 android:drawableTint="?attr/colorPrimary"
                 android:drawableTop="@drawable/ic_call"
                 android:textColor="?attr/colorPrimary"
-                android:text="@string/acao_ligar"
+                android:text="Ligar"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
@@ -128,7 +154,7 @@
                 android:drawableTint="?attr/colorPrimary"
                 android:textColor="?attr/colorPrimary"
                 android:drawableTop="@drawable/ic_share"
-                android:text="@string/acao_compartilhar"
+                android:text="Compartilhar"
                 app:layout_constraintLeft_toRightOf="@+id/detalhes_btn_ligar"
                 app:layout_constraintRight_toLeftOf="@+id/detalhes_btn_salvar"
                 app:layout_constraintTop_toTopOf="@+id/detalhes_btn_ligar"/>
@@ -144,8 +170,8 @@
                 android:drawablePadding="15dp"
                 android:drawableTint="?attr/colorPrimary"
                 android:textColor="?attr/colorPrimary"
-                android:drawableTop="@drawable/ic_hospital"
-                tools:text="@string/acao_salvar"
+                android:drawableTop="@drawable/ic_favorite"
+                android:text="Salvar"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/detalhes_btn_ligar"/>
 
@@ -541,6 +567,8 @@
 
             <RatingBar
                 android:id="@+id/detalhes_rating_bar"
+                android:progressTint="@color/amarelo"
+                android:secondaryProgressTint="@color/amarelo"
                 android:stepSize="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

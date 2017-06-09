@@ -65,5 +65,6 @@
     <string name="acao_remover">Remover</string>
     <string name="favoritos_vazio">Você ainda não marcou nenhum estabelecimento como favorito</string>
     <string name="nenhum_resultado_mensagem">Nenhum resultado encontrado</string>
+    <string name="detalhes_nenhuma_avaliacao">nenhuma avaliação</string>
 
 </resources>

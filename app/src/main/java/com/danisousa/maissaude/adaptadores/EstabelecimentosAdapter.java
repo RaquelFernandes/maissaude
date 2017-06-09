@@ -11,18 +11,22 @@ import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.danisousa.maissaude.R;
 import com.danisousa.maissaude.atividades.DetalhesActivity;
+import com.danisousa.maissaude.dados.AvaliacoesDAO;
 import com.danisousa.maissaude.dados.FavoritosDAO;
 import com.danisousa.maissaude.fragmentos.FavoritosFragment;
+import com.danisousa.maissaude.modelos.Avaliacao;
 import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.utils.ClipboardHelper;
 import com.danisousa.maissaude.utils.Acoes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.danisousa.maissaude.utils.Acoes.ABRIR_NO_GMAPS;
 import static com.danisousa.maissaude.utils.Acoes.ADICIONAR_OU_REMOVER_FAVORITOS;
@@ -37,30 +41,53 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
     private Location mLocalizacao;
     private List<Estabelecimento> mEstabelecimentos;
     private Class mFragmentClass;
+    private AvaliacoesDAO mAvaliacoesDAO;
 
     private static final String TAG = "EstabelecimentosAdapter";
 
     public class EstabelecimentoViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView nome, tipo, distancia;
+        public TextView nome, tipo, distancia, nota;
+        public RatingBar estrela;
 
         public EstabelecimentoViewHolder(View view) {
             super(view);
-            nome = (TextView) view.findViewById(R.id.nomeFantasia);
-            tipo = (TextView) view.findViewById(R.id.tipoUnidade);
-            distancia = (TextView) view.findViewById(R.id.distancia);
+            nome = (TextView) view.findViewById(R.id.item_lista_nome);
+            tipo = (TextView) view.findViewById(R.id.item_lista_tipo);
+            distancia = (TextView) view.findViewById(R.id.item_lista_distancia);
+            nota = (TextView) view.findViewById(R.id.item_lista_nota);
+            estrela = (RatingBar) view.findViewById(R.id.item_lista_estrela);
         }
     }
 
     public EstabelecimentosAdapter(Context context) {
         mContext = context;
         mEstabelecimentos = new ArrayList<>();
+        mAvaliacoesDAO = AvaliacoesDAO.getInstance();
     }
 
     public void atualizar(Location localizacao, List<Estabelecimento> estabelecimentos) {
         mLocalizacao = localizacao;
         mEstabelecimentos = estabelecimentos;
         notifyDataSetChanged();
+
+        for (int i = 0; i < estabelecimentos.size(); i++) {
+            int index = i;
+            Estabelecimento estabelecimento = estabelecimentos.get(index);
+            mAvaliacoesDAO.setNotaListener(estabelecimento, new AvaliacoesDAO.NotaListener() {
+                @Override
+                public void onNotasChanged(List<Avaliacao> avaliacoes) {
+                    if (avaliacoes.size() == 0) return;
+                    Float novaMedia = mAvaliacoesDAO.calcularMedia(avaliacoes);
+                    estabelecimento.setNotaMedia(novaMedia);
+                    notifyItemChanged(index);
+                }
+                @Override
+                public void onNotaUsuarioChanged(Avaliacao avaliacao) {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -74,12 +101,21 @@ public class EstabelecimentosAdapter extends RecyclerView.Adapter<Estabeleciment
         final int index = position;
 
         Estabelecimento estabelecimento = mEstabelecimentos.get(position);
+        String nota = estabelecimento.getNotaMediaFormatada();
+
         holder.nome.setText(estabelecimento.getNomeFantasia());
         holder.tipo.setText(estabelecimento.getTipoUnidade());
         holder.itemView.setOnClickListener(v -> onClickViewHolder(v, index));
         holder.itemView.setOnLongClickListener(v -> onLongClickViewHolder(v, index));
         if (mLocalizacao != null) {
             holder.distancia.setText(estabelecimento.getDistanciaFormatada(mLocalizacao.getLatitude(), mLocalizacao.getLongitude()));
+        }
+        if (nota != null) {
+            holder.nota.setText(nota);
+            holder.estrela.setVisibility(View.VISIBLE);
+        } else {
+            holder.nota.setText("");
+            holder.estrela.setVisibility(View.GONE);
         }
     }
 

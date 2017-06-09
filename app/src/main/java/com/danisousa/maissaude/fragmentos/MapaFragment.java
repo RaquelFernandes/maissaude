@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.danisousa.maissaude.R;
@@ -37,7 +38,6 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterManager;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +48,12 @@ import retrofit2.Response;
 public class MapaFragment extends Fragment implements OnMapReadyCallback, LocalizacaoHelper.LocalizacaoListener, GoogleMap.OnCameraMoveListener {
 
     private MainActivity mMainActivity;
-    private FrameLayout mMapProgress;
+
+    private FrameLayout mMapaWrapper;
+    private TextView mMapaTexto;
+    private ProgressBar mMapaProgressBar;
     private MapView mMapView;
+
     private GoogleMap mMap;
     private ApiEstabelecimentosInterface mServico;
     private Location mLocalizacao;
@@ -58,10 +62,12 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
     private ClusterRenderer mClusterRenderer;
     private CameraPosition mPosicaoCamera;
 
+    private boolean mAlterandoLocal = false;
+
     private static final String TAG = "MapaFragment";
     private static final String ESTABALECIMENTOS = "Estabelecimentos";
     private static final String POSICAO_CAMERA = "PosicaoCamera";
-    private static final int RAIO = 20; // km
+    private static final int RAIO = 5; // km
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,7 +85,9 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
 
         mServico = TcuApi.getInstance().getServico();
 
-        mMapProgress = (FrameLayout) view.findViewById(R.id.map_progress);
+        mMapaWrapper = (FrameLayout) view.findViewById(R.id.mapa_wrapper);
+        mMapaTexto = (TextView) view.findViewById(R.id.mapa_texto);
+        mMapaProgressBar = (ProgressBar) view.findViewById(R.id.mapa_progressbar);
         mMapView = (MapView) view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 
@@ -137,15 +145,15 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
             return;
         }
 
+        mMap.clear();
         mMap.addCircle(new CircleOptions()
                 .center(new LatLng(mLocalizacao.getLatitude(), mLocalizacao.getLongitude()))
                 .radius(RAIO * 1000) // raio em metros
                 .strokeColor(ContextCompat.getColor(mMainActivity, R.color.azul_claro))
                 .fillColor(ContextCompat.getColor(mMainActivity, R.color.azul_claro_transparente)));
-//                .fillColor(Color.argb(98, 101, 141, 255)));
-
         mMap.getUiSettings().setAllGesturesEnabled(true);
         mMap.setMyLocationEnabled(true);
+
         configurarClusters();
         configurarCamera();
 
@@ -181,15 +189,42 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
     }
 
     private void configurarCamera() {
-        mMapProgress.setVisibility(View.GONE);
+        mMapaProgressBar.setVisibility(View.GONE);
+        mMapaWrapper.setVisibility(View.GONE);
+        mMainActivity.habilitarLocalFAB();
         CameraPosition posicaoCamera = (mPosicaoCamera != null) ? mPosicaoCamera : new CameraPosition.Builder()
                 .target(new LatLng(mLocalizacao.getLatitude(), mLocalizacao.getLongitude()))
-                .zoom(9.8f)
+                .zoom(12f)
                 .build();
         if (mPosicaoCamera != null) {
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(posicaoCamera));
         } else {
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(posicaoCamera));
+        }
+    }
+
+    public void onMapClick() {
+        if (mMap == null) return;
+        if (mAlterandoLocal) {
+            mAlterandoLocal = false;
+            mMap.setOnMapClickListener(null);
+            mMapaWrapper.setVisibility(View.GONE);
+        } else {
+            mAlterandoLocal = true;
+            mMapaProgressBar.setVisibility(View.INVISIBLE);
+            mMapaTexto.setVisibility(View.VISIBLE);
+            mMapaWrapper.setVisibility(View.VISIBLE);
+            mMap.setOnMapClickListener(latLng -> {
+                mAlterandoLocal = false;
+                mMainActivity.desabilitarLocalFAB();
+                mMap.getUiSettings().setScrollGesturesEnabled(false);
+                mMap.setOnMapClickListener(null);
+                mMapaTexto.setVisibility(View.INVISIBLE);
+                mMapaProgressBar.setVisibility(View.VISIBLE);
+                mLocalizacao.setLatitude(latLng.latitude);
+                mLocalizacao.setLongitude(latLng.longitude);
+                carregarEstabelecimentos();
+            });
         }
     }
 

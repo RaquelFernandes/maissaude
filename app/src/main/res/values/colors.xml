@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="azul_mais_escuro">#4b69bd</color>
     <color name="azul_escuro">#5476d6</color>
     <color name="azul_claro">#658DFF</color>
     <color name="azul_claro_transparente">#32658dff</color>
@@ -11,4 +12,5 @@
     <color name="cinza_3">#B2B2B2</color>
     <color name="cinza_4">#a0a0a0</color>
     <color name="cinza_escuro">#434343</color>
+    <color name="preto_transparente">#8c000000</color>
 </resources>

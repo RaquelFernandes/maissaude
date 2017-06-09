@@ -17,6 +17,8 @@ public class Estabelecimento implements Serializable {
     private static final String NAO = "Não";
 
     @Exclude
+    private Float notaMedia;
+    @Exclude
     private String endereco;
     @SerializedName("bairro")
     @Expose
@@ -117,6 +119,19 @@ public class Estabelecimento implements Serializable {
     @SerializedName("vinculoSus")
     @Expose
     private String vinculoSus;
+
+    public String getNotaMediaFormatada() {
+        if (this.notaMedia == null) return null;
+        return String.format("%.0f", this.notaMedia);
+    }
+
+    public Float getNotaMedia() {
+        return notaMedia;
+    }
+
+    public void setNotaMedia(Float notaMedia) {
+        this.notaMedia = notaMedia;
+    }
 
     public Double getDistancia(double latitude, double longitude) {
         LatLng localEstabelecimento = new LatLng(this.lat, this._long);

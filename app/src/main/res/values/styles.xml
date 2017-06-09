@@ -32,6 +32,9 @@
 
     <!-- Widgets: -->
 
+    <style name="MiniRatingBar" parent="Base.Widget.AppCompat.RatingBar.Small">
+    </style>
+
     <style name="TituloExpandido" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
         <item name="android:textSize">26sp</item>
     </style>

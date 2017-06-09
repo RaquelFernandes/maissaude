@@ -14,10 +14,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.danisousa.maissaude.R;
+import com.danisousa.maissaude.dados.AvaliacoesDAO;
 import com.danisousa.maissaude.dados.FavoritosDAO;
+import com.danisousa.maissaude.modelos.Avaliacao;
 import com.danisousa.maissaude.modelos.Estabelecimento;
 import com.danisousa.maissaude.utils.FotoHelper;
 import com.danisousa.maissaude.utils.Acoes;
@@ -32,22 +35,28 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.List;
+
 public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private FirebaseAuth mAuth;
     private FirebaseStorage mStorage;
     private Estabelecimento mEstabelecimento;
+    private AvaliacoesDAO mAvaliacoesDAO;
 
     private CoordinatorLayout mCoordinatorLayout;
     private AppBarLayout mAppBarLayout;
     private FrameLayout mMapLoadingBackground;
 
     private FloatingActionButton mFloatingActionButton;
+    private RatingBar mRatingBar;
+    private RatingBar mMiniRatingBar;
 
     private Button mLigarButton;
     private Button mCompartilharButton;
     private Button mSalvarButton;
 
+    private TextView mQuantidadeAvaliacoes;
     private TextView mNomeTextView;
     private TextView mEnderecoTextView;
     private TextView mTipoTextView;
@@ -62,7 +71,6 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
     private ImageView mTemObstetra;
     private ImageView mTemNeonatal;
     private ImageView mTemDialise;
-
     private ImageView mFotoImageView;
 
     public static final String EXTRA_ESTABELECIMENTO = "Estabelecimento";
@@ -74,6 +82,7 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
 
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance();
+        mAvaliacoesDAO = AvaliacoesDAO.getInstance();
 
         mEstabelecimento = (Estabelecimento) getIntent().getSerializableExtra(EXTRA_ESTABELECIMENTO);
 
@@ -90,22 +99,20 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
 
     private void setupView() {
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar);
-
         mFloatingActionButton = (FloatingActionButton) findViewById(R.id.fab_rotas);
-
+        mRatingBar = (RatingBar) findViewById(R.id.detalhes_rating_bar);
+        mMiniRatingBar = (RatingBar) findViewById(R.id.detalhes_mini_rating_bar);
+        mQuantidadeAvaliacoes = (TextView) findViewById(R.id.detalhes_quantidade_avaliacoes);
         mLigarButton = (Button) findViewById(R.id.detalhes_btn_ligar);
         mCompartilharButton = (Button) findViewById(R.id.detalhes_btn_compartilhar);
         mSalvarButton = (Button) findViewById(R.id.detalhes_btn_salvar);
-
         mMapLoadingBackground = (FrameLayout) findViewById(R.id.map_background);
-
         mNomeTextView = (TextView) findViewById(R.id.detalhes_tv_nome);
         mEnderecoTextView = (TextView) findViewById(R.id.detalhes_tv_endereco);
         mTipoTextView = (TextView) findViewById(R.id.detalhes_tv_tipo);
         mRetencaoTextView = (TextView) findViewById(R.id.detalhes_tv_retencao);
         mTelefoneTextView = (TextView) findViewById(R.id.detalhes_tv_telefone);
         mTurnoTextView = (TextView) findViewById(R.id.detalhes_tv_turno);
-
         mTemSus = (ImageView) findViewById(R.id.detalhes_ico_sus);
         mTemUrgencia = (ImageView) findViewById(R.id.detalhes_ico_urgencia);
         mTemAmbulatorial = (ImageView) findViewById(R.id.detalhes_ico_ambulatorial);
@@ -118,8 +125,33 @@ public class DetalhesActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void bindView() {
-        mFloatingActionButton.setOnClickListener(v -> Acoes.direcoesDoMapa(DetalhesActivity.this, mEstabelecimento));
+        mMiniRatingBar.setVisibility(View.GONE);
+        mAvaliacoesDAO.setNotaListener(mEstabelecimento, new AvaliacoesDAO.NotaListener() {
+            @Override
+            public void onNotasChanged(List<Avaliacao> avaliacoes) {
+                int quantidadeAvaliacoes = avaliacoes.size();
+                Float media = mAvaliacoesDAO.calcularMedia(avaliacoes);
+                String quantidadeTexto;
+                int visibilidade;
+                if (quantidadeAvaliacoes == 0) {
+                    visibilidade = View.GONE;
+                    quantidadeTexto = getString(R.string.detalhes_nenhuma_avaliacao);
+                } else {
+                    visibilidade = View.VISIBLE;
+                    quantidadeTexto = getResources().getQuantityString(R.plurals.detalhes_quantidade_avaliacoes, quantidadeAvaliacoes, quantidadeAvaliacoes);
+                }
+                mMiniRatingBar.setRating(media);
+                mMiniRatingBar.setVisibility(visibilidade);
+                mQuantidadeAvaliacoes.setText(quantidadeTexto);
+            }
 
+            @Override
+            public void onNotaUsuarioChanged(Avaliacao avaliacao) {
+                mRatingBar.setRating(avaliacao.getNota());
+            }
+        });
+        mFloatingActionButton.setOnClickListener(v -> Acoes.direcoesDoMapa(DetalhesActivity.this, mEstabelecimento));
+        mRatingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> mAvaliacoesDAO.salvar(rating, mEstabelecimento));
         mLigarButton.setOnClickListener(v -> Acoes.ligar(DetalhesActivity.this, mEstabelecimento));
         mCompartilharButton.setOnClickListener(v -> Acoes.compartilharTexto(DetalhesActivity.this, mEstabelecimento));
 

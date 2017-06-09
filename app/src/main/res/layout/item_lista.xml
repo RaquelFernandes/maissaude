@@ -15,7 +15,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/nomeFantasia"
+        android:id="@+id/item_lista_nome"
         android:textColor="@color/cinza_escuro"
         android:textSize="16sp"
         android:layout_width="0dp"
@@ -25,47 +25,50 @@
         app:layout_constraintLeft_toLeftOf="parent"/>
 
     <TextView
-        android:id="@+id/tipoUnidade"
-        android:layout_below="@id/nomeFantasia"
+        android:id="@+id/item_lista_tipo"
+        android:layout_below="@id/item_lista_nome"
         android:textColor="@color/cinza_3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         tools:text="SUBTITULO"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="@+id/nomeFantasia"
+        app:layout_constraintLeft_toLeftOf="@+id/item_lista_nome"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/nomeFantasia"/>
+        app:layout_constraintTop_toBottomOf="@+id/item_lista_nome"/>
 
     <TextView
+        android:id="@+id/item_lista_nota"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintRight_toLeftOf="@+id/classificacao"
+        app:layout_constraintRight_toLeftOf="@+id/item_lista_estrela"
         android:textColor="@color/cinza_3"
-        android:text="3,5"
         android:layout_marginRight="3dp"
-        app:layout_constraintBottom_toBottomOf="@+id/distancia"
-        app:layout_constraintTop_toTopOf="@+id/distancia"
+        app:layout_constraintBottom_toBottomOf="@+id/item_lista_distancia"
+        app:layout_constraintTop_toTopOf="@+id/item_lista_distancia"
         android:layout_marginBottom="0dp"/>
 
     <RatingBar
-        android:id="@+id/classificacao"
+        android:id="@+id/item_lista_estrela"
         style="?android:attr/ratingBarStyleSmall"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:progressTint="@color/cinza_3"
         android:rating="1"
         android:numStars="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintRight_toLeftOf="@+id/distancia"
+        app:layout_constraintRight_toLeftOf="@+id/item_lista_distancia"
         android:layout_marginRight="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/distancia"
-        app:layout_constraintTop_toTopOf="@+id/distancia"/>
+        app:layout_constraintBottom_toBottomOf="@+id/item_lista_distancia"
+        app:layout_constraintTop_toTopOf="@+id/item_lista_distancia"/>
 
     <TextView
-        android:id="@+id/distancia"
+        android:id="@+id/item_lista_distancia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/cinza_3"
         tools:text="25km"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/tipoUnidade"/>
+        app:layout_constraintBottom_toBottomOf="@+id/item_lista_tipo"/>
 
 </android.support.constraint.ConstraintLayout>
