@@ -17,8 +17,10 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.danisousa.maissaude.adaptadores.ViewPagerAdapter;
@@ -46,8 +48,6 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private MapaFragment mMapaFragment;
-
     private ApiEstabelecimentosInterface mServico;
     private FloatingActionButton mEmergenciaFAB;
     private FloatingActionButton mLocalFAB;
@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         LocalizacaoHelper.pedirPermissao(this);
         configurarLocalBroadcast();
 
-        mMapaFragment = new MapaFragment();
         mServico = TcuApi.getInstance().getServico();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -88,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         mLocalFAB = (FloatingActionButton) findViewById(R.id.fab_local);
         mEmergenciaFAB = (FloatingActionButton) findViewById(R.id.fab_emergencia);
-        mLocalFAB.setOnClickListener(v -> mMapaFragment.onMapClick());
         mEmergenciaFAB.setOnClickListener(v -> {
             mProgessEmergencia = new ProgressDialog(MainActivity.this);
             mProgessEmergencia.setMessage("Buscando estabeleciento de urgências mais próximo");
@@ -102,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(mMapaFragment, getString(R.string.tab_mapa));
+        adapter.addFragment(new MapaFragment(), getString(R.string.tab_mapa));
         adapter.addFragment(new ProximosFragment(), getString(R.string.tab_proximos));
         adapter.addFragment(new FavoritosFragment(), getString(R.string.tab_favoritos));
         viewPager.setAdapter(adapter);
@@ -189,6 +187,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         });
     }
 
+    public void setFABonClickListener(View.OnClickListener listener) {
+        mLocalFAB.setOnClickListener(listener);
+    }
+
     public void habilitarLocalFAB() { mLocalFAB.show(); }
 
     public void desabilitarLocalFAB() { mLocalFAB.hide(); }
@@ -212,6 +214,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Intent it = new Intent(MainActivity.this, LoginActivity.class);
         finish();
         startActivity(it);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        atualizarLocalizacao();
     }
 
     @Override

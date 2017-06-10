@@ -33,7 +33,7 @@ public class FavoritosFragment extends Fragment implements FavoritosDAO.Favorito
     private LinearLayout mListaVazia;
     private EstabelecimentosAdapter mAdapter;
     private Location mLocalizacao;
-    private List<Estabelecimento> mEstabelecimentos = new ArrayList<>();
+    private List<Estabelecimento> mEstabelecimentos;
 
     private static final String TAG = "FavoritosFragment";
 

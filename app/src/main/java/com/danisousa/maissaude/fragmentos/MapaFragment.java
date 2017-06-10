@@ -60,13 +60,12 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
     private List<Estabelecimento> mEstabelecimentos;
     private ClusterManager<Cluster> mClusterManager;
     private ClusterRenderer mClusterRenderer;
-    private CameraPosition mPosicaoCamera;
 
     private boolean mAlterandoLocal = false;
 
     private static final String TAG = "MapaFragment";
     private static final String ESTABALECIMENTOS = "Estabelecimentos";
-    private static final String POSICAO_CAMERA = "PosicaoCamera";
+    private static final String LOCALIZACAO = "Localização";
     private static final int RAIO = 5; // km
 
     @Override
@@ -75,7 +74,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
         mMainActivity = (MainActivity) this.getActivity();
         if (savedInstanceState != null) {
             mEstabelecimentos = (ArrayList<Estabelecimento>) savedInstanceState.getSerializable(ESTABALECIMENTOS);
-            mPosicaoCamera = savedInstanceState.getParcelable(POSICAO_CAMERA);
+            mLocalizacao = savedInstanceState.getParcelable(LOCALIZACAO);
         }
     }
 
@@ -97,6 +96,8 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
             e.printStackTrace();
         }
 
+        mMainActivity.setFABonClickListener(v -> onMapClick());
+
         mMapView.getMapAsync(this);
 
         mMainActivity.addLocalizacaoListener(this);
@@ -108,7 +109,7 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(ESTABALECIMENTOS, (ArrayList<Estabelecimento>) mEstabelecimentos);
-        if (mMap != null) outState.putParcelable(POSICAO_CAMERA, mMap.getCameraPosition());
+        outState.putParcelable(LOCALIZACAO, mLocalizacao);
     }
 
     private void carregarEstabelecimentos() {
@@ -192,15 +193,11 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
         mMapaProgressBar.setVisibility(View.GONE);
         mMapaWrapper.setVisibility(View.GONE);
         mMainActivity.habilitarLocalFAB();
-        CameraPosition posicaoCamera = (mPosicaoCamera != null) ? mPosicaoCamera : new CameraPosition.Builder()
+        CameraPosition posicaoCamera = new CameraPosition.Builder()
                 .target(new LatLng(mLocalizacao.getLatitude(), mLocalizacao.getLongitude()))
                 .zoom(12f)
                 .build();
-        if (mPosicaoCamera != null) {
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(posicaoCamera));
-        } else {
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(posicaoCamera));
-        }
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(posicaoCamera));
     }
 
     public void onMapClick() {
@@ -232,7 +229,6 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
     public void onLocalizacaoChanged(Location localizacao) {
         if (mLocalizacao == null) {
             mLocalizacao = localizacao;
-            Log.d(TAG, "Localização: " + mLocalizacao.toString());
             if (mEstabelecimentos == null) {
                 carregarEstabelecimentos();
             } else {
@@ -243,8 +239,8 @@ public class MapaFragment extends Fragment implements OnMapReadyCallback, Locali
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Log.d(TAG, "Mapa carregado");
         mMap = googleMap;
+        if (mLocalizacao != null) configurarMapa();
     }
 
     @Override

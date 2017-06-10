@@ -40,6 +40,8 @@ public class AvaliacoesDAO {
     }
 
     public void setNotaListener(Estabelecimento estabelecimento, final NotaListener listener) {
+        if (mAuth.getCurrentUser() == null) return;
+
         DatabaseReference avaliacoesRef = mDatabase.getReference("avaliacoes");
 
         ValueEventListener notaUsuarioListener = new ValueEventListener() {
